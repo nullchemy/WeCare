@@ -1,12 +1,9 @@
-embedding_word2vec.txt
-vocab.txt
-suicide_detection.txt
-suicide_detection_final_cleaned.csv
-suicide_detection_full_cleaned.csv
-node_modules
+web/node_modules
 
 *.csv
 
 backend/wandb/*
 backend/Data/*
 backend/Models/*
+
+.env
