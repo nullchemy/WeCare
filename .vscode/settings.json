@@ -1,0 +1,8 @@
+{
+    "eslint.workingDirectories": [
+        {
+            "directory": "e:\\projects\\WeCare\\backend\\server",
+            "changeProcessCWD": true
+        }
+    ]
+}

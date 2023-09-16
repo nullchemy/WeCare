@@ -1,4 +1,6 @@
 web/node_modules
+backend/venv
+backend/server/node_modules
 
 *.csv
 
