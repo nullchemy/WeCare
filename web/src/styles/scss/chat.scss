@@ -1,0 +1,145 @@
+.chat {
+  height: 100vh;
+  .chat_container {
+    .chatAppbar {
+      background-color: var(--background-modals);
+      height: 54px;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      .chatbar_left {
+        display: flex;
+        align-items: center;
+      }
+    }
+    .chatWrapper {
+      width: 90%;
+      margin: 0 auto;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-evenly;
+      column-gap: 20px;
+      .leftSidebar {
+        width: 23%;
+        .lsbar_search {
+          margin-bottom: 20px;
+          .lsdbar_searchform {
+            display: flex;
+            align-items: center;
+            background-color: var(--background-modals);
+            border-radius: 5px;
+            width: 100%;
+            .lsdbar_form_group {
+              flex: 1;
+              .lsdbar_search_input {
+                padding: 10px;
+                border: none;
+                width: 95%;
+                background-color: transparent;
+              }
+            }
+            .lsdbar_search_button {
+              all: unset;
+              cursor: pointer;
+              padding: 7px 10px 5px 10px;
+              .lsdbar_search_Ic {
+                height: 15px;
+                width: 15px;
+              }
+            }
+          }
+        }
+        .lsdbar_categories {
+          .lsdbar_cat_item {
+            margin-bottom: 2px;
+            border-bottom: 1px solid #bfbfbf;
+            .lsbar_it_title {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              cursor: pointer;
+              padding: 5px;
+              border-radius: 5px;
+              &:hover {
+                background-color: var(--background-modals);
+              }
+              span {
+                text-transform: uppercase;
+              }
+              .lsdbar_it_Ic {
+                height: 15px;
+                width: 15px;
+                margin-top: 2px;
+              }
+            }
+            .lsdbar_cat_cont {
+              .wecare_it_user {
+                margin: 10px 0;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                .wecare_lsdbar_profile {
+                  min-width: 40px;
+                  height: 40px;
+                  width: 40px;
+                  border-radius: 50%;
+                  overflow: hidden !important;
+                  cursor: pointer;
+                  border: 3px solid #9935e8;
+                  .wecare_user_profile_sidebar {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                    margin-top: 5px;
+                  }
+                }
+                .lsdbar_user_profile_texts {
+                  margin-left: 10px;
+                  .lsdbar_user_name {
+                    font-family: 'VolteRounded-Bold';
+                    font-size: 1.1rem;
+                    font-weight: 900;
+                    line-height: 18px;
+                    color: var(--text-color);
+                  }
+                  .lsdbar_last_mess {
+                    font-size: 0.85rem;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                    word-wrap: break-word;
+                    color: var(--text-color);
+                    display: -webkit-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  }
+                }
+                .lsdbar_user_profile_meta {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-end;
+                  justify-content: flex-start;
+                  padding-right: 10px;
+                  padding-bottom: 20px;
+                  .lsdbar_lst_time {
+                    font-size: 0.7rem;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      .playarea {
+        flex: 1;
+        background-color: var(--background-modals);
+        border-radius: 10px;
+        height: calc(100vh - 94px);
+        padding: 5px;
+      }
+      .rightSidebar {
+        width: 23%;
+      }
+    }
+  }
+}

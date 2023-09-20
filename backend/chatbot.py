@@ -41,7 +41,6 @@ helpline_message = "In times of severe distress where you need to speak with som
 
 def printmd(string):
     socketio.emit('response', {'response': Markdown(string).data})
-    print(Markdown(string).data)
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
   global tokenizer
@@ -89,7 +88,7 @@ def start_chatbot(message):
     if tokenizer is None or model is None:
         socketio.emit('response', {'response': Markdown('Loading DialogGPT model...').data})
         tokenizer, model = load_tokenizer_and_model()
-    user_input = message
+    user_input = message.get('message', '').lower()
     if user_input.lower() == "start":
         printmd(start_message)
     else:

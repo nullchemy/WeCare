@@ -5,7 +5,7 @@ from chatbot import bp as chatbot
 from sockets import socketio
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+cors = CORS(app)
 
 # app.register_blueprint(test)
 app.register_blueprint(chatbot)
