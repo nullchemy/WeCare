@@ -1,3 +1,4 @@
+# working chatbot with suicide detection
 from flask import Blueprint
 from sockets import socketio
 import os
@@ -7,6 +8,14 @@ import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 from IPython.display import Markdown, display
 from datasets import Dataset
+
+# Global variables to store tokenizer and models
+chat_round = 0
+tokenizer = None
+model = None
+suicide_tokenizer = None
+suicide_model = None
+chat_history_ids = torch.tensor([])
 
 
 start_message = "==== Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here. To end the chat, input 'exit' in the chatbox. ===="
@@ -35,28 +44,35 @@ def printmd(string):
     print(Markdown(string).data)
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
+  global tokenizer
   tokenizer = AutoTokenizer.from_pretrained(model)
   model = AutoModelForCausalLM.from_pretrained(model)
   return tokenizer, model
 
 def load_suicide_tokenizer_and_model(tokenizer="google/electra-base-discriminator", model="Models/electra"):
+  global suicide_tokenizer, suicide_model
   suicide_tokenizer = AutoTokenizer.from_pretrained(tokenizer)
   suicide_model = AutoModelForSequenceClassification.from_pretrained(model)
   return suicide_tokenizer, suicide_model
 
 def check_intent(text):
   global suicide_tokenizer, suicide_model
-  suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
+  print('Running generating response')
+  if suicide_tokenizer is None or suicide_model is None:
+        socketio.emit('response', {'response': Markdown('Loading Suicide model...').data})
+        suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
   tokenised_text = suicide_tokenizer.encode_plus(text, return_tensors="pt")
   logits = suicide_model(**tokenised_text)[0]
   prediction = round(torch.softmax(logits, dim=1).tolist()[0][1])
   return prediction
 
-def generate_response(tokenizer, model, chat_round, chat_history_ids, user_input):
+def generate_response(chat_round, user_input):
+  global tokenizer, model, chat_history_ids
+  print('Running generating response')
   if user_input == "exit":
     raise Exception("End of Conversation")
   new_input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors='pt')
-  bot_input_ids = torch.cat([chat_history_ids, new_input_ids], dim=-1) if chat_round > 0 else new_input_ids
+  bot_input_ids = torch.cat([chat_history_ids.long(), new_input_ids], dim=-1) if chat_round > 0 else new_input_ids.long()
   chat_history_ids = model.generate(bot_input_ids, max_length=1250, pad_token_id=tokenizer.eos_token_id)
   if check_intent(user_input):
     printmd("*Alex:* {}".format(random.choice(prevention_messages)))
@@ -69,21 +85,21 @@ bp = Blueprint('chatbot', __name__)
 
 @socketio.on('client_message')
 def start_chatbot(message):
-  user_input = message
-  global tokenizer, model, chat_history_ids
-  tokenizer, model = load_tokenizer_and_model()
-  chat_history_ids = None
-  printmd(start_message)
-  try:
-    for chat_round in range(1000):
-      chat_history_ids = generate_response(tokenizer, model, chat_round, chat_history_ids, user_input)
-  except Exception as e:
-    printmd("*Alex:* See ya => "+str(e))
+    global tokenizer, model, chat_round, chat_history_ids
+    if tokenizer is None or model is None:
+        socketio.emit('response', {'response': Markdown('Loading DialogGPT model...').data})
+        tokenizer, model = load_tokenizer_and_model()
+    user_input = message
+    if user_input.lower() == "start":
+        printmd(start_message)
+    else:
+        try:
+            chat_round += 1
+            chat_history_ids = generate_response(chat_round, user_input)
+        except Exception as e:
+            printmd("*Alex:* See ya => " + str(e))
 
 
 if __name__ == '__main__':
     from app import app, socketio
-    # tokenizer, model = load_tokenizer_and_model()
-    # chat_history_ids = None
-    # suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
     socketio.run(app, debug=True)
