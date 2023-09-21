@@ -76,19 +76,19 @@
   margin-top: 2px;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user {
-  margin: 10px 0;
+  margin: 10px 0 20px 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .wecare_lsdbar_profile {
-  min-width: 40px;
-  height: 40px;
-  width: 40px;
+  min-width: 30px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   overflow: hidden !important;
   cursor: pointer;
-  border: 3px solid #9935e8;
+  border: 2px solid #9935e8;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .wecare_lsdbar_profile .wecare_user_profile_sidebar {
   width: 100%;
@@ -103,9 +103,9 @@
   margin-left: 10px;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .lsdbar_user_profile_texts .lsdbar_user_name {
-  font-family: "VolteRounded-Bold";
+  font-family: "Apercu";
   font-size: 1.1rem;
-  font-weight: 900;
+  font-weight: 400;
   line-height: 18px;
   color: var(--text-color);
 }
@@ -136,6 +136,107 @@
   border-radius: 10px;
   height: calc(100vh - 94px);
   padding: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top {
+  height: 35px;
+  border-bottom: 1px solid #bfbfbf;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle {
+  flex: 1;
+  padding: 10px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay {
+  display: flex;
+  flex-direction: column;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message {
+  display: flex;
+  align-items: flex-start;
+  width: 80%;
+  margin: 20px 0;
+  align-self: flex-start;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_sender_profile {
+  min-width: 30px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content {
+  margin-left: 10px;
+  background-color: var(--background-modals);
+  padding: 5px;
+  border: 1px solid #d6d6d6;
+  border-radius: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .inc_mess_meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .inc_mess_meta .inc_sender_name {
+  font-family: "Apercu";
+  font-size: 0.8rem;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .inc_mess_meta .inc_mess_time {
+  font-size: 0.8rem;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .inc_mess_meta .inc_mess_misc {
+  font-family: "Apercu";
+  background-color: #ff9428;
+  padding: 2px 3px;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .incoming_cont_message {
+  padding-top: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .incoming_cont_message .inc_th_content {
+  font-size: 0.95rem;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message {
+  display: flex;
+  align-items: flex-start;
+  width: 80%;
+  margin: 20px 0;
+  align-self: flex-end;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content {
+  margin-right: 10px;
+  background-color: var(--background-modals);
+  padding: 5px;
+  border: 1px solid #d6d6d6;
+  border-radius: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content .out_mess_meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content .out_mess_meta .out_mess_time {
+  font-size: 0.8rem;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content .outgoing_cont_message {
+  padding-top: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content .outgoing_cont_message .out_th_content {
+  font-size: 0.95rem;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_sender_profile {
+  min-width: 30px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom {
+  height: 50px;
 }
 .chat .chat_container .chatWrapper .rightSidebar {
   width: 23%;

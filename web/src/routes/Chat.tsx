@@ -64,7 +64,7 @@ const Test: React.FC = () => {
             <div className="lsdbar_categories">
               <div className="lsdbar_cat_item">
                 <div className="lsbar_it_title">
-                  <span>Friends</span>
+                  <span>Friends & Family</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
                 <div className="lsdbar_cat_cont">
@@ -167,21 +167,88 @@ const Test: React.FC = () => {
             </div>
           </div>
           <div className="playarea">
-            <div>
-              {messages.map((message, index) => (
-                <div key={index}>{message}</div>
-              ))}
+            <div className="pa_top"></div>
+            <div className="pa_middle">
+              <div className="messplay">
+                <div className="incoming_message">
+                  <div className="in_mess_sender_profile">
+                    <img src={UserPlaceholder} alt="" />
+                  </div>
+                  <div className="in_mess_content">
+                    <div className="inc_mess_meta">
+                      <span className="inc_sender_name">Benn kaiser</span>
+                      <span className="inc_mess_misc">moderator</span>
+                      <span className="inc_mess_time">now</span>
+                    </div>
+                    <div className="incoming_cont_message">
+                      <span className="inc_th_content">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ex consequatur dolor, neque dolorem error blanditiis
+                        quia dolorum, saepe pariatur impedit debitis. Nihil
+                        atque modi placeat, minima fugiat aspernatur, neque et
+                        culpa esse, at quisquam soluta?
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="incoming_message">
+                  <div className="in_mess_sender_profile">
+                    <img src={UserPlaceholder} alt="" />
+                  </div>
+                  <div className="in_mess_content">
+                    <div className="inc_mess_meta">
+                      <span className="inc_sender_name">Benn kaiser</span>
+                      <span className="inc_mess_misc">moderator</span>
+                      <span className="inc_mess_time">now</span>
+                    </div>
+                    <div className="incoming_cont_message">
+                      <span className="inc_th_content">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ex consequatur dolor, neque dolorem error blanditiis
+                        quia dolorum, saepe pariatur impedit debitis. Nihil
+                        atque modi placeat, minima fugiat aspernatur, neque et
+                        culpa esse, at quisquam soluta?
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="outgoing_message">
+                  <div className="out_mess_content">
+                    <div className="out_mess_meta">
+                      <span className="out_mess_time">now</span>
+                    </div>
+                    <div className="outgoing_cont_message">
+                      <span className="out_th_content">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ex consequatur dolor, neque dolorem error blanditiis
+                        quia dolorum, saepe pariatur impedit debitis. Nihil
+                        atque modi placeat, minima fugiat aspernatur, neque et
+                        culpa esse, at quisquam soluta?
+                      </span>
+                    </div>
+                  </div>
+                  <div className="out_mess_sender_profile">
+                    <img src={UserPlaceholder} alt="" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                {messages.map((message, index) => (
+                  <div key={index}>{message}</div>
+                ))}
+              </div>
             </div>
-
-            <form onSubmit={handleSendMessage}>
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <button type="submit">Send</button>
-            </form>
+            <div className="pa_bottom">
+              <form onSubmit={handleSendMessage}>
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type a message..."
+                />
+                <button type="submit">Send</button>
+              </form>
+            </div>
           </div>
           <div className="rightSidebar"></div>
         </div>
