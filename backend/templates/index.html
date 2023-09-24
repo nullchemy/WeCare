@@ -27,7 +27,7 @@
 
       function sendMessage() {
         var userInput = document.getElementById('userInput').value
-        socket.emit('client_message', userInput)
+        socket.emit('client_message', { message: userInput })
         document.getElementById('userInput').value = ''
       }
     </script>

@@ -18,7 +18,7 @@ suicide_model = None
 chat_history_ids = torch.tensor([])
 
 
-start_message = "==== Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here. To end the chat, input 'exit' in the chatbox. ===="
+start_message = "Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here. To end the chat, input 'exit' in the chatbox."
 
 prevention_messages = ["Are you okay? How long have you been feeling this way?",
                        "That sounds so painful, and I appreciate you sharing that with me. How can I help?",
@@ -40,7 +40,13 @@ prevention_messages = ["Are you okay? How long have you been feeling this way?",
 helpline_message = "In times of severe distress where you need to speak with someone immediately, these are suicide hotline services available for you. You will be speaking with volunteers or professionals who are trained to deal with suicide crisis. Samaritans of Singapore (SOS; 24 hours): 1800 221 4444 Mental Health Helpline (24 hours): 6389 2222 Singapore Association for Mental Health (SAMH) Helpline: 1800 283 7019"
 
 def printmd(string):
-    socketio.emit('response', {'response': Markdown(string).data})
+    socketio.emit('response', {'response': {
+"timestamp": "now",
+"userid": "user456",
+"sendername": "Alex",
+"level": "moderator",
+"message": Markdown(string).data
+}})
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
   global tokenizer
@@ -58,7 +64,7 @@ def check_intent(text):
   global suicide_tokenizer, suicide_model
   print('Running generating response')
   if suicide_tokenizer is None or suicide_model is None:
-        socketio.emit('response', {'response': Markdown('Loading Suicide model...').data})
+        socketio.emit('info', {'response': Markdown('Loading Suicide model...').data})
         suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
   tokenised_text = suicide_tokenizer.encode_plus(text, return_tensors="pt")
   logits = suicide_model(**tokenised_text)[0]
@@ -74,10 +80,10 @@ def generate_response(chat_round, user_input):
   bot_input_ids = torch.cat([chat_history_ids.long(), new_input_ids], dim=-1) if chat_round > 0 else new_input_ids.long()
   chat_history_ids = model.generate(bot_input_ids, max_length=1250, pad_token_id=tokenizer.eos_token_id)
   if check_intent(user_input):
-    printmd("*Alex:* {}".format(random.choice(prevention_messages)))
-    printmd("{}".format(helpline_message))
+    printmd(format(random.choice(prevention_messages)))
+    printmd(format(helpline_message))
   else:
-    printmd("*Alex:* {}".format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))
+    printmd(format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))
   return chat_history_ids
 
 bp = Blueprint('chatbot', __name__)
@@ -86,7 +92,7 @@ bp = Blueprint('chatbot', __name__)
 def start_chatbot(message):
     global tokenizer, model, chat_round, chat_history_ids
     if tokenizer is None or model is None:
-        socketio.emit('response', {'response': Markdown('Loading DialogGPT model...').data})
+        socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
         tokenizer, model = load_tokenizer_and_model()
     user_input = message.get('message', '').lower()
     if user_input.lower() == "start":

@@ -23,6 +23,8 @@
 }
 .chat .chat_container .chatWrapper .leftSidebar {
   width: 23%;
+  display: flex;
+  flex-direction: column;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsbar_search {
   margin-bottom: 20px;
@@ -51,6 +53,14 @@
 .chat .chat_container .chatWrapper .leftSidebar .lsbar_search .lsdbar_searchform .lsdbar_search_button .lsdbar_search_Ic {
   height: 15px;
   width: 15px;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_item_cat_active {
+  flex: 1;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item {
   margin-bottom: 2px;
@@ -101,6 +111,7 @@
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .lsdbar_user_profile_texts {
   margin-left: 10px;
+  flex: 1;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .lsdbar_user_profile_texts .lsdbar_user_name {
   font-family: "Apercu";
@@ -135,17 +146,26 @@
   background-color: var(--background-modals);
   border-radius: 10px;
   height: calc(100vh - 94px);
-  padding: 5px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .chat .chat_container .chatWrapper .playarea .pa_top {
   height: 35px;
   border-bottom: 1px solid #bfbfbf;
+  box-shadow: 0px 2px 8px rgba(99, 99, 99, 0.2);
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle {
-  flex: 1;
-  padding: 10px;
+  height: calc(100vh - 94px - 35px - 50px);
+  padding: 15px;
+  padding-bottom: 5px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+}
+.chat .chat_container .chatWrapper .playarea .pa_middle::-webkit-scrollbar {
+  display: none;
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay {
   display: flex;
@@ -202,7 +222,7 @@
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message {
   display: flex;
   align-items: flex-start;
-  width: 80%;
+  max-width: 80%;
   margin: 20px 0;
   align-self: flex-end;
 }
@@ -236,8 +256,62 @@
   cursor: pointer;
 }
 .chat .chat_container .chatWrapper .playarea .pa_bottom {
-  height: 50px;
+  height: -moz-min-content;
+  height: min-content;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper {
+  display: flex;
+  align-items: center;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_widgets {
+  padding: 0 10px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_widgets .pa_plus_Ic {
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form {
+  flex: 1;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form .pa_form_chat {
+  display: flex;
+  align-items: center;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form .pa_form_chat .pa_chat_input {
+  flex: 1;
+  background-color: var(--background-color-one);
+  outline: none;
+  border-radius: 5px;
+  display: block;
+  min-height: 30px;
+  height: 30px;
+  max-height: 98px;
+  overflow-x: auto;
+  line-height: 21px;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 25px;
+  float: left;
+  border: 1px solid gray;
+  resize: none;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form .pa_form_chat .pa_chat_input::-webkit-scrollbar {
+  display: none;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form .pa_form_chat .pa_chat_submit_btn {
+  all: unset;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .pa_bottom .pa_chat_wrapper .pa_chat_form .pa_form_chat .pa_chat_submit_btn .pa_send_Ic {
+  height: 20px;
+  width: 20px;
 }
 .chat .chat_container .chatWrapper .rightSidebar {
   width: 23%;
+}
+
+[contentEditable=true]:empty:not(:focus):before {
+  content: attr(data-text);
 }/*# sourceMappingURL=chat.css.map */

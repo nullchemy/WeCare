@@ -21,6 +21,8 @@
       column-gap: 20px;
       .leftSidebar {
         width: 23%;
+        display: flex;
+        flex-direction: column;
         .lsbar_search {
           margin-bottom: 20px;
           .lsdbar_searchform {
@@ -50,6 +52,12 @@
           }
         }
         .lsdbar_categories {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          .lsdbar_item_cat_active {
+            flex: 1;
+          }
           .lsdbar_cat_item {
             margin-bottom: 2px;
             border-bottom: 1px solid #bfbfbf;
@@ -96,6 +104,7 @@
                 }
                 .lsdbar_user_profile_texts {
                   margin-left: 10px;
+                  flex: 1;
                   .lsdbar_user_name {
                     font-family: 'Apercu';
                     font-size: 1.1rem;
@@ -135,16 +144,25 @@
         background-color: var(--background-modals);
         border-radius: 10px;
         height: calc(100vh - 94px);
-        padding: 5px;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
         .pa_top {
           height: 35px;
           border-bottom: 1px solid #bfbfbf;
+          box-shadow: 0px 2px 8px rgba(99, 99, 99, 0.2);
         }
         .pa_middle {
-          flex: 1;
-          padding: 10px;
+          height: calc(100vh - 94px - 35px - 50px);
+          padding: 15px;
+          padding-bottom: 5px;
+          overflow-y: scroll;
+          display: flex;
+          flex-direction: column-reverse;
+          justify-content: flex-start;
+          &::-webkit-scrollbar {
+            display: none;
+          }
           .messplay {
             display: flex;
             flex-direction: column;
@@ -199,7 +217,7 @@
             .outgoing_message {
               display: flex;
               align-items: flex-start;
-              width: 80%;
+              max-width: 80%;
               margin: 20px 0;
               align-self: flex-end;
               .out_mess_content {
@@ -235,11 +253,70 @@
           }
         }
         .pa_bottom {
-          height: 50px;
+          height: min-content;
+          .pa_chat_wrapper {
+            display: flex;
+            align-items: center;
+            .pa_widgets {
+              padding: 0 10px;
+              .pa_plus_Ic {
+                height: 20px;
+                width: 20px;
+                cursor: pointer;
+              }
+            }
+            .pa_chat_form {
+              flex: 1;
+              .pa_form_chat {
+                display: flex;
+                align-items: center;
+                .pa_chat_input {
+                  flex: 1;
+                  background-color: var(--background-color-one);
+                  outline: none;
+                  border-radius: 5px;
+                  display: block;
+                  min-height: 30px;
+                  height: 30px;
+                  max-height: 98px;
+                  overflow-x: auto;
+                  line-height: 21px;
+                  padding: 10px;
+                  font-size: 15px;
+                  line-height: 25px;
+                  float: left;
+                  border: 1px solid gray;
+                  resize: none;
+                  &::-webkit-scrollbar {
+                    display: none;
+                  }
+                }
+                .pa_chat_submit_btn {
+                  all: unset;
+                  padding: 10px 20px;
+                  cursor: pointer;
+                  .pa_send_Ic {
+                    height: 20px;
+                    width: 20px;
+                  }
+                }
+              }
+            }
+          }
         }
       }
       .rightSidebar {
         width: 23%;
+      }
+    }
+  }
+}
+
+[contentEditable='true'] {
+  &:empty {
+    &:not(:focus) {
+      &:before {
+        content: attr(data-text);
       }
     }
   }

@@ -1,0 +1,85 @@
+{
+    "chats": [
+    {
+      "chat_id": "chat1",
+      "name": "Dennis Kibet",
+      "last_message": "how are you dennis",
+      "unread_messages": "10",
+      "profile_url": "",
+      "last_seen": "yesterday",
+      "timestamp": "23/9/2023"
+    },
+    {
+      "chat_id": "chat2",
+      "name": "Alice Johnson",
+      "last_message": "Hey there!",
+      "unread_messages": "3",
+      "profile_url": "",
+      "last_seen": "2 hours ago",
+      "timestamp": "23/9/2023"
+    },
+    {
+      "chat_id": "chat3",
+      "name": "Bob Smith",
+      "last_message": "Good morning!",
+      "unread_messages": "1",
+      "profile_url": "",
+      "last_seen": "1 day ago",
+      "timestamp": "22/9/2023"
+    },
+    {
+      "chat_id": "chat4",
+      "name": "Emma Davis",
+      "last_message": "Can't wait for the weekend!",
+      "unread_messages": "7",
+      "profile_url": "",
+      "last_seen": "3 hours ago",
+      "timestamp": "23/9/2023"
+    },
+    {
+      "chat_id": "chat5",
+      "name": "Michael Johnson",
+      "last_message": "Let's catch up soon!",
+      "unread_messages": "2",
+      "profile_url": "",
+      "last_seen": "1 week ago",
+      "timestamp": "16/9/2023"
+    },
+    {
+      "chat_id": "chat6",
+      "name": "Laura Thompson",
+      "last_message": "Sure thing!",
+      "unread_messages": "5",
+      "profile_url": "",
+      "last_seen": "2 days ago",
+      "timestamp": "21/9/2023"
+    },
+    {
+      "chat_id": "chat7",
+      "name": "Alex White",
+      "last_message": "See you later!",
+      "unread_messages": "0",
+      "profile_url": "",
+      "last_seen": "1 hour ago",
+      "timestamp": "23/9/2023"
+    },
+    {
+      "chat_id": "chat8",
+      "name": "Sophie Brown",
+      "last_message": "Hello!",
+      "unread_messages": "4",
+      "profile_url": "",
+      "last_seen": "5 days ago",
+      "timestamp": "18/9/2023"
+    },
+    {
+      "chat_id": "chat9",
+      "name": "David Clark",
+      "last_message": "Happy Friday!",
+      "unread_messages": "9",
+      "profile_url": "",
+      "last_seen": "4 hours ago",
+      "timestamp": "23/9/2023"
+    }
+    ]
+}
