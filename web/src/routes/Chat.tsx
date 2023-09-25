@@ -121,7 +121,10 @@ const Test: React.FC = () => {
                         </div>
                         <div className="lsdbar_user_profile_texts">
                           <h2 className="lsdbar_user_name">{chat.name}</h2>
-                          <span className="lsdbar_last_mess">
+                          <span
+                            className="lsdbar_last_mess"
+                            title={chat.last_message}
+                          >
                             {chat.last_message}
                           </span>
                         </div>

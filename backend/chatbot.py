@@ -44,7 +44,7 @@ def printmd(string):
 "timestamp": "now",
 "userid": "user456",
 "sendername": "Alex",
-"level": "moderator",
+"level": "BOT",
 "message": Markdown(string).data
 }})
 
