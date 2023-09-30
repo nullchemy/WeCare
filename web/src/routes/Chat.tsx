@@ -136,6 +136,10 @@ const Test: React.FC = () => {
                       </div>
                     )
                   })}
+                  <span className="lsdbar_new_chat">
+                    <Plus className="pa_plus_Ic" />
+                    <span>new chat</span>
+                  </span>
                 </div>
               </div>
               <div className="lsdbar_cat_item">

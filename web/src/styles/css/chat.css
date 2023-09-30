@@ -141,6 +141,31 @@
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user .lsdbar_user_profile_meta .lsdbar_lst_time {
   font-size: 0.7rem;
 }
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .lsdbar_new_chat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #14a9ff, #0088f0) !important;
+  border: none;
+  border-radius: 23px;
+  color: #fff !important;
+  cursor: pointer;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  line-height: 1.5rem;
+  margin: 20px 0;
+  outline: none;
+  padding: 10px 20px;
+  transition: 0.4s;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .lsdbar_new_chat .pa_plus_Ic {
+  height: 15px;
+  width: 15px;
+  fill: #fff !important;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .lsdbar_new_chat span {
+  margin-left: 5px;
+}
 .chat .chat_container .chatWrapper .playarea {
   flex: 1;
   background-color: var(--background-modals);
