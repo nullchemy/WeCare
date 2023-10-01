@@ -23,6 +23,8 @@
 }
 .chat .chat_container .chatWrapper .leftSidebar {
   width: 23%;
+  height: calc(100vh - 94px);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -84,6 +86,13 @@
   height: 15px;
   width: 15px;
   margin-top: 2px;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont {
+  height: 322px;
+  overflow-y: scroll;
+}
+.chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont::-webkit-scrollbar {
+  display: none;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont .wecare_it_user {
   margin: 10px 0 20px 0;
@@ -398,6 +407,7 @@
 }
 .chat .chat_container .chatWrapper .rightSidebar {
   width: 23%;
+  width: 0% !important;
 }
 
 [contentEditable=true]:empty:not(:focus):before {

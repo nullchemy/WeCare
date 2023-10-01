@@ -21,6 +21,8 @@
       column-gap: 20px;
       .leftSidebar {
         width: 23%;
+        height: calc(100vh - 94px);
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         .lsbar_search {
@@ -81,6 +83,11 @@
               }
             }
             .lsdbar_cat_cont {
+              height: 322px;
+              overflow-y: scroll;
+              &::-webkit-scrollbar {
+                display: none;
+              }
               .wecare_it_user {
                 margin: 10px 0 20px 0;
                 display: flex;
@@ -399,6 +406,7 @@
       }
       .rightSidebar {
         width: 23%;
+        width: 0% !important;
       }
     }
   }
