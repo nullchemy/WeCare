@@ -1,22 +1,33 @@
-from flask import Flask, request, jsonify, session
-from pymongo import MongoClient
+from flask import Blueprint, request, jsonify, session
 import uuid
 
-
-client = MongoClient('mongodb://localhost:27017/')
-db = client['wecare']
-users_collection = db['users']
+from .extensions import mongo, bcrypt
+auth = Blueprint('auth', __name__)
 
 def generate_user_id():
     return str(uuid.uuid4())
 
 def generate_user_number():
+    users_collection = mongo.db.users
     last_user = users_collection.find_one(sort=[('user_number', -1)])  # Get the last user
-    last_user_number = last_user['user_number'] if last_user else 100000
+
+    if last_user and 'user_number' in last_user:
+        last_user_number = last_user['user_number']
+    else:
+        last_user_number = 99999  # Set a default starting number
+
     new_user_number = last_user_number + 1
     return new_user_number
 
-def registerlogic(full_name, email, password, confirm_password, bcrypt):
+@auth.route('/auth/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    full_name = data.get('full_name')
+    email = data.get('email')
+    password = data.get('password')
+    confirm_password = data.get('confirm_password')
+    users_collection = mongo.db.users
+
     # Check if password and confirm password match
     if password != confirm_password:
         return jsonify({"message": "Passwords do not match. Please try again."}), 400
@@ -41,12 +52,17 @@ def registerlogic(full_name, email, password, confirm_password, bcrypt):
     return jsonify({"message": "User registered successfully!", "user_id": user_id, "user_number": user_number}), 201
 
 
-def loginlogic(email_or_user_id, password):
+@auth.route('/auth/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email_or_user_id = data.get('email_or_user_id')
+    password = data.get('password')
+    users_collection = mongo.db.users
+
     # Check if the user exists
     user = users_collection.find_one({'$or': [{'email': email_or_user_id}, {'user_id': email_or_user_id}]})
 
     if user and bcrypt.check_password_hash(user['hashed_password'], password):
-        session['user_id'] = user['user_id']
         return jsonify({"message": "Login successful", "user_id": user['user_id']}), 200
 
     return jsonify({"message": "Invalid credentials. Please try again."}), 401

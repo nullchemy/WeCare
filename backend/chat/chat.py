@@ -1,13 +1,9 @@
 from flask import Blueprint, request, jsonify
-from sockets import socketio
-from pymongo import MongoClient
+from backend.server.sockets import socketio
+from backend.server.extensions import mongo 
 
 # MongoDB setup
-client = MongoClient('mongodb://localhost:27017/')
-db = client['wecare']
-chat_collection = db['chats']
-group_collection = db['groups']
-bot_collection = db['bots']
+group_collection = mongo.db.users
 
 bp = Blueprint('chat', __name__)
 
