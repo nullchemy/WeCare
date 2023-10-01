@@ -176,9 +176,55 @@
   overflow: hidden;
 }
 .chat .chat_container .chatWrapper .playarea .pa_top {
-  height: 35px;
+  height: -moz-min-content;
+  height: min-content;
   border-bottom: 1px solid #bfbfbf;
   box-shadow: 0px 2px 8px rgba(99, 99, 99, 0.2);
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top .active_chatee_left {
+  display: flex;
+  align-items: center;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top .active_chatee_left .active_chatee_profile {
+  min-width: 30px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  overflow: hidden !important;
+  cursor: pointer;
+  border: 2px solid #9935e8;
+  margin-right: 10px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top .active_chatee_left .active_chatee_profile img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+  margin-top: 5px;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top .active_chatee_left .active_chatee_meta h2 {
+  font-family: "Apercu";
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .pa_top .active_chatee_left .active_chatee_meta .active_chatee_ls {
+  font-size: 0.85rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  word-wrap: break-word;
+  color: var(--text-color);
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle {
   height: calc(100vh - 94px - 35px - 50px);
@@ -192,9 +238,24 @@
 .chat .chat_container .chatWrapper .playarea .pa_middle::-webkit-scrollbar {
   display: none;
 }
+.chat .chat_container .chatWrapper .playarea .pa_middle .messplay_sec_info {
+  background-color: var(--background-modals);
+  color: var(--text-color);
+  padding: 5px;
+  border-radius: 5px;
+  width: 50%;
+  margin: 0 auto;
+  align-self: center;
+  text-align: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  align-self: flex-start;
+}
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  flex: 1;
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message {
   display: flex;
@@ -217,6 +278,7 @@
   padding: 5px;
   border: 1px solid #d6d6d6;
   border-radius: 5px;
+  min-width: 70px;
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay .incoming_message .in_mess_content .inc_mess_meta {
   display: flex;
@@ -257,6 +319,7 @@
   padding: 5px;
   border: 1px solid #d6d6d6;
   border-radius: 5px;
+  min-width: 70px;
 }
 .chat .chat_container .chatWrapper .playarea .pa_middle .messplay .outgoing_message .out_mess_content .out_mess_meta {
   display: flex;

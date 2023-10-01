@@ -11,6 +11,7 @@ import ChatList from '../data/chat_list.json'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
+  const [lsdbarActive, setlsdbarActive] = useState('chat')
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
   const [info, setInfo] = useState<string>('')
@@ -76,8 +77,8 @@ const Test: React.FC = () => {
       <div className="chat_container">
         <div className="chatAppbar">
           <div className="chatbar_left">
-            <h1>
-              WeCare: Mental Health Chatbot for Suicide Detection, and Support
+            <h1 title="Mental Health Chatbot for Suicide Detection, and Support">
+              WeCare
             </h1>
           </div>
           <div className="chatbar_right"></div>
@@ -99,71 +100,151 @@ const Test: React.FC = () => {
               </form>
             </div>
             <div className="lsdbar_categories">
-              <div className="lsdbar_cat_item lsdbar_item_cat_active">
-                <div className="lsbar_it_title">
+              <div
+                className={
+                  lsdbarActive === 'chat'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('chat')
+                  }}
+                >
                   <span>Friends & Family</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
-                <div className="lsdbar_cat_cont">
-                  {chatlist.map((chat) => {
-                    return (
-                      <div className="wecare_it_user">
-                        <div className="wecare_lsdbar_profile">
-                          <img
-                            src={
-                              chat.profile_url === ''
-                                ? UserPlaceholder
-                                : chat.profile_url
-                            }
-                            alt=""
-                            className="wecare_user_profile_sidebar"
-                          />
+                {lsdbarActive === 'chat' ? (
+                  <div className="lsdbar_cat_cont">
+                    {chatlist.map((chat) => {
+                      return (
+                        <div className="wecare_it_user">
+                          <div className="wecare_lsdbar_profile">
+                            <img
+                              src={
+                                chat.profile_url === ''
+                                  ? UserPlaceholder
+                                  : chat.profile_url
+                              }
+                              alt=""
+                              className="wecare_user_profile_sidebar"
+                            />
+                          </div>
+                          <div className="lsdbar_user_profile_texts">
+                            <h2 className="lsdbar_user_name">{chat.name}</h2>
+                            <span
+                              className="lsdbar_last_mess"
+                              title={chat.last_message}
+                            >
+                              {chat.last_message}
+                            </span>
+                          </div>
+                          <div className="lsdbar_user_profile_meta">
+                            <span className="lsdbar_lst_time">
+                              {chat.last_seen}
+                            </span>
+                          </div>
                         </div>
-                        <div className="lsdbar_user_profile_texts">
-                          <h2 className="lsdbar_user_name">{chat.name}</h2>
-                          <span
-                            className="lsdbar_last_mess"
-                            title={chat.last_message}
-                          >
-                            {chat.last_message}
-                          </span>
-                        </div>
-                        <div className="lsdbar_user_profile_meta">
-                          <span className="lsdbar_lst_time">
-                            {chat.last_seen}
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  <span className="lsdbar_new_chat">
-                    <Plus className="pa_plus_Ic" />
-                    <span>new chat</span>
-                  </span>
-                </div>
+                      )
+                    })}
+                    <span className="lsdbar_new_chat">
+                      <Plus className="pa_plus_Ic" />
+                      <span>new chat</span>
+                    </span>
+                  </div>
+                ) : null}
               </div>
-              <div className="lsdbar_cat_item">
-                <div className="lsbar_it_title">
+              <div
+                className={
+                  lsdbarActive === 'groups'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('groups')
+                  }}
+                >
                   <span>Groups</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
+                {lsdbarActive === 'groups' ? (
+                  <div className="lsdbar_cat_cont">
+                    <span className="lsdbar_new_chat">
+                      <Plus className="pa_plus_Ic" />
+                      <span>new group chat</span>
+                    </span>
+                  </div>
+                ) : null}
               </div>
-              <div className="lsdbar_cat_item">
-                <div className="lsbar_it_title">
+              <div
+                className={
+                  lsdbarActive === 'community'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('community')
+                  }}
+                >
                   <span>Communities</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
+                {lsdbarActive === 'community' ? (
+                  <div className="lsdbar_cat_cont">
+                    <span className="lsdbar_new_chat">
+                      <Plus className="pa_plus_Ic" />
+                      <span>new community chat</span>
+                    </span>
+                  </div>
+                ) : null}
               </div>
-              <div className="lsdbar_cat_item">
-                <div className="lsbar_it_title">
+              <div
+                className={
+                  lsdbarActive === 'bot'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('bot')
+                  }}
+                >
                   <span>bots</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
+                {lsdbarActive === 'bot' ? (
+                  <div className="lsdbar_cat_cont">
+                    <span className="lsdbar_new_chat">
+                      <Plus className="pa_plus_Ic" />
+                      <span>new bot chat</span>
+                    </span>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
           <div className="playarea">
-            <div className="pa_top"></div>
+            <div className="pa_top">
+              <div className="active_chatee_left">
+                <div className="active_chatee_profile">
+                  <img src={UserPlaceholder} alt="" />
+                </div>
+                <div className="active_chatee_meta">
+                  <h2>Alice Johnson</h2>
+                  <span className="active_chatee_ls">online</span>
+                </div>
+              </div>
+            </div>
             <div className="pa_middle">
               <div className="messplay">
                 {/* {PrevChats.chats.map((chat) => {
@@ -258,6 +339,10 @@ const Test: React.FC = () => {
                   <div key={index}>{message}</div>
                 ))} */}
               </div>
+              <span className="messplay_sec_info">
+                Messages are end-to-end encrypted. No one outside this chat, not
+                even WeCare, can read or listen to them. Click to learn more
+              </span>
             </div>
             <div className="pa_bottom">
               <div className="pa_chat_wrapper">
