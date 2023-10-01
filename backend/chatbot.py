@@ -104,7 +104,6 @@ def start_chatbot(message):
         except Exception as e:
             printmd("*Alex:* See ya => " + str(e))
 
-
 if __name__ == '__main__':
     from app import app, socketio
     socketio.run(app, debug=True)
