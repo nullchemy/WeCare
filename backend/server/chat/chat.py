@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from backend.server.sockets import socketio
-from backend.server.extensions import mongo 
+from ..sockets import socketio
+from ..extensions import mongo 
 
 # MongoDB setup
 group_collection = mongo.db.users

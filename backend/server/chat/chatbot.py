@@ -1,6 +1,6 @@
 # working chatbot with suicide detection
 from flask import Blueprint
-from sockets import socketio
+from backend.server.sockets import socketio
 import os
 import torch
 import random
@@ -14,7 +14,7 @@ chat_round = 0
 tokenizer = None
 model = None
 suicide_tokenizer = None
-suicide_model = None
+suicide_model = None 
 chat_history_ids = torch.tensor([])
 
 
