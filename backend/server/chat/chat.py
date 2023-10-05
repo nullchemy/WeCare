@@ -5,7 +5,7 @@ from backend.server.extensions import mongo
 # MongoDB setup
 group_collection = mongo.db.users
 
-bp = Blueprint('chat', __name__)
+chat = Blueprint('chat', __name__)
 
 # when a user joins a group
 @socketio.on('join_group')
