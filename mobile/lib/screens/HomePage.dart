@@ -36,9 +36,9 @@ class _HomeViewState extends State<HomeView> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: const [
+        children: [
           ChatHomeScreen(),
-          MyAccount(),
+          const MyAccount(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
