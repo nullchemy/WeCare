@@ -7,44 +7,44 @@ class ChatHomeScreen extends StatelessWidget {
 
   List<ChatUsers> chatUsers = const [
     ChatUsers(
-        name: "Jane Russel",
-        messageText: "Awesome Setup",
-        imageURL: "images/userImage1.jpeg",
+        name: "Benn kaiser",
+        messageText: "kuna game kesho saa saba sharp",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/1.jpg",
         time: "Now"),
     ChatUsers(
-        name: "Glady's Murphy",
-        messageText: "That's Great",
-        imageURL: "images/userImage2.jpeg",
+        name: "Lauren Chebet",
+        messageText: "wow! that a nice way to think about it",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/female/2.jpg",
         time: "Yesterday"),
     ChatUsers(
-        name: "Jorge Henry",
+        name: "Henry Omosh",
         messageText: "Hey where are you?",
-        imageURL: "images/userImage3.jpeg",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/3.jpg",
         time: "31 Mar"),
     ChatUsers(
-        name: "Philip Fox",
+        name: "Sally",
         messageText: "Busy! Call me in 20 mins",
-        imageURL: "images/userImage4.jpeg",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/female/43.jpg",
         time: "28 Mar"),
     ChatUsers(
-        name: "Debra Hawkins",
+        name: "Debra Shiks",
         messageText: "Thankyou, It's awesome",
-        imageURL: "images/userImage5.jpeg",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/5.jpg",
         time: "23 Mar"),
     ChatUsers(
         name: "Jacob Pena",
         messageText: "will update you in evening",
-        imageURL: "images/userImage6.jpeg",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/6.jpg",
         time: "17 Mar"),
     ChatUsers(
-        name: "Andrey Jones",
-        messageText: "Can you please share the file?",
-        imageURL: "images/userImage7.jpeg",
+        name: "Mr. Randwet",
+        messageText: "we mzee, nitumie notes bna",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/7.jpg",
         time: "24 Feb"),
     ChatUsers(
         name: "John Wick",
         messageText: "How are you?",
-        imageURL: "images/userImage8.jpeg",
+        imageURL: "https://xsgames.co/randomusers/assets/avatars/male/8.jpg",
         time: "18 Feb"),
   ];
 
@@ -69,20 +69,20 @@ class ChatHomeScreen extends StatelessWidget {
                     height: 30,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Colors.pink[50],
+                      color: Colors.blue[50],
                     ),
                     child: const Row(
                       children: <Widget>[
                         Icon(
                           Icons.add,
-                          color: Colors.pink,
+                          color: Color.fromARGB(255, 30, 44, 233),
                           size: 20,
                         ),
                         SizedBox(
                           width: 2,
                         ),
                         Text(
-                          "Add New",
+                          "new chat",
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.bold),
                         ),
