@@ -47,6 +47,11 @@ class ChatHomeScreen extends StatelessWidget {
         imageURL: "https://xsgames.co/randomusers/assets/avatars/male/8.jpg",
         time: "18 Feb"),
   ];
+  Future<void> _refreshPage() async {
+    // Implement your refresh logic here
+    // This function will be called when the user pulls down to refresh
+    // You can fetch new data, reload content, etc.
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +119,20 @@ class ChatHomeScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: chatUsers.length,
-                itemBuilder: (context, index) {
-                  return ConversationList(
-                    name: chatUsers[index].name,
-                    messageText: chatUsers[index].messageText,
-                    imageUrl: chatUsers[index].imageURL,
-                    time: chatUsers[index].time,
-                    isMessageRead: (index == 0 || index == 3) ? true : false,
-                  );
-                },
+              child: RefreshIndicator(
+                onRefresh: _refreshPage,
+                child: ListView.builder(
+                  itemCount: chatUsers.length,
+                  itemBuilder: (context, index) {
+                    return ConversationList(
+                      name: chatUsers[index].name,
+                      messageText: chatUsers[index].messageText,
+                      imageUrl: chatUsers[index].imageURL,
+                      time: chatUsers[index].time,
+                      isMessageRead: (index == 0 || index == 3) ? true : false,
+                    );
+                  },
+                ),
               ),
             ),
           ],
