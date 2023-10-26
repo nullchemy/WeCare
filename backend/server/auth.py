@@ -63,6 +63,8 @@ def login():
     user = users_collection.find_one({'$or': [{'email': email_or_user_id}, {'user_id': email_or_user_id}]})
 
     if user and bcrypt.check_password_hash(user['hashed_password'], password):
-        return jsonify({"message": "Login successful", "user_id": user['user_id']}), 200
+        # generate sessionid and save to database
+        sessionid = str(uuid.uuid4())
+        return jsonify({"message": "Login successful", "user_id": user['user_id'], "status": "true", "sessionid": sessionid}), 200
 
-    return jsonify({"message": "Invalid credentials. Please try again."}), 401
+    return jsonify({"message": "Invalid credentials. Please try again.", "status": "false"}), 401

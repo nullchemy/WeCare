@@ -3,7 +3,7 @@ from ..sockets import socketio
 from ..extensions import mongo 
 
 # MongoDB setup
-group_collection = mongo.db.users
+# group_collection = mongo.db.users
 
 chat = Blueprint('chat', __name__)
 
@@ -22,7 +22,7 @@ def handle_message(data):
     message = data['message']
 
     # Save the message to the database
-    group_collection.insert_one({'room': room, 'message': message})
+    # group_collection.insert_one({'room': room, 'message': message})
 
     # Broadcast the message to all members in the room
     socketio.emit('message', {'message': message}, room=room)
