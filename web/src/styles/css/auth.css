@@ -1,0 +1,48 @@
+.auth {
+  height: 100vh;
+  position: relative;
+}
+.auth .auth-form {
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.auth .auth-form h2 {
+  margin: 0 0 10px;
+}
+.auth .auth-form .error_info {
+  color: red;
+  padding-bottom: 10px;
+}
+.auth .auth-form form {
+  display: flex;
+  flex-direction: column;
+}
+.auth .auth-form form input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.auth .auth-form form button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.auth .auth-form p {
+  margin-top: 10px;
+}
+.auth .auth-form p span {
+  cursor: pointer;
+  color: #007bff;
+}/*# sourceMappingURL=auth.css.map */

@@ -69,7 +69,7 @@ def login():
             {'user_id': user['user_id']},
             {'$set': {'sessionid': sessionid}}
         )
-        
-        return jsonify({"message": "Login successful", "user_id": user['user_id'], "status": "true", "sessionid": sessionid}), 200
+
+        return jsonify({"message": "Login successful", "status": "true", "session": {"sessionid": sessionid, "user_id": user['user_id']}}), 200
 
     return jsonify({"message": "Invalid credentials. Please try again.", "status": "false"}), 401

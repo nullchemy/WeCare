@@ -10,21 +10,18 @@ const getConfirmEmail = () => {
   }
 }
 
-const savesession = (authToken: string, refreshToken: string) => {
-  Cookies.set('authToken', authToken, { expires: 7 })
-  Cookies.set('refreshToken', refreshToken, { expires: 7 })
+const savesession = (sessionid: object) => {
+  Cookies.set('auth', JSON.stringify(sessionid), { expires: 7 })
 }
 
 const getsession = () => {
   return {
-    authToken: Cookies.get('authToken'),
-    refreshToken: Cookies.get('refreshToken'),
+    authToken: Cookies.get('auth'),
   }
 }
 
 const destroysession = () => {
-  Cookies.remove('authToken')
-  Cookies.remove('refreshToken')
+  Cookies.remove('auth')
 }
 
 const session = {
