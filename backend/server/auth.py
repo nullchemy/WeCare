@@ -70,6 +70,25 @@ def login():
             {'$set': {'sessionid': sessionid}}
         )
 
-        return jsonify({"message": "Login successful", "status": "true", "session": {"sessionid": sessionid, "user_id": user['user_id']}}), 200
+        return jsonify({"message": "Login successful", "status": True, "session": {"sessionid": sessionid, "user_id": user['user_id']}}), 200
 
-    return jsonify({"message": "Invalid credentials. Please try again.", "status": "false"}), 401
+    return jsonify({"message": "Invalid credentials. Please try again.", "status": False}), 401
+
+@auth.route('/auth/session', methods=['POST'])
+def session():
+    data = request.get_json()
+    sessiondet = data.get('auth')
+    users_collection = mongo.db.users
+
+    # Check if the session exists
+    session = users_collection.find_one({
+        'sessionid': sessiondet['sessionid'],
+        'user_id': sessiondet['user_id']
+    })
+    
+    if session:
+        # Session exists
+        return jsonify({'session': True}), 200
+    else:
+        # Session does not exist
+        return jsonify({'session': False}), 404

@@ -16,7 +16,7 @@ const savesession = (sessionid: object) => {
 
 const getsession = () => {
   return {
-    authToken: Cookies.get('auth'),
+    auth: Cookies.get('auth'),
   }
 }
 
