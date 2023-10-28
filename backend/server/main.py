@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
 from .extensions import mongo 
 
@@ -10,3 +10,19 @@ def index():
     user_collection.insert_one({'name' : 'Cristina'})
     user_collection.insert_one({'name' : 'Derek'})
     return '<h1>Added a User!</h1>'
+
+@main.errorhandler(403)
+def forbidden(e):
+    return jsonify({
+        "message": "Forbidden",
+        "error": str(e),
+        "data": None
+    }), 403
+
+@main.errorhandler(404)
+def forbidden(e):
+    return jsonify({
+        "message": "Endpoint Not Found",
+        "error": str(e),
+        "data": None
+    }), 404
