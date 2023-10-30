@@ -6,12 +6,13 @@ import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Send } from '../assets/svg/send.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
-import PrevChats from '../data/previous_chats.json'
 import ChatList from '../data/chat_list.json'
+import api from '../api/axios'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
   const [lsdbarActive, setlsdbarActive] = useState('chat')
+  const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
   const [info, setInfo] = useState<string>('')
@@ -56,6 +57,7 @@ const Test: React.FC = () => {
       }
     }
   }, [])
+
   useEffect(() => {
     if (socket) {
       socket.on('response', (data: any) => {
@@ -69,9 +71,16 @@ const Test: React.FC = () => {
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
     }
-  }, [socket])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  console.log(messages)
+  const handleNewChatDrawer = async () => {
+    setNewchatdrawer(true)
+    // fetch users available for chatting
+    const res = await api('GET', '/allusers', {})
+    console.log(res.data)
+  }
+
   return (
     <div className="chat">
       <div className="chat_container">
@@ -84,7 +93,23 @@ const Test: React.FC = () => {
           <div className="chatbar_right"></div>
         </div>
         <div className="chatWrapper">
-          <div className="leftSidebar">
+          <div
+            className={
+              newchatdrawer ? 'newChatDrawer lsdractive' : 'newChatDrawer'
+            }
+          >
+            <button
+              className="newChatDrawerCloseIc"
+              onClick={() => {
+                setNewchatdrawer(false)
+              }}
+            >
+              Close
+            </button>
+          </div>
+          <div
+            className={newchatdrawer ? 'leftSidebar' : 'leftSidebar lsdractive'}
+          >
             <div className="lsbar_search">
               <form className="lsdbar_searchform">
                 <div className="lsdbar_form_group">
@@ -149,7 +174,12 @@ const Test: React.FC = () => {
                         </div>
                       )
                     })}
-                    <span className="lsdbar_new_chat">
+                    <span
+                      className="lsdbar_new_chat"
+                      onClick={() => {
+                        handleNewChatDrawer()
+                      }}
+                    >
                       <Plus className="pa_plus_Ic" />
                       <span>new chat</span>
                     </span>

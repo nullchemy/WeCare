@@ -1,5 +1,6 @@
+from flask import Blueprint, jsonify, request
 from .auth_middleware import token_required
-from flask import Blueprint, jsonify
+import uuid
 
 from .extensions import mongo 
 
@@ -12,6 +13,50 @@ def index():
     user_collection.insert_one({'name' : 'Cristina'})
     user_collection.insert_one({'name' : 'Derek'})
     return '<h1>Added a User!</h1>'
+
+@main.route('/allusers', methods=['GET'])
+@token_required
+def allusers(current_user):
+    users_collection = mongo.db.users
+    my_user_id = current_user['user_id']
+    users = users_collection.find({})
+    user_list = []
+    for user in users:
+        # Exclude the current user by comparing user IDs
+        if user['user_id'] != my_user_id:
+            user_data = {
+                'user_id': user['user_id'],
+                'email': user['email'],
+                'full_name': user['full_name'],
+                'user_number': user['user_number'],
+                'active': user['active'],
+            }
+            user_list.append(user_data)
+    return jsonify({'users': user_list, 'status': True})
+
+@main.route('/newchat', methods=['POST'])
+@token_required
+def login(current_user):
+    data = request.get_json()
+    my_user_id = current_user['user_id']
+    userid = data.get('userid')
+    if not userid:
+        return {
+            "message": "User ID is required for new details",
+            "data": None,
+            "error": "Bad request"
+        }, 400
+    chats_collection = mongo.db.chats
+
+    data = {
+        "chat_id": str(uuid.uuid4()),
+        "participants": [my_user_id, userid],
+    }
+    chats_collection.insert_one(data)
+
+    return jsonify({"message": "Create new chat successfully!", "status": True}), 200
+
+
 
 @main.errorhandler(403)
 def forbidden(e):

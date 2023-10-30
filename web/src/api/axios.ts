@@ -16,14 +16,14 @@ const api = async (
   headers: object = {}
 ): Promise<AxiosResponse> => {
   try {
-    const token = session.get('jwtToken')
+    const token = session.get('auth')
     const config = {
       method: method,
       maxBodyLength: Infinity,
       url: backend() + '' + slug,
       headers: {
         ...headers,
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + token.auth,
       },
       data: data,
     }

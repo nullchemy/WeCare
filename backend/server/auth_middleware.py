@@ -19,14 +19,16 @@ def token_required(f):
         try:
             users_collection = mongo.db.users
             data=jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-            current_user = users_collection.find_one({'user_id': data.user_id})
+            current_user = users_collection.find_one(data)
+            keys_to_remove = ["hashed_password", "email"]
+            current_user = {key: value for key, value in current_user.items() if key not in keys_to_remove}
             if current_user is None:
                 return {
                 "message": "Invalid Authentication token!",
                 "data": None,
                 "error": "Unauthorized"
             }, 401
-            if not current_user["active"]:
+            if not current_user['active']:
                 abort(403)
         except Exception as e:
             return {

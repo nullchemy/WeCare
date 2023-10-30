@@ -19,8 +19,19 @@
       display: flex;
       justify-content: space-evenly;
       column-gap: 20px;
+      .lsdractive {
+        width: 23% !important;
+      }
+      .newChatDrawer {
+        width: 0px;
+        height: calc(100vh - 94px);
+        overflow: hidden;
+        .newChatDrawerCloseIc {
+          cursor: pointer;
+        }
+      }
       .leftSidebar {
-        width: 23%;
+        width: 0px;
         height: calc(100vh - 94px);
         overflow: hidden;
         display: flex;

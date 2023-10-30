@@ -21,8 +21,19 @@
   -moz-column-gap: 20px;
        column-gap: 20px;
 }
+.chat .chat_container .chatWrapper .lsdractive {
+  width: 23% !important;
+}
+.chat .chat_container .chatWrapper .newChatDrawer {
+  width: 0px;
+  height: calc(100vh - 94px);
+  overflow: hidden;
+}
+.chat .chat_container .chatWrapper .newChatDrawer .newChatDrawerCloseIc {
+  cursor: pointer;
+}
 .chat .chat_container .chatWrapper .leftSidebar {
-  width: 23%;
+  width: 0px;
   height: calc(100vh - 94px);
   overflow: hidden;
   display: flex;
