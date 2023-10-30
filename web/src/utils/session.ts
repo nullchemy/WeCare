@@ -10,18 +10,18 @@ const getConfirmEmail = () => {
   }
 }
 
-const savesession = (sessionid: object) => {
-  Cookies.set('auth', JSON.stringify(sessionid), { expires: 7 })
+const savesession = (session: string) => {
+  Cookies.set('auth', session, { expires: 7 })
 }
 
-const getsession = () => {
+const getsession = (cookie: string) => {
   return {
-    auth: Cookies.get('auth'),
+    auth: Cookies.get(cookie),
   }
 }
 
-const destroysession = () => {
-  Cookies.remove('auth')
+const destroysession = (cookie: string) => {
+  Cookies.remove(cookie)
 }
 
 const session = {

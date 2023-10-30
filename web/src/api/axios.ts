@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
+import session from '../utils/session'
 
 const backend = (): string => {
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -15,12 +16,14 @@ const api = async (
   headers: object = {}
 ): Promise<AxiosResponse> => {
   try {
+    const token = session.get('jwtToken')
     const config = {
       method: method,
       maxBodyLength: Infinity,
       url: backend() + '' + slug,
       headers: {
         ...headers,
+        Authorization: 'Bearer ' + token,
       },
       data: data,
     }

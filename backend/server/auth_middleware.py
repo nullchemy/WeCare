@@ -1,8 +1,8 @@
 from functools import wraps
+from .extensions import mongo
 import jwt
 from flask import request, abort
 from flask import current_app
-import models
 
 def token_required(f):
     @wraps(f)
@@ -17,8 +17,9 @@ def token_required(f):
                 "error": "Unauthorized"
             }, 401
         try:
+            users_collection = mongo.db.users
             data=jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-            current_user=models.User().get_by_id(data["user_id"])
+            current_user = users_collection.find_one({'user_id': data.user_id})
             if current_user is None:
                 return {
                 "message": "Invalid Authentication token!",
@@ -33,7 +34,6 @@ def token_required(f):
                 "data": None,
                 "error": str(e)
             }, 500
-
         return f(current_user, *args, **kwargs)
 
     return decorated

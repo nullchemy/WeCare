@@ -1,3 +1,4 @@
+from .auth_middleware import token_required
 from flask import Blueprint, jsonify
 
 from .extensions import mongo 
@@ -5,6 +6,7 @@ from .extensions import mongo
 main = Blueprint('main', __name__)
 
 @main.route('/')
+@token_required
 def index():
     user_collection = mongo.db.users
     user_collection.insert_one({'name' : 'Cristina'})

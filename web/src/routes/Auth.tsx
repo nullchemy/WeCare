@@ -53,7 +53,7 @@ const Auth = () => {
         let from = location.state?.from?.pathname || '/chat'
         console.log(res.data)
         //set logged in state
-        session.save(res.data.session)
+        session.save(res.data.token)
         dispatch(setIsLogged(true))
         //redirect user to chatpage
         return navigate(from, { replace: true })

@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 import uuid
+import jwt
+from flask import current_app
 
 from .extensions import mongo, bcrypt
 auth = Blueprint('auth', __name__)
@@ -22,6 +24,12 @@ def generate_user_number():
 @auth.route('/auth/register', methods=['POST'])
 def register():
     data = request.get_json()
+    if not data:
+        return {
+            "message": "Please provide user details",
+            "data": None,
+            "error": "Bad request"
+        }, 400
     full_name = data.get('full_name')
     email = data.get('email')
     password = data.get('password')
@@ -55,6 +63,12 @@ def register():
 @auth.route('/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data:
+        return {
+            "message": "Please provide user details",
+            "data": None,
+            "error": "Bad request"
+        }, 400
     email_or_user_id = data.get('email_or_user_id')
     password = data.get('password')
     users_collection = mongo.db.users
@@ -63,32 +77,13 @@ def login():
     user = users_collection.find_one({'$or': [{'email': email_or_user_id}, {'user_id': email_or_user_id}]})
 
     if user and bcrypt.check_password_hash(user['hashed_password'], password):
-        # generate sessionid and save to database
-        sessionid = str(uuid.uuid4())
-        users_collection.update_one(
-            {'user_id': user['user_id']},
-            {'$set': {'sessionid': sessionid}}
+        # token should expire after 24 hrs
+        token = jwt.encode(
+            {"user_id": user["user_id"]},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256"
         )
 
-        return jsonify({"message": "Login successful", "status": True, "session": {"sessionid": sessionid, "user_id": user['user_id']}}), 200
+        return jsonify({"message": "Login successful", "status": True, "token": token}), 200
 
     return jsonify({"message": "Invalid credentials. Please try again.", "status": False}), 401
-
-@auth.route('/auth/session', methods=['POST'])
-def session():
-    data = request.get_json()
-    sessiondet = data.get('auth')
-    users_collection = mongo.db.users
-
-    # Check if the session exists
-    session = users_collection.find_one({
-        'sessionid': sessiondet['sessionid'],
-        'user_id': sessiondet['user_id']
-    })
-    
-    if session:
-        # Session exists
-        return jsonify({'session': True}), 200
-    else:
-        # Session does not exist
-        return jsonify({'session': False}), 404
