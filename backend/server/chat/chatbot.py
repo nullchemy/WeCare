@@ -1,6 +1,6 @@
 # working chatbot with suicide detection
 from flask import Blueprint
-from backend.server.sockets import socketio
+from ..sockets import socketio
 import os
 import torch
 import random
@@ -86,7 +86,7 @@ def generate_response(chat_round, user_input):
     printmd(format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))
   return chat_history_ids
 
-bp = Blueprint('chatbot', __name__)
+chat = Blueprint('chatbot', __name__)
 
 @socketio.on('client_message')
 def start_chatbot(message):
