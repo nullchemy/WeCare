@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from .auth_middleware import token_required
 import uuid
 
@@ -6,13 +6,9 @@ from .extensions import mongo
 
 main = Blueprint('main', __name__)
 
-@main.route('/')
-@token_required
+@main.route('/', methods=['GET'])
 def index():
-    user_collection = mongo.db.users
-    user_collection.insert_one({'name' : 'Cristina'})
-    user_collection.insert_one({'name' : 'Derek'})
-    return '<h1>Added a User!</h1>'
+    return render_template('index.html')
 
 @main.route('/allusers', methods=['GET'])
 @token_required

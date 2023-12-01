@@ -1,0 +1,10 @@
+Flask
+Flask_Bcrypt
+Flask_Cors
+Flask_PyMongo
+Flask_SocketIO
+ipython
+pandas
+PyJWT
+torch
+transformers

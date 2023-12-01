@@ -86,10 +86,11 @@ def generate_response(chat_round, user_input):
     printmd(format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))
   return chat_history_ids
 
-chat = Blueprint('chatbot', __name__)
+chatbot = Blueprint('chatbot', __name__)
 
 @socketio.on('client_message')
 def start_chatbot(message):
+    print('Endpoint Hit⚡⚡⚡')
     global tokenizer, model, chat_round, chat_history_ids
     if tokenizer is None or model is None:
         socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})

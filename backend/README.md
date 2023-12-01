@@ -7,5 +7,5 @@
 ```
 
 ```cmd
-    flask venv --debug
+    flask run --debug
 ```
