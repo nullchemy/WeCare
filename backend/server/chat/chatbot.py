@@ -40,6 +40,8 @@ prevention_messages = ["Are you okay? How long have you been feeling this way?",
 helpline_message = "In times of severe distress where you need to speak with someone immediately, these are suicide hotline services available for you. You will be speaking with volunteers or professionals who are trained to deal with suicide crisis. Samaritans of Singapore (SOS; 24 hours): 1800 221 4444 Mental Health Helpline (24 hours): 6389 2222 Singapore Association for Mental Health (SAMH) Helpline: 1800 283 7019"
 
 def printmd(string):
+    socketio.emit('typing', {'response': False})
+    print(string)
     socketio.emit('response', {'response': {
 "timestamp": "now",
 "userid": "user456",
@@ -50,19 +52,22 @@ def printmd(string):
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
   global tokenizer
-  tokenizer = AutoTokenizer.from_pretrained(model, padding_side='left')
+  tokenizer = AutoTokenizer.from_pretrained(model)
+  tokenizer.padding_side = "left" 
   model = AutoModelForCausalLM.from_pretrained(model)
   return tokenizer, model
 
 def load_suicide_tokenizer_and_model(tokenizer="google/electra-base-discriminator", model="Models/electra"):
   global suicide_tokenizer, suicide_model
-  suicide_tokenizer = AutoTokenizer.from_pretrained(tokenizer, padding_side='left')
+  suicide_tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+  suicide_tokenizer.padding_side = "left" 
   suicide_model = AutoModelForSequenceClassification.from_pretrained(model)
   return suicide_tokenizer, suicide_model
 
 def check_intent(text):
   global suicide_tokenizer, suicide_model
   print('Running generating response')
+  socketio.emit('typing', {'response': True})
   if suicide_tokenizer is None or suicide_model is None:
         socketio.emit('info', {'response': Markdown('Loading Suicide model...').data})
         suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
@@ -74,6 +79,7 @@ def check_intent(text):
 def generate_response(chat_round, user_input):
   global tokenizer, model, chat_history_ids
   print('Running generating response')
+  socketio.emit('typing', {'response': True})
   if user_input == "exit":
     raise Exception("End of Conversation")
   new_input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors='pt')
@@ -96,6 +102,7 @@ def start_chatbot(message):
         socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
         tokenizer, model = load_tokenizer_and_model()
     user_input = message.get('message', '').lower()
+    print(user_input)
     if user_input.lower() == "start":
         printmd(start_message)
     else:
@@ -103,7 +110,7 @@ def start_chatbot(message):
             chat_round += 1
             chat_history_ids = generate_response(chat_round, user_input)
         except Exception as e:
-            printmd("*Alex:* See ya => " + str(e))
+            printmd("chat next time, See Ya")
 
 if __name__ == '__main__':
     from app import app, socketio

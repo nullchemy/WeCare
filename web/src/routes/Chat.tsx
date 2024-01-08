@@ -16,6 +16,7 @@ const Test: React.FC = () => {
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
   const [info, setInfo] = useState<string>('')
+  const [typing, setTyping] = useState<boolean>(false)
   const [socket, setSocket] = useState<any>(null)
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
@@ -70,9 +71,13 @@ const Test: React.FC = () => {
         setInfo(data.response)
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
+      socket.on('typing', (data: any) => {
+        console.log(data.response)
+        setTyping(data.response)
+        messContRef.current?.scrollIntoView({ behavior: 'smooth' })
+      })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [socket])
 
   const handleNewChatDrawer = async () => {
     setNewchatdrawer(true)
@@ -277,52 +282,6 @@ const Test: React.FC = () => {
             </div>
             <div className="pa_middle">
               <div className="messplay">
-                {/* {PrevChats.chats.map((chat) => {
-                  return chat.userid === myuserid ? (
-                    <div className="outgoing_message">
-                      <div className="out_mess_content">
-                        <div className="out_mess_meta">
-                          <span className="out_mess_time">now</span>
-                        </div>
-                        <div className="outgoing_cont_message">
-                          <span className="out_th_content">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Ex consequatur dolor, neque dolorem error
-                            blanditiis quia dolorum, saepe pariatur impedit
-                            debitis. Nihil atque modi placeat, minima fugiat
-                            aspernatur, neque et culpa esse, at quisquam soluta?
-                          </span>
-                        </div>
-                      </div>
-                      <div className="out_mess_sender_profile">
-                        <img src={UserPlaceholder} alt="" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="incoming_message">
-                      <div className="in_mess_sender_profile">
-                        <img src={UserPlaceholder} alt="" />
-                      </div>
-                      <div className="in_mess_content">
-                        <div className="inc_mess_meta">
-                          <span className="inc_sender_name">Benn kaiser</span>
-                          <span className="inc_mess_misc">moderator</span>
-                          <span className="inc_mess_time">now</span>
-                        </div>
-                        <div className="incoming_cont_message">
-                          <span className="inc_th_content">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Ex consequatur dolor, neque dolorem error
-                            blanditiis quia dolorum, saepe pariatur impedit
-                            debitis. Nihil atque modi placeat, minima fugiat
-                            aspernatur, neque et culpa esse, at quisquam soluta?
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })} */}
-                {info !== '' ? <span>info</span> : null}
                 {messages.map((chat: any) => {
                   return chat.userid === myuserid ? (
                     <div className="outgoing_message">
@@ -362,6 +321,21 @@ const Test: React.FC = () => {
                     </div>
                   )
                 })}
+                {info !== '' ? <span>info</span> : null}
+                {typing ? (
+                  <div className="incoming_message">
+                    <div className="in_mess_sender_profile">
+                      <img src={UserPlaceholder} alt="" />
+                    </div>
+                    <div className="in_mess_content">
+                      <div className="typing">
+                        <span className="circle bouncing"></span>
+                        <span className="circle bouncing"></span>
+                        <span className="circle bouncing"></span>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
                 <div ref={messContRef} />
               </div>
               <div>
