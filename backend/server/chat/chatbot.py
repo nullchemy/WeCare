@@ -87,6 +87,7 @@ def generate_response(chat_round, user_input):
   chat_history_ids = model.generate(bot_input_ids, max_length=1250, pad_token_id=tokenizer.eos_token_id)
   if check_intent(user_input):
     printmd(format(random.choice(prevention_messages)))
+    socketio.emit('typing', {'response': True})
     printmd(format(helpline_message))
   else:
     printmd(format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))

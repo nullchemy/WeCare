@@ -11,6 +11,7 @@ import api from '../api/axios'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
+  const [activechat, setActiveChat] = useState<string>('')
   const [lsdbarActive, setlsdbarActive] = useState('chat')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
@@ -148,37 +149,52 @@ const Test: React.FC = () => {
                 </div>
                 {lsdbarActive === 'chat' ? (
                   <div className="lsdbar_cat_cont">
-                    {chatlist.map((chat) => {
-                      return (
-                        <div className="wecare_it_user">
-                          <div className="wecare_lsdbar_profile">
-                            <img
-                              src={
-                                chat.profile_url === ''
-                                  ? UserPlaceholder
-                                  : chat.profile_url
-                              }
-                              alt=""
-                              className="wecare_user_profile_sidebar"
-                            />
+                    {chatlist.map(
+                      (chat: {
+                        chat_id: string
+                        name: string
+                        last_message: string
+                        unread_messages: number
+                        profile_url: string
+                        last_seen: string
+                        timestamp: string
+                      }) => {
+                        return (
+                          <div
+                            className="wecare_it_user"
+                            onClick={() => {
+                              setActiveChat(chat.chat_id)
+                            }}
+                          >
+                            <div className="wecare_lsdbar_profile">
+                              <img
+                                src={
+                                  chat.profile_url === ''
+                                    ? UserPlaceholder
+                                    : chat.profile_url
+                                }
+                                alt=""
+                                className="wecare_user_profile_sidebar"
+                              />
+                            </div>
+                            <div className="lsdbar_user_profile_texts">
+                              <h2 className="lsdbar_user_name">{chat.name}</h2>
+                              <span
+                                className="lsdbar_last_mess"
+                                title={chat.last_message}
+                              >
+                                {chat.last_message}
+                              </span>
+                            </div>
+                            <div className="lsdbar_user_profile_meta">
+                              <span className="lsdbar_lst_time">
+                                {chat.last_seen}
+                              </span>
+                            </div>
                           </div>
-                          <div className="lsdbar_user_profile_texts">
-                            <h2 className="lsdbar_user_name">{chat.name}</h2>
-                            <span
-                              className="lsdbar_last_mess"
-                              title={chat.last_message}
-                            >
-                              {chat.last_message}
-                            </span>
-                          </div>
-                          <div className="lsdbar_user_profile_meta">
-                            <span className="lsdbar_lst_time">
-                              {chat.last_seen}
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      }
+                    )}
                     <span
                       className="lsdbar_new_chat"
                       onClick={() => {
@@ -269,105 +285,128 @@ const Test: React.FC = () => {
             </div>
           </div>
           <div className="playarea">
-            <div className="pa_top">
-              <div className="active_chatee_left">
-                <div className="active_chatee_profile">
-                  <img src={UserPlaceholder} alt="" />
+            {activechat === '' ? (
+              <div className="playarea_placeholder">
+                <div className="playarea_place_center">
+                  <h1>Start a new Conversation</h1>
                 </div>
-                <div className="active_chatee_meta">
-                  <h2>Alice Johnson</h2>
-                  <span className="active_chatee_ls">online</span>
+                <div className="playarea_place_bottom">
+                  <p>messages are end-to-end encrypted</p>
                 </div>
               </div>
-            </div>
-            <div className="pa_middle">
-              <div className="messplay">
-                {messages.map((chat: any) => {
-                  return chat.userid === myuserid ? (
-                    <div className="outgoing_message">
-                      <div className="out_mess_content">
-                        <div className="out_mess_meta">
-                          <span className="out_mess_time">
-                            {chat.timestamp}
-                          </span>
-                        </div>
-                        <div className="outgoing_cont_message">
-                          <span className="out_th_content">{chat.message}</span>
-                        </div>
-                      </div>
-                      <div className="out_mess_sender_profile">
-                        <img src={UserPlaceholder} alt="" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="incoming_message">
-                      <div className="in_mess_sender_profile">
-                        <img src={UserPlaceholder} alt="" />
-                      </div>
-                      <div className="in_mess_content">
-                        <div className="inc_mess_meta">
-                          <span className="inc_sender_name">
-                            {chat.sendername}
-                          </span>
-                          <span className="inc_mess_misc">{chat.level}</span>
-                          <span className="inc_mess_time">
-                            {chat.timestamp}
-                          </span>
-                        </div>
-                        <div className="incoming_cont_message">
-                          <span className="inc_th_content">{chat.message}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-                {info !== '' ? <span>info</span> : null}
-                {typing ? (
-                  <div className="incoming_message">
-                    <div className="in_mess_sender_profile">
+            ) : (
+              <div className="playarea_active">
+                <div className="pa_top">
+                  <div className="active_chatee_left">
+                    <div className="active_chatee_profile">
                       <img src={UserPlaceholder} alt="" />
                     </div>
-                    <div className="in_mess_content">
-                      <div className="typing">
-                        <span className="circle bouncing"></span>
-                        <span className="circle bouncing"></span>
-                        <span className="circle bouncing"></span>
-                      </div>
+                    <div className="active_chatee_meta">
+                      <h2>Alice Johnson</h2>
+                      <span className="active_chatee_ls">online</span>
                     </div>
                   </div>
-                ) : null}
-                <div ref={messContRef} />
-              </div>
-              <div>
-                {/* {messages.map((message, index) => (
+                </div>
+                <div className="pa_middle">
+                  <div className="messplay">
+                    {messages.map((chat: any) => {
+                      return chat.userid === myuserid ? (
+                        <div className="outgoing_message">
+                          <div className="out_mess_content">
+                            <div className="out_mess_meta">
+                              <span className="out_mess_time">
+                                {chat.timestamp}
+                              </span>
+                            </div>
+                            <div className="outgoing_cont_message">
+                              <span className="out_th_content">
+                                {chat.message}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="out_mess_sender_profile">
+                            <img src={UserPlaceholder} alt="" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="incoming_message">
+                          <div className="in_mess_sender_profile">
+                            <img src={UserPlaceholder} alt="" />
+                          </div>
+                          <div className="in_mess_content">
+                            <div className="inc_mess_meta">
+                              <span className="inc_sender_name">
+                                {chat.sendername}
+                              </span>
+                              <span className="inc_mess_misc">
+                                {chat.level}
+                              </span>
+                              <span className="inc_mess_time">
+                                {chat.timestamp}
+                              </span>
+                            </div>
+                            <div className="incoming_cont_message">
+                              <span className="inc_th_content">
+                                {chat.message}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                    {info !== '' ? <span>info</span> : null}
+                    {typing ? (
+                      <div className="incoming_message">
+                        <div className="in_mess_sender_profile">
+                          <img src={UserPlaceholder} alt="" />
+                        </div>
+                        <div className="in_mess_content">
+                          <div className="typing">
+                            <span className="circle bouncing"></span>
+                            <span className="circle bouncing"></span>
+                            <span className="circle bouncing"></span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                    <div ref={messContRef} />
+                  </div>
+                  <div>
+                    {/* {messages.map((message, index) => (
                   <div key={index}>{message}</div>
                 ))} */}
-              </div>
-              <span className="messplay_sec_info">
-                Messages are end-to-end encrypted. No one outside this chat, not
-                even WeCare, can read or listen to them. Click to learn more
-              </span>
-            </div>
-            <div className="pa_bottom">
-              <div className="pa_chat_wrapper">
-                <div className="pa_widgets">
-                  <Plus className="pa_plus_Ic" />
+                  </div>
+                  <span className="messplay_sec_info">
+                    Messages are end-to-end encrypted. No one outside this chat,
+                    not even WeCare, can read or listen to them. Click to learn
+                    more
+                  </span>
                 </div>
-                <div className="pa_chat_form">
-                  <form onSubmit={handleSendMessage} className="pa_form_chat">
-                    <textarea
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      placeholder="Type a message..."
-                      className="pa_chat_input"
-                    ></textarea>
-                    <button type="submit" className="pa_chat_submit_btn">
-                      <Send className="pa_send_Ic" />
-                    </button>
-                  </form>
+                <div className="pa_bottom">
+                  <div className="pa_chat_wrapper">
+                    <div className="pa_widgets">
+                      <Plus className="pa_plus_Ic" />
+                    </div>
+                    <div className="pa_chat_form">
+                      <form
+                        onSubmit={handleSendMessage}
+                        className="pa_form_chat"
+                      >
+                        <textarea
+                          value={messageInput}
+                          onChange={(e) => setMessageInput(e.target.value)}
+                          placeholder="Type a message..."
+                          className="pa_chat_input"
+                        ></textarea>
+                        <button type="submit" className="pa_chat_submit_btn">
+                          <Send className="pa_send_Ic" />
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="rightSidebar"></div>
         </div>
