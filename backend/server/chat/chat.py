@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from ..auth_middleware import token_required
 from ..sockets import socketio
 from ..extensions import mongo 
 
@@ -26,6 +27,42 @@ def handle_message(data):
 
     # Broadcast the message to all members in the room
     socketio.emit('message', {'message': message}, room=room)
+
+@chat.route('/newchat', methods=['POST'])
+@token_required
+def newchat(current_user):
+    data = request.get_json()
+    my_user_id = current_user['user_id']
+    userid = data.get('userid')
+    if not userid:
+        return {
+            "message": "User ID is required for new details",
+            "data": None,
+            "error": "Bad request"
+        }, 400
+    chats_collection = mongo.db.chats
+
+    data = {
+        "chat_id": str(uuid.uuid4()),
+        "participants": [my_user_id, userid],
+    }
+    chats_collection.insert_one(data)
+
+    return jsonify({"message": "Create new chat successfully!", "status": True}), 200
+
+@chat.route('/prevchats', methods=['GET'])
+@token_required
+def prevchats():
+    data = request.get_json()
+    if not data:
+        return {
+            "message": "Please provide chat details",
+            "data": None,
+            "error": "Bad request"
+        }, 400
+    chatid = data.get('chatid')
+    chats_collection = mongo.db.chats
+    return jsonify({'users': {}, 'status': True})
 
 if __name__ == '__main__':
     from app import app, socketio

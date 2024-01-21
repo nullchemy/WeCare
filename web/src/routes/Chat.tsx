@@ -87,6 +87,11 @@ const Test: React.FC = () => {
     console.log(res.data)
   }
 
+  const fetchPrevChats = async (chatid: string) => {
+    const res = await api('GET', 'prevchats', { chatid: chatid })
+    console.log(res.data)
+  }
+
   return (
     <div className="chat">
       <div className="chat_container">
@@ -164,6 +169,7 @@ const Test: React.FC = () => {
                             className="wecare_it_user"
                             onClick={() => {
                               setActiveChat(chat.chat_id)
+                              fetchPrevChats(chat.chat_id)
                             }}
                           >
                             <div className="wecare_lsdbar_profile">
