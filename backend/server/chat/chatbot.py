@@ -93,6 +93,17 @@ def generate_response(chat_round, user_input):
     printmd(format(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)))
   return chat_history_ids
 
+def cleanup():
+    global tokenizer, model, suicide_tokenizer, suicide_model
+    if model is not None:
+        del model
+    if tokenizer is not None:
+        del tokenizer
+    if suicide_model is not None:
+        del suicide_model
+    if suicide_tokenizer is not None:
+        del suicide_tokenizer
+
 chatbot = Blueprint('chatbot', __name__)
 
 @socketio.on('client_message')
@@ -111,7 +122,8 @@ def start_chatbot(message):
             chat_round += 1
             chat_history_ids = generate_response(chat_round, user_input)
         except Exception as e:
-            printmd("chat next time, See Ya")
+            cleanup()
+            printmd("chat session terminated!, See Ya")
 
 if __name__ == '__main__':
     from app import app, socketio
