@@ -18,7 +18,7 @@ suicide_model = None
 chat_history_ids = torch.tensor([])
 
 
-start_message = "Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here. To end the chat, input 'exit' in the chatbox."
+start_message = "Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here."
 
 prevention_messages = ["Are you okay? How long have you been feeling this way?",
                        "That sounds so painful, and I appreciate you sharing that with me. How can I help?",
@@ -37,7 +37,7 @@ prevention_messages = ["Are you okay? How long have you been feeling this way?",
                        "I know it feels like a lot right now. It’s OK to feel that way.",
                        "Is there anything I can do to make this day go easier for you?"]
 
-helpline_message = "In times of severe distress where you need to speak with someone immediately, these are suicide hotline services available for you. You will be speaking with volunteers or professionals who are trained to deal with suicide crisis. Samaritans of Singapore (SOS; 24 hours): 1800 221 4444 Mental Health Helpline (24 hours): 6389 2222 Singapore Association for Mental Health (SAMH) Helpline: 1800 283 7019"
+helpline_message = "In times of severe distress where you need to speak with someone immediately, these are suicide hotline services available for you. You will be speaking with volunteers or professionals who are trained to deal with suicide crisis. Befrienders Kenya (24 hours): +254 722 178 177, NiskiZe: 0900 620 800, Emergency Medicine Kenya Foundation (EMKF): 0800 723 253, Cognitive Behavioral Therapy-Kenya (CBT-Kenya): +254 739 935 333 or +254 756 454 585"
 
 def printmd(string):
     socketio.emit('typing', {'response': False})
