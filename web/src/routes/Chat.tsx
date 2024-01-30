@@ -23,7 +23,7 @@ const Test: React.FC = () => {
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     console.log(messageInput)
     // add message to the arr
