@@ -19,6 +19,7 @@ const Test: React.FC = () => {
   const [info, setInfo] = useState<string>('')
   const [typing, setTyping] = useState<boolean>(false)
   const [socket, setSocket] = useState<any>(null)
+  const [newBot, setNewBot] = useState<boolean>(false)
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
 
@@ -94,6 +95,36 @@ const Test: React.FC = () => {
 
   return (
     <div className="chat">
+      {newBot ? (
+        <div
+          className="chatmodalpop"
+          onClick={() => {
+            setNewBot(false)
+          }}
+        >
+          <div className="chatmodalinnercont_wrapper">
+            <div
+              className="chatmodalinnercont"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              <form className="newbot_form">
+                <div className="newbot_form_group">
+                  <label htmlFor="bot name" className="new_form_label">
+                    name your bot <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input type="text" className="newbot_form_input" />
+                </div>
+                <button className="newbot_name_submit_form">
+                  <span>create</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <div className="chat_container">
         <div className="chatAppbar">
           <div className="chatbar_left">
@@ -281,7 +312,12 @@ const Test: React.FC = () => {
                 </div>
                 {lsdbarActive === 'bot' ? (
                   <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
+                    <span
+                      className="lsdbar_new_chat"
+                      onClick={() => {
+                        setNewBot(true)
+                      }}
+                    >
                       <Plus className="pa_plus_Ic" />
                       <span>new bot chat</span>
                     </span>

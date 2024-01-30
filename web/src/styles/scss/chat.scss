@@ -1,5 +1,83 @@
 .chat {
   height: 100vh;
+  position: relative;
+  .chatmodalpop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background-color: #00000079;
+    .chatmodalinnercont_wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      .chatmodalinnercont {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: auto;
+        width: 400px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        padding: 5px;
+        .newbot_form {
+          width: 70%;
+          margin: 0 auto;
+          .newbot_form_group {
+            width: 100%;
+            .new_form_label {
+              margin: 0 0 10px 5px;
+            }
+            .newbot_form_input {
+              outline: none;
+              border: 1px solid #000;
+              border-radius: 23px;
+              padding: 10px 20px;
+              font-size: 1.2rem;
+              font-weight: 700;
+              width: calc(100% - 40px);
+              margin-top: 10px;
+            }
+          }
+          .newbot_name_submit_form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+              to bottom right,
+              #14a9ff,
+              #0088f0
+            ) !important;
+            border: none;
+            border-radius: 23px;
+            color: #fff !important;
+            cursor: pointer;
+            font-family: Roboto, sans-serif;
+            font-weight: 700;
+            line-height: 1.5rem;
+            margin: 20px auto;
+            outline: none;
+            padding: 10px 20px;
+            transition: 0.4s;
+            width: 100%;
+            .pa_plus_Ic {
+              height: 15px;
+              width: 15px;
+              fill: #fff !important;
+            }
+            span {
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
   .chat_container {
     .chatAppbar {
       background-color: var(--background-modals);
