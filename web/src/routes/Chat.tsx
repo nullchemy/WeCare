@@ -246,56 +246,6 @@ const Test: React.FC = () => {
               </div>
               <div
                 className={
-                  lsdbarActive === 'groups'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('groups')
-                  }}
-                >
-                  <span>Groups</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'groups' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
-                      <Plus className="pa_plus_Ic" />
-                      <span>new group chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={
-                  lsdbarActive === 'community'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('community')
-                  }}
-                >
-                  <span>Communities</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'community' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
-                      <Plus className="pa_plus_Ic" />
-                      <span>new community chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={
                   lsdbarActive === 'bot'
                     ? 'lsdbar_cat_item lsdbar_item_cat_active'
                     : 'lsdbar_cat_item'
@@ -307,7 +257,7 @@ const Test: React.FC = () => {
                     setlsdbarActive('bot')
                   }}
                 >
-                  <span>bots</span>
+                  <span>chatbots</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
                 {lsdbarActive === 'bot' ? (
