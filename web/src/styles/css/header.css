@@ -1,3 +1,35 @@
 .header {
-  height: 54px;
+  height: auto;
+}
+.header .header_container {
+  margin: 0 5%;
+}
+.header .header_container .header_wrapper {
+  display: flex;
+  padding: 10px 0;
+}
+.header .header_container .header_wrapper .header_left {
+  flex: 1;
+}
+.header .header_container .header_wrapper .header_right {
+  width: 50%;
+}
+.header .header_container .header_wrapper .header_right .header_login_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #14a9ff, #0088f0) !important;
+  border: none;
+  border-radius: 23px;
+  color: #fff !important;
+  cursor: pointer;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  line-height: 1.5rem;
+  margin: 10px auto;
+  outline: none;
+  padding: 5px 20px;
+  transition: 0.4s;
+  width: -moz-max-content;
+  width: max-content;
 }/*# sourceMappingURL=header.css.map */
