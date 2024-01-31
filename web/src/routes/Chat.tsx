@@ -12,7 +12,7 @@ import api from '../api/axios'
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
   const [activechat, setActiveChat] = useState<string>('')
-  const [lsdbarActive, setlsdbarActive] = useState('chat')
+  const [lsdbarActive, setlsdbarActive] = useState('bot')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
@@ -169,6 +169,36 @@ const Test: React.FC = () => {
             <div className="lsdbar_categories">
               <div
                 className={
+                  lsdbarActive === 'bot'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('bot')
+                  }}
+                >
+                  <span>chatbots</span>
+                  <AngleDown className="lsdbar_it_Ic" />
+                </div>
+                {lsdbarActive === 'bot' ? (
+                  <div className="lsdbar_cat_cont">
+                    <span
+                      className="lsdbar_new_chat"
+                      onClick={() => {
+                        setNewBot(true)
+                      }}
+                    >
+                      <Plus className="pa_plus_Ic" />
+                      <span>new bot chat</span>
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+              <div
+                className={
                   lsdbarActive === 'chat'
                     ? 'lsdbar_cat_item lsdbar_item_cat_active'
                     : 'lsdbar_cat_item'
@@ -180,7 +210,7 @@ const Test: React.FC = () => {
                     setlsdbarActive('chat')
                   }}
                 >
-                  <span>Friends & Family</span>
+                  <span>Psychologists & Therapists</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
                 {lsdbarActive === 'chat' ? (
@@ -240,36 +270,6 @@ const Test: React.FC = () => {
                     >
                       <Plus className="pa_plus_Ic" />
                       <span>new chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={
-                  lsdbarActive === 'bot'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('bot')
-                  }}
-                >
-                  <span>chatbots</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'bot' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span
-                      className="lsdbar_new_chat"
-                      onClick={() => {
-                        setNewBot(true)
-                      }}
-                    >
-                      <Plus className="pa_plus_Ic" />
-                      <span>new bot chat</span>
                     </span>
                   </div>
                 ) : null}

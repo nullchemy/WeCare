@@ -172,7 +172,7 @@
   margin-top: 2px;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont {
-  height: 322px;
+  height: 385px;
   overflow-y: scroll;
 }
 .chat .chat_container .chatWrapper .leftSidebar .lsdbar_categories .lsdbar_cat_item .lsdbar_cat_cont::-webkit-scrollbar {
