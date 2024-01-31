@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chatereum/react-e2ee": "^3.0.0",
+    "@chatereum/react-e2ee": "^3.0.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "^16.18.51",
     "@types/react": "^18.2.21",

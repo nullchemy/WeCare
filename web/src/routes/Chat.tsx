@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import '../styles/css/chat.css'
 import io from 'socket.io-client'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
@@ -20,6 +20,7 @@ const Test: React.FC = () => {
   const [typing, setTyping] = useState<boolean>(false)
   const [socket, setSocket] = useState<any>(null)
   const [newBot, setNewBot] = useState<boolean>(false)
+  const [botname, setBotName] = useState<string>('')
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
 
@@ -93,6 +94,14 @@ const Test: React.FC = () => {
     console.log(res.data)
   }
 
+  const submitNewBot = async (e: FormEvent) => {
+    e.preventDefault()
+    const res = await api('POST', 'newbot', { botname: botname })
+    setBotName('')
+    setNewBot(false)
+    console.log(res.data)
+  }
+
   return (
     <div className="chat">
       {newBot ? (
@@ -109,12 +118,24 @@ const Test: React.FC = () => {
                 e.stopPropagation()
               }}
             >
-              <form className="newbot_form">
+              <form
+                className="newbot_form"
+                onSubmit={(e) => {
+                  submitNewBot(e)
+                }}
+              >
                 <div className="newbot_form_group">
                   <label htmlFor="bot name" className="new_form_label">
                     name your bot <span style={{ color: 'red' }}>*</span>
                   </label>
-                  <input type="text" className="newbot_form_input" />
+                  <input
+                    type="text"
+                    className="newbot_form_input"
+                    value={botname}
+                    onChange={(e) => {
+                      setBotName(e.target.value)
+                    }}
+                  />
                 </div>
                 <button className="newbot_name_submit_form">
                   <span>create</span>
