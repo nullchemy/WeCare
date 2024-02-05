@@ -6,7 +6,6 @@ from ..extensions import mongo
 BOT_DEFAULT_SETTINGS = {
     'setting1': 'default_value1',
     'setting2': 'default_value2',
-    # Add more settings as needed
 }
 
 bot = Blueprint('bot', __name__)
@@ -40,3 +39,17 @@ def newchat(current_user):
         response_message = 'New bot created successfully!'
 
     return jsonify({'message': response_message})
+
+@bot.route('/mybots', methods=['GET'])
+@token_required
+def get_user_bots(current_user):
+    my_user_id = current_user['user_id']
+    bots_collection = mongo.db.bots
+
+    # Retrieve the user's bots from the database
+    user_bots = bots_collection.find_one({'user_id': my_user_id}, {'_id': 0, 'user_id': 0})
+
+    if user_bots:
+        return jsonify({'user_bots': user_bots['botname']})
+    else:
+        return jsonify({'user_bots': []})

@@ -21,6 +21,7 @@ const Test: React.FC = () => {
   const [socket, setSocket] = useState<any>(null)
   const [newBot, setNewBot] = useState<boolean>(false)
   const [botname, setBotName] = useState<string>('')
+  const [bots, setBots] = useState<Array<string>>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
 
@@ -46,6 +47,11 @@ const Test: React.FC = () => {
     setMessageInput('')
   }
 
+  const getUserBots = async () => {
+    const res = await api('GET', 'mybots', {})
+    setBots(res.data.user_bots)
+  }
+
   useEffect(() => {
     messContRef.current?.scrollIntoView()
     setChatList(ChatList.chats)
@@ -54,6 +60,9 @@ const Test: React.FC = () => {
     setSocket(newSocket)
 
     newSocket.emit('client_message', { message: 'start' })
+
+    // fetch User's Bots
+    getUserBots()
 
     return () => {
       if (newSocket.connected) {
@@ -206,6 +215,27 @@ const Test: React.FC = () => {
                 </div>
                 {lsdbarActive === 'bot' ? (
                   <div className="lsdbar_cat_cont">
+                    {bots.map((bot: string) => (
+                      <div
+                        className="wecare_it_user"
+                        key={bot}
+                        onClick={() => {}}
+                      >
+                        <div className="wecare_lsdbar_profile">
+                          <img
+                            src={UserPlaceholder}
+                            alt=""
+                            className="wecare_user_profile_sidebar"
+                          />
+                        </div>
+                        <div className="lsdbar_user_profile_texts">
+                          <h2 className="lsdbar_user_name">{bot}</h2>
+                        </div>
+                        <div className="lsdbar_user_profile_meta">
+                          <span className="lsdbar_lst_time">{}</span>
+                        </div>
+                      </div>
+                    ))}
                     <span
                       className="lsdbar_new_chat"
                       onClick={() => {
