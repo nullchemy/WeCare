@@ -1,6 +1,7 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import '../styles/css/chat.css'
 import io from 'socket.io-client'
+import Cookies from 'js-cookie'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
 import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
@@ -8,6 +9,7 @@ import { ReactComponent as Send } from '../assets/svg/send.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
+import { Link } from 'react-router-dom'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
@@ -166,7 +168,17 @@ const Test: React.FC = () => {
               WeCare
             </h1>
           </div>
-          <div className="chatbar_right"></div>
+          <div className="chatbar_right">
+            <Link
+              to="/"
+              className="btn"
+              onClick={() => {
+                Cookies.remove('auth')
+              }}
+            >
+              logout
+            </Link>
+          </div>
         </div>
         <div className="chatWrapper">
           <div
@@ -223,7 +235,10 @@ const Test: React.FC = () => {
                       <div
                         className="wecare_it_user"
                         key={bot.bot_id}
-                        onClick={() => {}}
+                        onClick={() => {
+                          setActiveChat(bot.bot_id)
+                          fetchPrevChats(bot.bot_id)
+                        }}
                       >
                         <div className="wecare_lsdbar_profile">
                           <img

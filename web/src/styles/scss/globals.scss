@@ -78,6 +78,26 @@ input:-internal-autofill-selected {
   color: fieldtext !important;
 }
 
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(to bottom right, #14a9ff, #0088f0) !important;
+  border: none;
+  border-radius: 23px;
+  color: #fff !important;
+  cursor: pointer;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  line-height: 1.5rem;
+  margin: 10px auto;
+  outline: none;
+  padding: 5px 20px;
+  transition: 0.4s;
+  width: max-content;
+}
+
 //loading animation
 /**
  * ==============================================
