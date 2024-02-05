@@ -21,7 +21,9 @@ const Test: React.FC = () => {
   const [socket, setSocket] = useState<any>(null)
   const [newBot, setNewBot] = useState<boolean>(false)
   const [botname, setBotName] = useState<string>('')
-  const [bots, setBots] = useState<Array<string>>([])
+  const [bots, setBots] = useState<Array<{ botname: string; bot_id: string }>>(
+    []
+  )
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = 'mod456'
 
@@ -49,6 +51,7 @@ const Test: React.FC = () => {
 
   const getUserBots = async () => {
     const res = await api('GET', 'mybots', {})
+    console.log(res.data.user_bots)
     setBots(res.data.user_bots)
   }
 
@@ -109,6 +112,7 @@ const Test: React.FC = () => {
     setBotName('')
     setNewBot(false)
     console.log(res.data)
+    getUserBots()
   }
 
   return (
@@ -215,10 +219,10 @@ const Test: React.FC = () => {
                 </div>
                 {lsdbarActive === 'bot' ? (
                   <div className="lsdbar_cat_cont">
-                    {bots.map((bot: string) => (
+                    {bots.map((bot: { botname: string; bot_id: string }) => (
                       <div
                         className="wecare_it_user"
-                        key={bot}
+                        key={bot.bot_id}
                         onClick={() => {}}
                       >
                         <div className="wecare_lsdbar_profile">
@@ -229,7 +233,7 @@ const Test: React.FC = () => {
                           />
                         </div>
                         <div className="lsdbar_user_profile_texts">
-                          <h2 className="lsdbar_user_name">{bot}</h2>
+                          <h2 className="lsdbar_user_name">{bot.botname}</h2>
                         </div>
                         <div className="lsdbar_user_profile_meta">
                           <span className="lsdbar_lst_time">{}</span>
