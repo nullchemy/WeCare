@@ -13,7 +13,10 @@ import { Link } from 'react-router-dom'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
-  const [activechat, setActiveChat] = useState<string>('')
+  const [activechat, setActiveChat] = useState<{
+    chat_id: string
+    name: string
+  }>({ chat_id: '', name: '' })
   const [lsdbarActive, setlsdbarActive] = useState('bot')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
@@ -64,8 +67,6 @@ const Test: React.FC = () => {
     const newSocket = io('http://localhost:5000')
     setSocket(newSocket)
 
-    newSocket.emit('client_message', { message: 'start' })
-
     // fetch User's Bots
     getUserBots()
 
@@ -115,6 +116,12 @@ const Test: React.FC = () => {
     setNewBot(false)
     console.log(res.data)
     getUserBots()
+    // set active Chat and start new conversation
+    setActiveChat({
+      chat_id: '',
+      name: '',
+    })
+    socket.emit('client_message', { message: 'start' })
   }
 
   return (
@@ -165,7 +172,7 @@ const Test: React.FC = () => {
         <div className="chatAppbar">
           <div className="chatbar_left">
             <h1 title="Mental Health Chatbot for Suicide Detection, and Support">
-              WeCare
+              <Link to="/">WeCare</Link>
             </h1>
           </div>
           <div className="chatbar_right">
@@ -236,9 +243,13 @@ const Test: React.FC = () => {
                         className="wecare_it_user"
                         key={bot.bot_id}
                         onClick={() => {
-                          setActiveChat(bot.bot_id)
+                          setActiveChat({
+                            chat_id: bot.bot_id,
+                            name: bot.botname,
+                          })
                           fetchPrevChats(bot.bot_id)
                         }}
+                        style={{ alignItems: 'center' }}
                       >
                         <div className="wecare_lsdbar_profile">
                           <img
@@ -299,7 +310,10 @@ const Test: React.FC = () => {
                           <div
                             className="wecare_it_user"
                             onClick={() => {
-                              setActiveChat(chat.chat_id)
+                              setActiveChat({
+                                chat_id: chat.chat_id,
+                                name: chat.name,
+                              })
                               fetchPrevChats(chat.chat_id)
                             }}
                           >
@@ -347,7 +361,7 @@ const Test: React.FC = () => {
             </div>
           </div>
           <div className="playarea">
-            {activechat === '' ? (
+            {activechat.chat_id === '' ? (
               <div className="playarea_placeholder">
                 <div className="playarea_place_center">
                   <h1>Start a new Conversation</h1>
@@ -364,7 +378,7 @@ const Test: React.FC = () => {
                       <img src={UserPlaceholder} alt="" />
                     </div>
                     <div className="active_chatee_meta">
-                      <h2>Alice Johnson</h2>
+                      <h2>{activechat.name}</h2>
                       <span className="active_chatee_ls">online</span>
                     </div>
                   </div>

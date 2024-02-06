@@ -8,3 +8,4 @@ pandas
 PyJWT
 torch
 transformers
+python-dotenv

@@ -18,7 +18,7 @@ suicide_model = None
 chat_history_ids = torch.tensor([])
 
 
-start_message = "Hello! I am Alex and I am your virtual friend. If you need a listening ear, I'm always here."
+start_message = "Hello! I am your virtual friend. If you need a listening ear, I'm always here."
 
 prevention_messages = ["Are you okay? How long have you been feeling this way?",
                        "That sounds so painful, and I appreciate you sharing that with me. How can I help?",

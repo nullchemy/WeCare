@@ -52,8 +52,9 @@ def newchat(current_user):
 
 @chat.route('/prevchats', methods=['GET'])
 @token_required
-def prevchats():
+def prevchats(current_user):
     data = request.get_json()
+    my_user_id = current_user['user_id']
     if not data:
         return {
             "message": "Please provide chat details",
