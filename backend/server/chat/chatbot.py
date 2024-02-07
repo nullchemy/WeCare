@@ -6,6 +6,7 @@ import torch
 import random
 import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
+from transformers.utils import logging
 from IPython.display import Markdown, display
 from datasets import Dataset
 
@@ -16,6 +17,8 @@ model = None
 suicide_tokenizer = None
 suicide_model = None 
 chat_history_ids = torch.tensor([])
+
+logging.get_logger("transformers").setLevel(logging.ERROR)
 
 
 start_message = "Hello! I am your virtual friend. If you need a listening ear, I'm always here."
