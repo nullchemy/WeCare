@@ -41,7 +41,7 @@ const Test: React.FC = () => {
       ...messages,
       {
         timestamp: 'now',
-        userid: myuserid,
+        user_id: myuserid,
         sendername: 'Dennis Kibet',
         level: 'user',
         message: messageInput,
@@ -129,6 +129,7 @@ const Test: React.FC = () => {
       { 'Content-Type': 'application/json' }
     )
     console.log(res.data)
+    setMessages(res.data.chats)
   }
 
   const submitNewBot = async (e: FormEvent) => {
@@ -409,7 +410,7 @@ const Test: React.FC = () => {
                 <div className="pa_middle">
                   <div className="messplay">
                     {messages.map((chat: any) => {
-                      return chat.userid === myuserid ? (
+                      return chat.user_id === myuserid ? (
                         <div className="outgoing_message" key={chat.message_id}>
                           <div className="out_mess_content">
                             <div className="out_mess_meta">
