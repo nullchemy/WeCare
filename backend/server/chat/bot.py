@@ -18,6 +18,7 @@ def newchat(current_user):
     my_user_id = current_user['user_id']
     new_botname = data.get('botname')
     bots_collection = mongo.db.bots
+    botchats_collection = mongo.db.botchats
 
     bot_id = str(uuid.uuid4())
 
@@ -25,14 +26,14 @@ def newchat(current_user):
     existing_bot = bots_collection.find_one({'user_id': my_user_id})
 
     if existing_bot:
-        # Update existing bot
+        # add Bot to user's Bots
         bots_collection.update_one(
             {'user_id': my_user_id},
             {'$addToSet': {'bot': {'botname': new_botname, 'bot_id': bot_id}}, '$set': {'settings': BOT_DEFAULT_SETTINGS}},
         )
         response_message = 'Bot Created successfully!'
     else:
-        # Create a new bot
+        # Create a new bot for the user
         new_bot = {
             'user_id': my_user_id,
             'bot': [{'botname': new_botname, 'bot_id': bot_id}],  # Initialize with a list containing the first bot name
@@ -40,6 +41,8 @@ def newchat(current_user):
         }
         bots_collection.insert_one(new_bot)
         response_message = 'New bot created successfully!'
+    # initialize Chat for the user's Bot
+    botchats_collection.insert_one({'bot_id': bot_id, 'chat_id': bot_id, 'level': 'bot', 'chats': []})
 
     return jsonify({'message': response_message})
 

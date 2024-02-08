@@ -20,6 +20,7 @@ tokenizer = None
 model = None
 suicide_tokenizer = None
 suicide_model = None 
+chatid = None
 chat_history_ids = torch.tensor([])
 
 logging.get_logger("transformers").setLevel(logging.ERROR)
@@ -53,14 +54,17 @@ def printmd(string):
         "message_id": str(uuid.uuid4()),
         "sender_id": '',
         "receiver_id": '',
-        "timestamp": '',
+        "timestamp": datetime.now(timezone.utc).timestamp() * 1000,
         "message": str(Markdown(string).data),
         "level": 'bot',
         "status": 'sent',
       }
     # save response to database
     botchats_collection = mongo.db.botchats
-    botchats_collection.insert_one(response)
+    botchats_collection.update_one(
+            {'chat_id': chatid},
+            {'$addToSet': {'chats': response}},
+        )
     response.pop('_id', None)
     socketio.emit('response', {'response': str(response)})
 
@@ -125,7 +129,7 @@ chatbot = Blueprint('chatbot', __name__)
 def start_chatbot(current_user, message):
     print('Endpoint Hit⚡⚡⚡')
     botchats_collection = mongo.db.botchats
-    global tokenizer, model, chat_round, chat_history_ids
+    global tokenizer, model, chat_round, chat_history_ids, chatid
     # create chat ID
     message['message_id'] = str(uuid.uuid4())
     message['sender_id'] = current_user['user_id']
@@ -133,7 +137,12 @@ def start_chatbot(current_user, message):
     message['level'] = 'bot'
     message['status'] = 'sent'
     # save message to database
-    botchats_collection.insert_one(message)
+    botchats_collection.update_one(
+            {'chat_id': message.get('chat_id')},
+            {'$addToSet': {'chats': message}},
+        )
+    if chatid is None:
+      chatid = message.get('chat_id')
     if tokenizer is None or model is None:
         socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
         tokenizer, model = load_tokenizer_and_model()

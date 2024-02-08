@@ -50,20 +50,49 @@ def newchat(current_user):
 
     return jsonify({"message": "Create new chat successfully!", "status": True}), 200
 
+# @chat.route('/prevchats', methods=['GET'])
+# @token_required
+# def prevchats(current_user):
+#     print('Endpoint Hit⚡ - /prevchats [GET]')
+#     data = request.get_json()
+#     print(data)
+#     my_user_id = current_user['user_id']
+#     print(my_user_id)
+#     if not data:
+#         print('Please provide chat details')
+#         return {
+#             "message": "Please provide chat details",
+#             "data": None,
+#             "error": "Bad request"
+#         }, 400
+#     chatid = data.get('chat_id')
+#     print(chatid)
+#     # chats_collection = mongo.db.chats
+#     return jsonify({'users': {}, 'status': True})
+
 @chat.route('/prevchats', methods=['GET'])
 @token_required
 def prevchats(current_user):
-    data = request.get_json()
-    my_user_id = current_user['user_id']
-    print(data)
-    if not data:
-        return {
-            "message": "Please provide chat details",
+    print('Endpoint Hit⚡ - /prevchats [GET]')
+    
+    # Use request.args to get parameters from the URL
+    chat_id = request.args.get('chat_id')
+    
+    print(chat_id)
+    
+    if not chat_id:
+        print('Please provide chat details')
+        return jsonify({
+            "message": "Please provide chat_id parameter",
             "data": None,
             "error": "Bad request"
-        }, 400
-    chatid = data.get('chatid')
-    chats_collection = mongo.db.chats
+        }), 400
+
+    my_user_id = current_user['user_id']
+    print(my_user_id)
+
+    # Do something with chat_id
+    
     return jsonify({'users': {}, 'status': True})
 
 if __name__ == '__main__':

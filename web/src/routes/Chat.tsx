@@ -50,6 +50,7 @@ const Test: React.FC = () => {
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
       socket.emit('client_message', {
+        chat_id: activechat.chat_id,
         message_id: '',
         sender_id: '',
         receiver_id: '',
@@ -121,7 +122,12 @@ const Test: React.FC = () => {
   }
 
   const fetchPrevChats = async (chatid: string) => {
-    const res = await api('GET', 'prevchats', { chatid: chatid })
+    const res = await api(
+      'GET',
+      `prevchats?chat_id=${chatid}`,
+      { chat_id: chatid },
+      { 'Content-Type': 'application/json' }
+    )
     console.log(res.data)
   }
 
