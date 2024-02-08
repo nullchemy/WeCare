@@ -55,6 +55,7 @@ def newchat(current_user):
 def prevchats(current_user):
     data = request.get_json()
     my_user_id = current_user['user_id']
+    print(data)
     if not data:
         return {
             "message": "Please provide chat details",

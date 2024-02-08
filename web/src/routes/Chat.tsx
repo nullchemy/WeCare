@@ -10,6 +10,7 @@ import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
 import { Link } from 'react-router-dom'
+import session from '../utils/session'
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
@@ -48,7 +49,15 @@ const Test: React.FC = () => {
     ])
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
-      socket.emit('client_message', { message: messageInput })
+      socket.emit('client_message', {
+        message_id: '',
+        sender_id: '',
+        receiver_id: '',
+        timestamp: '',
+        message: messageInput,
+        level: '',
+        status: '',
+      })
       setMessageInput('')
     }
     setMessageInput('')
@@ -63,8 +72,12 @@ const Test: React.FC = () => {
   useEffect(() => {
     messContRef.current?.scrollIntoView()
     setChatList(ChatList.chats)
-
-    const newSocket = io('http://localhost:5000')
+    const token = session.get('auth')
+    const newSocket = io('http://localhost:5000', {
+      extraHeaders: {
+        Authorization: 'Bearer ' + token.auth,
+      },
+    })
     setSocket(newSocket)
 
     // fetch User's Bots
@@ -80,8 +93,11 @@ const Test: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on('response', (data: any) => {
-        console.log(data.response)
-        setMessages((prevMessages) => [...prevMessages, data.response])
+        console.log(JSON.parse(data.response.replace(/'/g, '"')))
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          JSON.parse(data.response.replace(/'/g, '"')),
+        ])
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('info', (data: any) => {
@@ -243,6 +259,7 @@ const Test: React.FC = () => {
                         className="wecare_it_user"
                         key={bot.bot_id}
                         onClick={() => {
+                          setMessages([])
                           setActiveChat({
                             chat_id: bot.bot_id,
                             name: bot.botname,
@@ -387,7 +404,7 @@ const Test: React.FC = () => {
                   <div className="messplay">
                     {messages.map((chat: any) => {
                       return chat.userid === myuserid ? (
-                        <div className="outgoing_message">
+                        <div className="outgoing_message" key={chat.message_id}>
                           <div className="out_mess_content">
                             <div className="out_mess_meta">
                               <span className="out_mess_time">
@@ -405,14 +422,14 @@ const Test: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="incoming_message">
+                        <div className="incoming_message" key={chat.message_id}>
                           <div className="in_mess_sender_profile">
                             <img src={UserPlaceholder} alt="" />
                           </div>
                           <div className="in_mess_content">
                             <div className="inc_mess_meta">
                               <span className="inc_sender_name">
-                                {chat.sendername}
+                                {activechat.name}
                               </span>
                               <span className="inc_mess_misc">
                                 {chat.level}
@@ -430,7 +447,7 @@ const Test: React.FC = () => {
                         </div>
                       )
                     })}
-                    {info !== '' ? <span>info</span> : null}
+                    {/* {info !== '' ? <span>info</span> : null} */}
                     {typing ? (
                       <div className="incoming_message">
                         <div className="in_mess_sender_profile">

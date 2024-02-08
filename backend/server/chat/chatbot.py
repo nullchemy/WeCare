@@ -1,14 +1,18 @@
 # working chatbot with suicide detection
 from flask import Blueprint
 from ..sockets import socketio
+from ..extensions import mongo
+from ..auth_middleware import token_required
 import os
 import torch
 import random
+import uuid
 import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 from transformers.utils import logging
 from IPython.display import Markdown, display
 from datasets import Dataset
+from datetime import datetime,timezone
 
 # Global variables to store tokenizer and models
 chat_round = 0
@@ -45,13 +49,20 @@ helpline_message = "In times of severe distress where you need to speak with som
 def printmd(string):
     socketio.emit('typing', {'response': False})
     print(string)
-    socketio.emit('response', {'response': {
-"timestamp": "now",
-"userid": "user456",
-"sendername": "Alex",
-"level": "BOT",
-"message": Markdown(string).data
-}})
+    response = {
+        "message_id": str(uuid.uuid4()),
+        "sender_id": '',
+        "receiver_id": '',
+        "timestamp": '',
+        "message": str(Markdown(string).data),
+        "level": 'bot',
+        "status": 'sent',
+      }
+    # save response to database
+    botchats_collection = mongo.db.botchats
+    botchats_collection.insert_one(response)
+    response.pop('_id', None)
+    socketio.emit('response', {'response': str(response)})
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
   global tokenizer
@@ -110,9 +121,19 @@ def cleanup():
 chatbot = Blueprint('chatbot', __name__)
 
 @socketio.on('client_message')
-def start_chatbot(message):
+@token_required
+def start_chatbot(current_user, message):
     print('Endpoint Hit⚡⚡⚡')
+    botchats_collection = mongo.db.botchats
     global tokenizer, model, chat_round, chat_history_ids
+    # create chat ID
+    message['message_id'] = str(uuid.uuid4())
+    message['sender_id'] = current_user['user_id']
+    message['timestamp'] = datetime.now(timezone.utc).timestamp() * 1000
+    message['level'] = 'bot'
+    message['status'] = 'sent'
+    # save message to database
+    botchats_collection.insert_one(message)
     if tokenizer is None or model is None:
         socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
         tokenizer, model = load_tokenizer_and_model()
