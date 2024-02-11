@@ -16,18 +16,18 @@ const api = async (
   headers: object = {}
 ): Promise<AxiosResponse> => {
   try {
-    const token = session.get('auth')
+    const auth: any = session.get('auth')
+    const token = auth ? JSON.parse(auth)?.token ?? null : null
     const config = {
       method: method,
       maxBodyLength: Infinity,
       url: backend() + '' + slug,
       headers: {
         ...headers,
-        Authorization: 'Bearer ' + token.auth,
+        Authorization: token ? 'Bearer ' + token : undefined,
       },
       data: data,
     }
-    console.log(config)
     const res = await axios(config)
     return res
   } catch (error: any) {

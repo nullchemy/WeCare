@@ -4,6 +4,7 @@ from ..sockets import socketio
 from ..extensions import mongo
 from ..auth_middleware import token_required
 import os
+import json
 import torch
 import random
 import uuid
@@ -66,7 +67,8 @@ def printmd(string):
             {'$addToSet': {'chats': response}},
         )
     response.pop('_id', None)
-    socketio.emit('response', {'response': str(response)})
+    json_response = json.dumps(response)
+    socketio.emit('response', {'response': response})
 
 def load_tokenizer_and_model(model="microsoft/DialoGPT-large"):
   global tokenizer

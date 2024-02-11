@@ -11,9 +11,31 @@ import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
 import { Link } from 'react-router-dom'
 import session from '../utils/session'
+import formatTimestamp from '../utils/time'
+
+interface Auth {
+  message: string
+  meta: {
+    email: string
+    full_name: string
+    user_id: string
+  }
+  status: boolean
+  token: string
+}
 
 const Test: React.FC = () => {
   const [chatlist, setChatList] = useState<Array<any>>([])
+  const [auth, setAuth] = useState<Auth>({
+    message: '',
+    meta: {
+      email: '',
+      full_name: '',
+      user_id: '',
+    },
+    status: false,
+    token: '',
+  })
   const [activechat, setActiveChat] = useState<{
     chat_id: string
     name: string
@@ -31,17 +53,16 @@ const Test: React.FC = () => {
     []
   )
   const messContRef = useRef<HTMLDivElement | null>(null)
-  const myuserid = 'mod456'
+  const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(messageInput)
     // add message to the arr
     setMessages([
       ...messages,
       {
-        timestamp: 'now',
-        user_id: myuserid,
+        timestamp: Date.now(),
+        sender_id: myuserid,
         sendername: 'Dennis Kibet',
         level: 'user',
         message: messageInput,
@@ -52,8 +73,8 @@ const Test: React.FC = () => {
       socket.emit('client_message', {
         chat_id: activechat.chat_id,
         message_id: '',
-        sender_id: '',
-        receiver_id: '',
+        sender_id: myuserid,
+        receiver_id: activechat.chat_id,
         timestamp: '',
         message: messageInput,
         level: '',
@@ -66,17 +87,18 @@ const Test: React.FC = () => {
 
   const getUserBots = async () => {
     const res = await api('GET', 'mybots', {})
-    console.log(res.data.user_bots)
     setBots(res.data.user_bots)
   }
 
   useEffect(() => {
     messContRef.current?.scrollIntoView()
     setChatList(ChatList.chats)
-    const token = session.get('auth')
+    const auth: any = session.get('auth')
+    setAuth(JSON.parse(auth))
+    const token = auth ? JSON.parse(auth)?.token ?? null : null
     const newSocket = io('http://localhost:5000', {
       extraHeaders: {
-        Authorization: 'Bearer ' + token.auth,
+        Authorization: token ? 'Bearer ' + token : 'Bearer undefined',
       },
     })
     setSocket(newSocket)
@@ -94,20 +116,14 @@ const Test: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on('response', (data: any) => {
-        console.log(JSON.parse(data.response.replace(/'/g, '"')))
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          JSON.parse(data.response.replace(/'/g, '"')),
-        ])
+        setMessages((prevMessages) => [...prevMessages, data.response])
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('info', (data: any) => {
-        console.log(data.response)
         setInfo(data.response)
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('typing', (data: any) => {
-        console.log(data.response)
         setTyping(data.response)
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
@@ -128,7 +144,6 @@ const Test: React.FC = () => {
       { chat_id: chatid },
       { 'Content-Type': 'application/json' }
     )
-    console.log(res.data)
     setMessages(res.data.chats)
   }
 
@@ -410,12 +425,12 @@ const Test: React.FC = () => {
                 <div className="pa_middle">
                   <div className="messplay">
                     {messages.map((chat: any) => {
-                      return chat.user_id === myuserid ? (
+                      return chat.sender_id === myuserid ? (
                         <div className="outgoing_message" key={chat.message_id}>
                           <div className="out_mess_content">
                             <div className="out_mess_meta">
                               <span className="out_mess_time">
-                                {chat.timestamp}
+                                {formatTimestamp(chat.timestamp)}
                               </span>
                             </div>
                             <div className="outgoing_cont_message">
@@ -442,7 +457,7 @@ const Test: React.FC = () => {
                                 {chat.level}
                               </span>
                               <span className="inc_mess_time">
-                                {chat.timestamp}
+                                {formatTimestamp(chat.timestamp)}
                               </span>
                             </div>
                             <div className="incoming_cont_message">
