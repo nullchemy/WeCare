@@ -6,6 +6,7 @@ import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
 import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Send } from '../assets/svg/send.svg'
+import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
@@ -39,7 +40,8 @@ const Test: React.FC = () => {
   const [activechat, setActiveChat] = useState<{
     chat_id: string
     name: string
-  }>({ chat_id: '', name: '' })
+    type: string
+  }>({ chat_id: '', name: '', type: 'bot' })
   const [lsdbarActive, setlsdbarActive] = useState('bot')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
@@ -52,6 +54,7 @@ const Test: React.FC = () => {
   const [bots, setBots] = useState<Array<{ botname: string; bot_id: string }>>(
     []
   )
+  const [regusers, setRegUsers] = useState<{}[]>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
 
@@ -63,23 +66,34 @@ const Test: React.FC = () => {
       {
         timestamp: Date.now(),
         sender_id: myuserid,
-        sendername: 'Dennis Kibet',
+        sendername: auth.meta.full_name ? auth.meta.full_name : '',
         level: 'user',
         message: messageInput,
       },
     ])
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
-      socket.emit('client_message', {
-        chat_id: activechat.chat_id,
-        message_id: '',
-        sender_id: myuserid,
-        receiver_id: activechat.chat_id,
-        timestamp: '',
-        message: messageInput,
-        level: '',
-        status: '',
-      })
+      if (activechat.type === 'bot') {
+        socket.emit('client_message', {
+          chat_id: activechat.chat_id,
+          message_id: '',
+          sender_id: myuserid,
+          receiver_id: activechat.chat_id,
+          timestamp: '',
+          message: messageInput,
+          level: '',
+        })
+      } else {
+        socket.emit('chat_message', {
+          chat_id: activechat.chat_id,
+          message_id: '',
+          sender_id: myuserid,
+          receiver_id: activechat.chat_id,
+          timestamp: '',
+          message: messageInput,
+          level: '',
+        })
+      }
       setMessageInput('')
     }
     setMessageInput('')
@@ -158,8 +172,14 @@ const Test: React.FC = () => {
     setActiveChat({
       chat_id: '',
       name: '',
+      type: 'bot',
     })
     socket.emit('client_message', { message: 'start' })
+  }
+
+  const fetchRegisteredUsers = async () => {
+    const res = await api('GET', 'getusers', {})
+    setRegUsers(res.data)
   }
 
   return (
@@ -231,14 +251,44 @@ const Test: React.FC = () => {
               newchatdrawer ? 'newChatDrawer lsdractive' : 'newChatDrawer'
             }
           >
-            <button
+            <Arrow
               className="newChatDrawerCloseIc"
               onClick={() => {
                 setNewchatdrawer(false)
               }}
-            >
-              Close
-            </button>
+            />
+            <br />
+            {/* registered users available for chat list */}
+            {regusers.map((user: any) => (
+              <div
+                className="wecare_it_user"
+                key={user.user_id}
+                onClick={() => {
+                  setMessages([])
+                  setActiveChat({
+                    chat_id: user.user_id,
+                    name: user.full_name,
+                    type: 'bot',
+                  })
+                  fetchPrevChats(user.user_id)
+                }}
+                style={{ alignItems: 'center' }}
+              >
+                <div className="wecare_lsdbar_profile">
+                  <img
+                    src={UserPlaceholder}
+                    alt=""
+                    className="wecare_user_profile_sidebar"
+                  />
+                </div>
+                <div className="lsdbar_user_profile_texts">
+                  <h2 className="lsdbar_user_name">{user.full_name}</h2>
+                </div>
+                <div className="lsdbar_user_profile_meta">
+                  <span className="lsdbar_lst_time">{}</span>
+                </div>
+              </div>
+            ))}
           </div>
           <div
             className={newchatdrawer ? 'leftSidebar' : 'leftSidebar lsdractive'}
@@ -285,6 +335,7 @@ const Test: React.FC = () => {
                           setActiveChat({
                             chat_id: bot.bot_id,
                             name: bot.botname,
+                            type: 'bot',
                           })
                           fetchPrevChats(bot.bot_id)
                         }}
@@ -352,6 +403,7 @@ const Test: React.FC = () => {
                               setActiveChat({
                                 chat_id: chat.chat_id,
                                 name: chat.name,
+                                type: 'chat',
                               })
                               fetchPrevChats(chat.chat_id)
                             }}
@@ -389,6 +441,7 @@ const Test: React.FC = () => {
                       className="lsdbar_new_chat"
                       onClick={() => {
                         handleNewChatDrawer()
+                        fetchRegisteredUsers()
                       }}
                     >
                       <Plus className="pa_plus_Ic" />

@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from ..auth_middleware import token_required
 from ..sockets import socketio
 from ..extensions import mongo 
+import uuid
+from datetime import datetime,timezone
 
 # MongoDB setup
 # group_collection = mongo.db.users
@@ -76,6 +78,43 @@ def prevchats(current_user):
         return jsonify({'chats': chats['chats']})
     else:
         return jsonify({'chats': []})
+
+@chat.route('/getusers', methods=['GET'])
+@token_required
+def getusers(current_user):
+    my_user_id = current_user['user_id']
+    users_collection = mongo.db.users
+    users = users_collection.find({'user_id': {'$ne': my_user_id}})
+    # Convert MongoDB documents to a list of dictionaries
+    users_list = []
+    for user in users:
+        user_dict = {
+            '_id': str(user['_id']),
+            'user_id': user['user_id'],
+            'full_name': user['full_name'],
+            'email': user['email'],
+            'user_number': user['user_number'],
+            'active': user['active']
+        }
+        users_list.append(user_dict)
+    return jsonify(users_list)
+    
+@socketio.on('chat_message')
+@token_required
+def start_chatbot(current_user, message):
+    print('Chat Endpoint Hit⚡⚡⚡')
+    chats_collection = mongo.db.chats
+    # create chat ID
+    message['message_id'] = str(uuid.uuid4())
+    message['sender_id'] = current_user['user_id']
+    message['timestamp'] = datetime.now(timezone.utc).timestamp() * 1000
+    message['level'] = 'chat'
+    # save message to database
+    chats_collection.update_one(
+            {'chat_id': message.get('chat_id')},
+            {'$addToSet': {'chats': message}},
+            upsert=True
+        )
 
 if __name__ == '__main__':
     from app import app, socketio

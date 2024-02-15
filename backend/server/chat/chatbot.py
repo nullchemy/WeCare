@@ -50,7 +50,6 @@ helpline_message = "In times of severe distress where you need to speak with som
 
 def printmd(string):
     socketio.emit('typing', {'response': False})
-    print(string)
     response = {
         "message_id": str(uuid.uuid4()),
         "sender_id": '',
@@ -129,7 +128,7 @@ chatbot = Blueprint('chatbot', __name__)
 @socketio.on('client_message')
 @token_required
 def start_chatbot(current_user, message):
-    print('Endpoint Hit⚡⚡⚡')
+    print('Bot Endpoint Hit⚡⚡⚡')
     botchats_collection = mongo.db.botchats
     global tokenizer, model, chat_round, chat_history_ids, chatid
     # create chat ID
