@@ -8,7 +8,6 @@ import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Send } from '../assets/svg/send.svg'
 import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
-import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
 import { Link } from 'react-router-dom'
 import session from '../utils/session'
@@ -26,7 +25,6 @@ interface Auth {
 }
 
 const Test: React.FC = () => {
-  const [chatlist, setChatList] = useState<Array<any>>([])
   const [auth, setAuth] = useState<Auth>({
     message: '',
     meta: {
@@ -46,7 +44,6 @@ const Test: React.FC = () => {
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
-  const [info, setInfo] = useState<string>('')
   const [typing, setTyping] = useState<boolean>(false)
   const [socket, setSocket] = useState<any>(null)
   const [newBot, setNewBot] = useState<boolean>(false)
@@ -55,6 +52,17 @@ const Test: React.FC = () => {
     []
   )
   const [regusers, setRegUsers] = useState<{}[]>([])
+  const [startedchats, setStartedChats] = useState<
+    {
+      chat_id: string
+      name: string
+      last_message: string
+      unread_messages: number
+      profile_url: string
+      last_seen: string
+      timestamp: string
+    }[]
+  >([])
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
 
@@ -87,6 +95,7 @@ const Test: React.FC = () => {
         socket.emit('chat_message', {
           chat_id: activechat.chat_id,
           message_id: '',
+          full_name: activechat.name,
           sender_id: myuserid,
           receiver_id: activechat.chat_id,
           timestamp: '',
@@ -106,7 +115,6 @@ const Test: React.FC = () => {
 
   useEffect(() => {
     messContRef.current?.scrollIntoView()
-    setChatList(ChatList.chats)
     const auth: any = session.get('auth')
     setAuth(JSON.parse(auth))
     const token = auth ? JSON.parse(auth)?.token ?? null : null
@@ -130,11 +138,30 @@ const Test: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on('response', (data: any) => {
-        setMessages((prevMessages) => [...prevMessages, data.response])
-        messContRef.current?.scrollIntoView({ behavior: 'smooth' })
-      })
-      socket.on('info', (data: any) => {
-        setInfo(data.response)
+        console.log(data)
+        if (data.level === 'chat') {
+          // setting started message
+          setStartedChats([
+            ...startedchats,
+            {
+              chat_id: data.chat_id,
+              name: data.full_name,
+              last_message: data.message,
+              unread_messages: 1,
+              profile_url: '',
+              last_seen: '',
+              timestamp: data.timestamp,
+            },
+          ])
+          // add chat to chatslist if active chat equals to user's id
+          console.log(activechat.chat_id === data.chat_id)
+          if (activechat.chat_id === data.chat_id) {
+            setMessages((prevMessages) => [...prevMessages, data])
+            console.log('it is active ')
+          }
+        } else {
+          setMessages((prevMessages) => [...prevMessages, data.response])
+        }
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('typing', (data: any) => {
@@ -142,6 +169,7 @@ const Test: React.FC = () => {
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket])
 
   const handleNewChatDrawer = async () => {
@@ -180,6 +208,36 @@ const Test: React.FC = () => {
   const fetchRegisteredUsers = async () => {
     const res = await api('GET', 'getusers', {})
     setRegUsers(res.data)
+  }
+
+  useEffect(() => {
+    const fetchActiveChatees = async () => {
+      const res = await api('GET', 'getchats', {})
+      if (res.status === 200) {
+        console.log(res.data)
+        setStartedChats(res.data.chats)
+      }
+    }
+    if (lsdbarActive === 'chat') {
+      fetchActiveChatees()
+    }
+  }, [lsdbarActive])
+
+  const updateStartedChats = async (user: any) => {
+    const res = await api('PUT', 'updatestartedchats', user)
+    // update active chat chatID
+    if (res.status === 200) {
+      const index = startedchats.findIndex(
+        (chat) => chat.chat_id === activechat.chat_id
+      )
+      const updatedChats = [...startedchats]
+      updatedChats[index] = {
+        ...updatedChats[index],
+        chat_id: res.data.chat_id,
+      }
+      setStartedChats(updatedChats)
+      setActiveChat({ ...activechat, chat_id: res.data.chat_id })
+    }
   }
 
   return (
@@ -230,8 +288,9 @@ const Test: React.FC = () => {
         <div className="chatAppbar">
           <div className="chatbar_left">
             <h1 title="Mental Health Chatbot for Suicide Detection, and Support">
-              <Link to="/">WeCare</Link>
+              <Link to="/">WeCare:</Link>
             </h1>
+            <h2> {auth.meta.full_name}</h2>
           </div>
           <div className="chatbar_right">
             <Link
@@ -268,9 +327,21 @@ const Test: React.FC = () => {
                   setActiveChat({
                     chat_id: user.user_id,
                     name: user.full_name,
-                    type: 'bot',
+                    type: 'chat',
                   })
-                  fetchPrevChats(user.user_id)
+                  updateStartedChats(user)
+                  setStartedChats([
+                    ...startedchats,
+                    {
+                      chat_id: user.user_id,
+                      name: user.full_name,
+                      last_message: '',
+                      unread_messages: 0,
+                      profile_url: '',
+                      last_seen: '',
+                      timestamp: '',
+                    },
+                  ])
                 }}
                 style={{ alignItems: 'center' }}
               >
@@ -386,7 +457,7 @@ const Test: React.FC = () => {
                 </div>
                 {lsdbarActive === 'chat' ? (
                   <div className="lsdbar_cat_cont">
-                    {chatlist.map(
+                    {startedchats.map(
                       (chat: {
                         chat_id: string
                         name: string
@@ -399,6 +470,7 @@ const Test: React.FC = () => {
                         return (
                           <div
                             className="wecare_it_user"
+                            key={chat.chat_id}
                             onClick={() => {
                               setActiveChat({
                                 chat_id: chat.chat_id,

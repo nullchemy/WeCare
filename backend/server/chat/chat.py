@@ -5,30 +5,7 @@ from ..extensions import mongo
 import uuid
 from datetime import datetime,timezone
 
-# MongoDB setup
-# group_collection = mongo.db.users
-
 chat = Blueprint('chat', __name__)
-
-# when a user joins a group
-@socketio.on('join_group')
-def join_room(data):
-    roomid = data['room_id']
-    userid = data['room_id']
-    join_room(roomid)
-    socketio.emit('joined_group', {'message': f'{userid} joined'}, room=roomid)
-
-# when a user sends a group message
-@socketio.on('group_message')
-def handle_message(data):
-    room = data['room_id']
-    message = data['message']
-
-    # Save the message to the database
-    # group_collection.insert_one({'room': room, 'message': message})
-
-    # Broadcast the message to all members in the room
-    socketio.emit('message', {'message': message}, room=room)
 
 @chat.route('/newchat', methods=['POST'])
 @token_required
@@ -98,7 +75,46 @@ def getusers(current_user):
         }
         users_list.append(user_dict)
     return jsonify(users_list)
-    
+
+@chat.route('/getchats', methods=['GET'])
+@token_required
+def getchats(current_user):
+    my_user_id = current_user['user_id']
+    users_collection = mongo.db.users
+    user_data = users_collection.find_one({'user_id': my_user_id}, {'chats': 1})
+    if user_data:
+        chats = user_data.get('chats', [])
+        response = {
+            'user_id': my_user_id,
+            'chats': chats
+        }
+        return jsonify(response), 200
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+@chat.route('/updatestartedchats', methods=['PUT'])
+@token_required
+def updatestartedchats(current_user):
+    my_user_id = current_user['user_id']
+    data = request.get_json()
+    users_collection = mongo.db.users
+    chat_id = str(uuid.uuid4())
+    chatee = {
+      "chat_id": chat_id,
+      "name": data.get('full_name'),
+      "last_message": "",
+      "unread_messages": 0,
+      "profile_url": "",
+      "last_seen": "",
+      "timestamp": ""
+    }
+    users_collection.update_one(
+            {'user_id': my_user_id},
+            {'$addToSet': {'chats': chatee}},
+            upsert=True
+        )
+    return jsonify({'chat_id': chat_id, 'message': 'updated started chats'}), 200
+
 @socketio.on('chat_message')
 @token_required
 def start_chatbot(current_user, message):
@@ -111,10 +127,13 @@ def start_chatbot(current_user, message):
     message['level'] = 'chat'
     # save message to database
     chats_collection.update_one(
-            {'chat_id': message.get('chat_id')},
+            {'chat_id': message.get('chat_id'), 'receiver_id': message.get('chat_id')},
             {'$addToSet': {'chats': message}},
             upsert=True
         )
+    # Emit the message to the receiver
+    receiver_id = message.get('receiver_id')
+    socketio.emit('response', message)
 
 if __name__ == '__main__':
     from app import app, socketio

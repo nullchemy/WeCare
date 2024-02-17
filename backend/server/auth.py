@@ -54,6 +54,7 @@ def register():
         'email': email,
         'hashed_password': hashed_password,
         'user_number': user_number,
+        'chats': [],
         'active': True
     }
     users_collection.insert_one(user_data)
