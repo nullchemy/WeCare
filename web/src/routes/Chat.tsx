@@ -24,7 +24,7 @@ interface Auth {
   token: string
 }
 
-const Test: React.FC = () => {
+const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
     message: '',
     meta: {
@@ -655,4 +655,4 @@ const Test: React.FC = () => {
   )
 }
 
-export default Test
+export default Chat
