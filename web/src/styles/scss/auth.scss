@@ -1,3 +1,7 @@
+:root {
+  --angle: 0deg;
+}
+
 .auth {
   height: 100vh;
   position: relative;
@@ -48,5 +52,103 @@
         color: #007bff;
       }
     }
+    .image_upload {
+      padding-bottom: 20px;
+      .image_upload_title {
+        font-size: 23px;
+      }
+      .profie_picture_wrapper {
+        position: relative;
+        height: 160px;
+        width: 160px;
+        border-radius: 50%;
+        margin: 20px auto 40px auto;
+        overflow: hidden !important;
+        .noborder {
+          border: none !important;
+        }
+        .profie_picture {
+          height: 150px;
+          width: 150px;
+          border-radius: 50%;
+          overflow: hidden !important;
+          border: 2px solid #9935e8;
+          cursor: pointer;
+          margin: 3px auto;
+          position: relative;
+          .the_profile_picture {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 0;
+          }
+          .m_t_unset {
+            margin-top: unset !important;
+          }
+          .profile_picture_file_field {
+            height: 100%;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            width: 100%;
+            top: 0px;
+            left: 0px;
+            cursor: pointer;
+          }
+        }
+      }
+      .profile_skip {
+        background: #2ac6ff;
+        border-radius: 23px;
+        padding: 9px 23px 11px;
+        font-size: 16px;
+        letter-spacing: 1.6px;
+        color: rgb(255, 255, 255);
+        text-transform: uppercase;
+        font-weight: 500;
+        z-index: unset !important;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(5turn);
+  }
+}
+.moving-border {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -3;
+    width: 100%;
+    height: 100%;
+    background-color: #399953;
+    background-repeat: no-repeat;
+    background-size: 50% 50%, 50% 50%;
+    background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+    background-image: linear-gradient(#399953, #399953),
+      linear-gradient(#fbb300, #fbb300), linear-gradient(#d53e33, #d53e33),
+      linear-gradient(#377af5, #377af5);
+    animation: rotate 4s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 5px;
+    top: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    background: white;
+    border-radius: 50%;
   }
 }

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import uuid
 import jwt
 from flask import current_app
+from .auth_middleware import token_required
 
 from .extensions import mongo, bcrypt
 auth = Blueprint('auth', __name__)
@@ -51,15 +52,27 @@ def register():
     user_data = {
         'user_id': user_id,
         'full_name': full_name,
+        'profile_url': '',
         'email': email,
         'hashed_password': hashed_password,
         'user_number': user_number,
         'chats': [],
         'active': True
     }
-    users_collection.insert_one(user_data)
+    result = users_collection.insert_one(user_data)
+    # token should expire after 24 hrs
+    if result.acknowledged:
+        token = jwt.encode(
+            {"user_id": user_id},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256"
+        )
+        print("Insertion successful. Token generated")
+        return jsonify({"message": "User registered successfully!", "status": True, "token": token, "meta": {"user_id": user_id, "full_name": full_name, "email": email}}), 201
+    else:
+        print("Insertion failed.")
+        return jsonify({"message": "User registration failed!"}), 500
 
-    return jsonify({"message": "User registered successfully!", "user_id": user_id, "user_number": user_number}), 201
 
 
 @auth.route('/auth/login', methods=['POST'])
@@ -90,3 +103,18 @@ def login():
         return jsonify({"message": "Login successful", "status": True, "token": token, "meta": {"user_id": user["user_id"], "full_name": user["full_name"], "email": user['email']}}), 200
 
     return jsonify({"message": "Invalid credentials. Please try again.", "status": False}), 401
+
+@auth.route('/updateprofile', methods=['PUT'])
+@token_required
+def updateprofile(current_user):
+    data = request.get_json()
+    profile_url = data.get('url')
+    my_user_id = current_user['user_id']
+    users_collection = mongo.db.users
+    # Find the user by user_id and update the profile_url
+    result = users_collection.update_one({'user_id': my_user_id}, {'$set': {'profile_url': profile_url}})
+    # Check if the user was found and updated
+    if result.modified_count == 1:
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    else:
+        return jsonify({'message': 'profile update failed'}), 404
