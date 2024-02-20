@@ -10,11 +10,10 @@
         }
         .landing_center_wrap {
           width: auto;
-          max-width: 36rem;
           margin: 3% auto;
           .landing_eye_catch_txt {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 3.75rem;
+            font-size: 5.75rem;
             line-height: 1;
             font-weight: 700;
             text-align: center;
@@ -24,7 +23,7 @@
               display: flex;
               justify-content: center;
               overflow: hidden;
-              height: 64px;
+              height: 97px;
 
               @media (max-width: 640px) {
                 height: 41px;
@@ -58,11 +57,12 @@
 
               .landing_keyword {
                 position: absolute;
-                transform: translateY(72px);
+                transform: translateY(87px);
                 opacity: 0;
                 animation-timing-function: ease-in-out;
                 color: var(--green110);
                 font-family: var(--mono-font);
+                white-space: nowrap !important;
 
                 &:first-child {
                   animation: rollup_1 8s forwards infinite;
@@ -95,8 +95,10 @@
             text-align: center;
             font-size: 1.25rem;
             line-height: 1.75rem;
+            margin: 0 auto;
             margin-top: 1.5rem;
             margin-bottom: 2rem;
+            width: 30rem;
           }
           .landing_cta_btn {
             display: flex;
@@ -149,7 +151,7 @@
 
 @keyframes rollup_1 {
   0% {
-    transform: translateY(72px);
+    transform: translateY(87px);
   }
 
   8.5% {
@@ -163,14 +165,14 @@
   }
 
   49.5% {
-    transform: translateY(-72px);
+    transform: translateY(-87px);
     opacity: 0;
   }
 }
 
 @keyframes rollup_2 {
   49.5% {
-    transform: translateY(72px);
+    transform: translateY(87px);
   }
 
   58% {
@@ -184,7 +186,7 @@
   }
 
   99% {
-    transform: translateY(-72px);
+    transform: translateY(-87px);
     opacity: 0;
   }
 }

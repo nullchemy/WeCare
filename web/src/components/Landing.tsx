@@ -45,11 +45,9 @@ const Landing = () => {
               <h1 className="landing_eye_catch_txt">
                 WeCare <br />
                 <span className="landing_rolling_keywords">
-                  <span className="landing_keyword">Depression</span>
+                  <span className="landing_keyword">Mental Health</span>
                   <span className="landing_keyword">&amp;</span>
-                  <span className="landing_keyword">Suicidal</span>
-                  <span className="landing_keyword">&amp;</span>
-                  <span className="landing_keyword">mental health</span>
+                  <span className="landing_keyword">Suicidal Detection</span>
                 </span>
                 chat-app
               </h1>
