@@ -100,7 +100,7 @@ def login():
         )
         print(user)
 
-        return jsonify({"message": "Login successful", "status": True, "token": token, "meta": {"user_id": user["user_id"], "full_name": user["full_name"], "email": user['email']}}), 200
+        return jsonify({"message": "Login successful", "status": True, "token": token, "meta": {"user_id": user["user_id"], "full_name": user["full_name"], "email": user['email'], "profile_url": user["profile_url"]}}), 200
 
     return jsonify({"message": "Invalid credentials. Please try again.", "status": False}), 401
 

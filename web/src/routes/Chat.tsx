@@ -441,7 +441,7 @@ const Chat: React.FC = () => {
                     setlsdbarActive('chat')
                   }}
                 >
-                  <span>Psychologists & Therapists</span>
+                  <span>Therapists & Help</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
                 {lsdbarActive === 'chat' ? (

@@ -1,5 +1,5 @@
 .header {
-  height: auto;
+  height: 60px;
   .header_container {
     margin: 0 5%;
     .header_wrapper {
@@ -7,9 +7,11 @@
       padding: 10px 0;
       .header_left {
         flex: 1;
+        h2 {
+          font-family: 'IBM Plex Mono', monospace;
+        }
       }
       .header_right {
-        width: 50%;
         .header_login_btn {
           display: flex;
           align-items: center;

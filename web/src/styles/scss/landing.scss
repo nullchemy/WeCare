@@ -1,3 +1,190 @@
+:root {
+  --green110: #00cd51;
+}
 .landing {
-  height: 50vh;
+  height: calc(100vh - 50px);
+  .landing_container {
+    .landing_wrapper {
+      .landing_relative {
+        .landing_particles {
+        }
+        .landing_center_wrap {
+          width: auto;
+          max-width: 36rem;
+          margin: 3% auto;
+          .landing_eye_catch_txt {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 3.75rem;
+            line-height: 1;
+            font-weight: 700;
+            text-align: center;
+            word-break: keep-all;
+            .landing_rolling_keywords {
+              position: relative;
+              display: flex;
+              justify-content: center;
+              overflow: hidden;
+              height: 64px;
+
+              @media (max-width: 640px) {
+                height: 41px;
+              }
+
+              &:after,
+              &:before {
+                content: '>';
+                position: absolute;
+                display: block;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+                height: 100%;
+                color: var(--green110);
+                animation: blink 1s forwards infinite;
+                opacity: 0.1;
+                transform: translateX(0);
+              }
+
+              &:before {
+                left: 60px;
+                animation: squeezeRight 1s forwards infinite;
+              }
+
+              &:after {
+                content: '<';
+                right: 60px;
+                animation: squeezeLeft 1s forwards infinite;
+              }
+
+              .landing_keyword {
+                position: absolute;
+                transform: translateY(72px);
+                opacity: 0;
+                animation-timing-function: ease-in-out;
+                color: var(--green110);
+                font-family: var(--mono-font);
+
+                &:first-child {
+                  animation: rollup_1 8s forwards infinite;
+                }
+
+                &:nth-child(2) {
+                  text-indent: -9999999px;
+                }
+
+                &:nth-child(3) {
+                  animation: rollup_2 8s forwards infinite;
+                }
+              }
+
+              @media (max-width: 1024px) {
+                &:before {
+                  left: 0;
+                  animation: squeezeRight 1s forwards infinite;
+                }
+
+                &:after {
+                  content: '<';
+                  right: 0;
+                  animation: squeezeLeft 1s forwards infinite;
+                }
+              }
+            }
+          }
+          .landing_intro_explainer {
+            text-align: center;
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+          }
+          .landing_cta_btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+              to bottom right,
+              #14a9ff,
+              #0088f0
+            ) !important;
+            border: none;
+            border-radius: 23px;
+            color: #fff !important;
+            cursor: pointer;
+            font-family: Roboto, sans-serif;
+            font-weight: 700;
+            line-height: 1.5rem;
+            margin: 10px auto;
+            outline: none;
+            padding: 5px 20px;
+            transition: 0.4s;
+            width: max-content;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes squeezeLeft {
+  50% {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+}
+
+@keyframes squeezeRight {
+  50% {
+    opacity: 1;
+    transform: translateX(-4px);
+  }
+}
+
+@keyframes rollup_1 {
+  0% {
+    transform: translateY(72px);
+  }
+
+  8.5% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  41% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  49.5% {
+    transform: translateY(-72px);
+    opacity: 0;
+  }
+}
+
+@keyframes rollup_2 {
+  49.5% {
+    transform: translateY(72px);
+  }
+
+  58% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  90.5% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  99% {
+    transform: translateY(-72px);
+    opacity: 0;
+  }
 }
