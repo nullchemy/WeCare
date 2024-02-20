@@ -86,6 +86,15 @@
   display: flex;
   align-items: center;
 }
+.chat .chat_container .chatAppbar .chatbar_left .chat_profile_pic {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #9935e8;
+  margin: 0 20px;
+  cursor: pointer;
+}
 .chat .chat_container .chatWrapper {
   width: 90%;
   margin: 0 auto;

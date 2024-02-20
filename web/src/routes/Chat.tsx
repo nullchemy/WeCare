@@ -12,17 +12,7 @@ import api from '../api/axios'
 import { Link } from 'react-router-dom'
 import session from '../utils/session'
 import formatTimestamp from '../utils/time'
-
-interface Auth {
-  message: string
-  meta: {
-    email: string
-    full_name: string
-    user_id: string
-  }
-  status: boolean
-  token: string
-}
+import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
 
 const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
@@ -31,15 +21,16 @@ const Chat: React.FC = () => {
       email: '',
       full_name: '',
       user_id: '',
+      profile_url: '',
     },
     status: false,
     token: '',
   })
-  const [activechat, setActiveChat] = useState<{
-    chat_id: string
-    name: string
-    type: string
-  }>({ chat_id: '', name: '', type: 'bot' })
+  const [activechat, setActiveChat] = useState<ActiveChat>({
+    chat_id: '',
+    name: '',
+    type: 'bot',
+  })
   const [lsdbarActive, setlsdbarActive] = useState('bot')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
@@ -48,21 +39,9 @@ const Chat: React.FC = () => {
   const [socket, setSocket] = useState<any>(null)
   const [newBot, setNewBot] = useState<boolean>(false)
   const [botname, setBotName] = useState<string>('')
-  const [bots, setBots] = useState<Array<{ botname: string; bot_id: string }>>(
-    []
-  )
+  const [bots, setBots] = useState<Array<Bot>>([])
   const [regusers, setRegUsers] = useState<{}[]>([])
-  const [startedchats, setStartedChats] = useState<
-    {
-      chat_id: string
-      name: string
-      last_message: string
-      unread_messages: number
-      profile_url: string
-      last_seen: string
-      timestamp: string
-    }[]
-  >([])
+  const [startedchats, setStartedChats] = useState<StartedChats[]>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
 
@@ -287,10 +266,20 @@ const Chat: React.FC = () => {
       <div className="chat_container">
         <div className="chatAppbar">
           <div className="chatbar_left">
+            <div className="chat_profile_pic" title={auth.meta.full_name}>
+              {auth.meta.profile_url ? (
+                <img src={auth.meta.profile_url} alt="" />
+              ) : (
+                <img
+                  src={UserPlaceholder}
+                  style={{ marginTop: '5px' }}
+                  alt=""
+                />
+              )}
+            </div>
             <h1 title="Mental Health Chatbot for Suicide Detection, and Support">
-              <Link to="/">WeCare:</Link>
+              <Link to="/">WeCare</Link>
             </h1>
-            <h2> {auth.meta.full_name}</h2>
           </div>
           <div className="chatbar_right">
             <Link
@@ -594,7 +583,6 @@ const Chat: React.FC = () => {
                         </div>
                       )
                     })}
-                    {/* {info !== '' ? <span>info</span> : null} */}
                     {typing ? (
                       <div className="incoming_message">
                         <div className="in_mess_sender_profile">
@@ -611,11 +599,7 @@ const Chat: React.FC = () => {
                     ) : null}
                     <div ref={messContRef} />
                   </div>
-                  <div>
-                    {/* {messages.map((message, index) => (
-                  <div key={index}>{message}</div>
-                ))} */}
-                  </div>
+                  <div></div>
                   <span className="messplay_sec_info">
                     Messages are end-to-end encrypted. No one outside this chat,
                     not even WeCare, can read or listen to them. Click to learn

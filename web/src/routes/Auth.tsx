@@ -90,6 +90,12 @@ const Auth = () => {
         const res = await api('PUT', 'updateprofile', { url: live_profile_url })
         console.log(res)
         if (res.status === 200) {
+          // save profile pic as cookie
+          const auth: any = session.get('auth')
+          const meta = auth
+            ? { ...JSON.parse(auth), profile_url: live_profile_url }
+            : { profile_url: live_profile_url }
+          session.save(JSON.stringify(meta))
           setProfilePicUrl(live_profile_url)
           setUploading(false)
         }
