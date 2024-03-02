@@ -16,7 +16,8 @@ genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
 
 redis_host = os.environ.get('REDIS_HOST_URL') or 'localhost'
 redis_port = int(os.environ.get('REDIS_HOST_PORT') or 6379)
-redis_client = redis.Redis(host=redis_host, port=redis_port, db=0)
+redis_client = redis.from_url(redis_host+':'+redis_port)
+# redis_client = redis.Redis(host=redis_host, port=redis_port, db=0)
 
 try:
     # Check if the connection is successful
