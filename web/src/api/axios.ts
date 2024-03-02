@@ -13,7 +13,10 @@ const api = async (
   method: string = 'GET',
   slug: string,
   data: object = {},
-  headers: object = {}
+  headers: object = {
+    'Content-type': 'application/json',
+    Accept: 'application/json',
+  }
 ): Promise<AxiosResponse> => {
   try {
     const auth: any = session.get('auth')
