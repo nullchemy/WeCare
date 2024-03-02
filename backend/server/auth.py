@@ -24,6 +24,8 @@ def generate_user_number():
 
 @auth.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
     data = request.get_json()
     if not data:
         return {
@@ -77,6 +79,8 @@ def register():
 
 @auth.route('/auth/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
     data = request.get_json()
     if not data:
         return {
@@ -107,6 +111,8 @@ def login():
 @auth.route('/updateprofile', methods=['PUT'])
 @token_required
 def updateprofile(current_user):
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
     data = request.get_json()
     profile_url = data.get('url')
     my_user_id = current_user['user_id']

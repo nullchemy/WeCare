@@ -16,6 +16,7 @@ def create_app():
     app = Flask(__name__)
 
     # app.config.from_object(config_object)
+    app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or '@wecare!kibet$this'
 

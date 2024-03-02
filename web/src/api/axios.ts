@@ -3,7 +3,7 @@ import session from '../utils/session'
 
 const backend = (): string => {
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    return 'http://localhost:5000/'
+    return 'https://wecare-hs1t.onrender.com/'
   } else {
     return 'https://wecare-hs1t.onrender.com/'
   }
@@ -14,8 +14,11 @@ const api = async (
   slug: string,
   data: object = {},
   headers: object = {
-    'Content-type': 'application/json',
+    'Content-Type': 'application/json',
     Accept: 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':
+      'Content-Type, Authorization, X-Requested-With, Accept, Content-Length, Accept-Encoding, X-CSRF-Token',
   }
 ): Promise<AxiosResponse> => {
   try {
@@ -31,9 +34,15 @@ const api = async (
       },
       data: data,
     }
+
+    console.log(config)
+
     const res = await axios(config)
+    console.log(res)
     return res
   } catch (error: any) {
+    console.log(error)
+
     // Handle error response
     if (error.response) {
       // The request was made and the server responded with a status code
