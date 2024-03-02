@@ -21,7 +21,7 @@ const api = async (
     const config = {
       method: method,
       maxBodyLength: Infinity,
-      url: backend() + 'api/v1/' + slug,
+      url: backend() + '' + slug,
       headers: {
         ...headers,
         Authorization: token ? 'Bearer ' + token : undefined,
