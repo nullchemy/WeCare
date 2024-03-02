@@ -22,7 +22,7 @@ def generate_user_number():
     new_user_number = last_user_number + 1
     return new_user_number
 
-@auth.route('/auth/register', methods=['POST'])
+@auth.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
     data = request.get_json()
     if not data:
@@ -75,7 +75,7 @@ def register():
 
 
 
-@auth.route('/auth/login', methods=['POST'])
+@auth.route('/auth/login', methods=['POST', 'OPTIONS'])
 def login():
     data = request.get_json()
     if not data:
