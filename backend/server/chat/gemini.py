@@ -13,7 +13,7 @@ from ..extensions import mongo
 gemini = Blueprint('gemini', __name__)
 
 genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+redis_client = redis.Redis(host=os.environ.get('REDIS_HOST_URL') or 'localhost', port=os.environ.get('REDIS_HOST_PORT') or 6379, db=0)
 
 # Global variables
 chatid = None

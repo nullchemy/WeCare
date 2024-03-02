@@ -125,39 +125,39 @@ def cleanup():
 
 chatbot = Blueprint('chatbot', __name__)
 
-@socketio.on('client_message')
-@token_required
-def start_chatbot(current_user, message):
-    print('Bot Endpoint Hit⚡⚡⚡')
-    botchats_collection = mongo.db.botchats
-    global tokenizer, model, chat_round, chat_history_ids, chatid
-    # create chat ID
-    message['message_id'] = str(uuid.uuid4())
-    message['sender_id'] = current_user['user_id']
-    message['timestamp'] = datetime.now(timezone.utc).timestamp() * 1000
-    message['level'] = 'bot'
-    message['status'] = 'sent'
-    # save message to database
-    botchats_collection.update_one(
-            {'chat_id': message.get('chat_id')},
-            {'$addToSet': {'chats': message}},
-        )
-    if chatid is None:
-      chatid = message.get('chat_id')
-    if tokenizer is None or model is None:
-        socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
-        tokenizer, model = load_tokenizer_and_model()
-    user_input = message.get('message', '').lower()
-    print(user_input)
-    if user_input.lower() == "start":
-        printmd(start_message)
-    else:
-        try:
-            chat_round += 1
-            chat_history_ids = generate_response(chat_round, user_input)
-        except Exception as e:
-            cleanup()
-            printmd("chat session terminated!, See Ya")
+# @socketio.on('client_message')
+# @token_required
+# def start_chatbot(current_user, message):
+#     print('Bot Endpoint Hit⚡⚡⚡')
+#     botchats_collection = mongo.db.botchats
+#     global tokenizer, model, chat_round, chat_history_ids, chatid
+#     # create chat ID
+#     message['message_id'] = str(uuid.uuid4())
+#     message['sender_id'] = current_user['user_id']
+#     message['timestamp'] = datetime.now(timezone.utc).timestamp() * 1000
+#     message['level'] = 'bot'
+#     message['status'] = 'sent'
+#     # save message to database
+#     botchats_collection.update_one(
+#             {'chat_id': message.get('chat_id')},
+#             {'$addToSet': {'chats': message}},
+#         )
+#     if chatid is None:
+#       chatid = message.get('chat_id')
+#     if tokenizer is None or model is None:
+#         socketio.emit('info', {'response': Markdown('Loading DialogGPT model...').data})
+#         tokenizer, model = load_tokenizer_and_model()
+#     user_input = message.get('message', '').lower()
+#     print(user_input)
+#     if user_input.lower() == "start":
+#         printmd(start_message)
+#     else:
+#         try:
+#             chat_round += 1
+#             chat_history_ids = generate_response(chat_round, user_input)
+#         except Exception as e:
+#             cleanup()
+#             printmd("chat session terminated!, See Ya")
 
 if __name__ == '__main__':
     from app import app, socketio
