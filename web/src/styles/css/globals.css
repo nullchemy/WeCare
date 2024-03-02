@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&family=Space+Mono:ital@0;1&display=swap");
 /* Apercu font */
 @font-face {
   font-family: Apercu;
@@ -232,6 +233,14 @@ input:-internal-autofill-selected {
   transition: 0.4s;
   width: -moz-max-content;
   width: max-content;
+}
+
+.r_blg_body__content,
+.out_th_content,
+.inc_th_content {
+  font-family: Roboto, Apercu, "Space Mono", monospace, sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 /**

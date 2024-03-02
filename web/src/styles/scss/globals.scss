@@ -98,6 +98,14 @@ input:-internal-autofill-selected {
   width: max-content;
 }
 
+.r_blg_body__content,
+.out_th_content,
+.inc_th_content {
+  font-family: Roboto, Apercu, 'Space Mono', monospace, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
 //loading animation
 /**
  * ==============================================

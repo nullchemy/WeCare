@@ -13,8 +13,14 @@ import { Link } from 'react-router-dom'
 import session from '../utils/session'
 import formatTimestamp from '../utils/time'
 import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const Chat: React.FC = () => {
+  const myRef = React.createRef<SyntaxHighlighter>()
   const [auth, setAuth] = useState<Auth>({
     message: '',
     meta: {
@@ -61,7 +67,7 @@ const Chat: React.FC = () => {
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
       if (activechat.type === 'bot') {
-        socket.emit('client_message', {
+        socket.emit('gemini_message', {
           chat_id: activechat.chat_id,
           message_id: '',
           sender_id: myuserid,
@@ -549,7 +555,42 @@ const Chat: React.FC = () => {
                             </div>
                             <div className="outgoing_cont_message">
                               <span className="out_th_content">
-                                {chat.message}
+                                <ReactMarkdown
+                                  rehypePlugins={[rehypeRaw]}
+                                  remarkPlugins={[remarkGfm]}
+                                  className="r_blg_body__content"
+                                  components={{
+                                    code({
+                                      node,
+                                      className,
+                                      children,
+                                      ...props
+                                    }) {
+                                      const match = /language-(\w+)/.exec(
+                                        className || ''
+                                      )
+                                      return match ? (
+                                        <SyntaxHighlighter
+                                          {...props}
+                                          ref={myRef}
+                                          children={String(children).replace(
+                                            /\n$/,
+                                            ''
+                                          )}
+                                          style={dracula}
+                                          language={match[1]}
+                                          PreTag="div"
+                                        />
+                                      ) : (
+                                        <code {...props} className={className}>
+                                          {children}
+                                        </code>
+                                      )
+                                    },
+                                  }}
+                                >
+                                  {chat.message}
+                                </ReactMarkdown>
                               </span>
                             </div>
                           </div>
@@ -576,7 +617,42 @@ const Chat: React.FC = () => {
                             </div>
                             <div className="incoming_cont_message">
                               <span className="inc_th_content">
-                                {chat.message}
+                                <ReactMarkdown
+                                  rehypePlugins={[rehypeRaw]}
+                                  remarkPlugins={[remarkGfm]}
+                                  className="r_blg_body__content"
+                                  components={{
+                                    code({
+                                      node,
+                                      className,
+                                      children,
+                                      ...props
+                                    }) {
+                                      const match = /language-(\w+)/.exec(
+                                        className || ''
+                                      )
+                                      return match ? (
+                                        <SyntaxHighlighter
+                                          {...props}
+                                          ref={myRef}
+                                          children={String(children).replace(
+                                            /\n$/,
+                                            ''
+                                          )}
+                                          style={dracula}
+                                          language={match[1]}
+                                          PreTag="div"
+                                        />
+                                      ) : (
+                                        <code {...props} className={className}>
+                                          {children}
+                                        </code>
+                                      )
+                                    },
+                                  }}
+                                >
+                                  {chat.message}
+                                </ReactMarkdown>
                               </span>
                             </div>
                           </div>

@@ -9,6 +9,7 @@ from .auth import auth
 from .chat.chatbot import chatbot
 from .chat.chat import chat
 from .chat.bot import bot
+from .chat.gemini import gemini
 
 def create_app(config_object='server.settings'):
     app = Flask(__name__)
@@ -26,6 +27,7 @@ def create_app(config_object='server.settings'):
     app.register_blueprint(chatbot)
     app.register_blueprint(chat)
     app.register_blueprint(bot)
+    app.register_blueprint(gemini)
 
     socketio.init_app(app)
 
