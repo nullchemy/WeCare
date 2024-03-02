@@ -103,7 +103,7 @@ const Chat: React.FC = () => {
     const auth: any = session.get('auth')
     setAuth(JSON.parse(auth))
     const token = auth ? JSON.parse(auth)?.token ?? null : null
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io('https://wecare-hs1t.onrender.com', {
       extraHeaders: {
         Authorization: token ? 'Bearer ' + token : 'Bearer undefined',
       },

@@ -5,7 +5,7 @@ const backend = (): string => {
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     return 'http://localhost:5000/'
   } else {
-    return 'https://nullchemy-api.onrender.com/'
+    return 'https://wecare-hs1t.onrender.com/'
   }
 }
 
@@ -21,7 +21,7 @@ const api = async (
     const config = {
       method: method,
       maxBodyLength: Infinity,
-      url: backend() + '' + slug,
+      url: backend() + 'api/v1/' + slug,
       headers: {
         ...headers,
         Authorization: token ? 'Bearer ' + token : undefined,

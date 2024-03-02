@@ -46,7 +46,6 @@ const Auth = () => {
       }
       // Add your registration logic here
       const res: any = await api('POST', 'auth/register', formData)
-      console.log(res)
       if (res) {
         if (res.status === 201) {
           setErr(res.data.message)
@@ -65,8 +64,7 @@ const Auth = () => {
     } else {
       // Handle login Logic
       const res: any = await api('POST', 'auth/login', formData)
-      console.log(res)
-      if (res.data.status) {
+      if (res && res.data.status) {
         setErr('')
         let from = location.state?.from?.pathname || '/chat'
         console.log(res.data)
