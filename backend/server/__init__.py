@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+import os
 
 from .extensions import mongo, bcrypt
 from .sockets import socketio
@@ -11,10 +12,12 @@ from .chat.chat import chat
 from .chat.bot import bot
 from .chat.gemini import gemini
 
-def create_app(config_object='server.settings'):
+def create_app():
     app = Flask(__name__)
 
-    app.config.from_object(config_object)
+    # app.config.from_object(config_object)
+    app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or '@wecare!kibet$this'
 
     mongo.init_app(app)
 
