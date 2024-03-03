@@ -21,6 +21,7 @@ const Auth = () => {
   const [profilePic, setProfilePic] = useState<File | null>(null)
   const [profilePicUrl, setProfilePicUrl] = useState<string>('')
   const [uploading, setUploading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
   const navigate = useNavigate()
   let location = useLocation()
@@ -45,9 +46,11 @@ const Auth = () => {
         return
       }
       // Add your registration logic here
+      setLoading(true)
       const res: any = await api('POST', 'auth/register', formData)
+      setLoading(false)
       if (res) {
-        if (res.status === 201) {
+        if (res.data && res.status === 201) {
           setErr(res.data.message)
           //set logged in state
           session.save(JSON.stringify(res.data))
@@ -63,8 +66,10 @@ const Auth = () => {
       }
     } else {
       // Handle login Logic
+      setLoading(true)
       const res: any = await api('POST', 'auth/login', formData)
-      if (res && res.data.status) {
+      setLoading(false)
+      if (res.data && res.data.status) {
         setErr('')
         let from = location.state?.from?.pathname || '/chat'
         console.log(res.data)
@@ -74,7 +79,9 @@ const Auth = () => {
         //redirect user to chatpage
         return navigate(from, { replace: true })
       } else {
-        setErr(res.data.message)
+        setErr(
+          res.data ? res.data.message : 'Something wrong happened! Please retry'
+        )
       }
     }
   }
@@ -161,7 +168,13 @@ const Auth = () => {
                   />
                 )}
                 <button type="submit">
-                  {isRegistering ? 'Register' : 'Login'}
+                  {loading ? (
+                    <div className="dot-flashing"></div>
+                  ) : isRegistering ? (
+                    'Register'
+                  ) : (
+                    'Login'
+                  )}
                 </button>
               </form>
               {isRegistering ? (

@@ -2,10 +2,15 @@ import axios, { AxiosResponse } from 'axios'
 import session from '../utils/session'
 
 const backend = (): string => {
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    return 'https://wecare-hs1t.onrender.com/'
+  console.log(process.env.REACT_APP_NODE_ENV)
+
+  if ((process.env.REACT_APP_NODE_ENV as string) === 'development') {
+    return (process.env.REACT_APP_DEV_URL as string) || 'http://localhost:5000/'
   } else {
-    return 'https://wecare-hs1t.onrender.com/'
+    return (
+      (process.env.REACT_APP_PROD_URL as string) ||
+      'https://wecare-hs1t.onrender.com/'
+    )
   }
 }
 
@@ -35,10 +40,7 @@ const api = async (
       data: data,
     }
 
-    console.log(config)
-
     const res = await axios(config)
-    console.log(res)
     return res
   } catch (error: any) {
     console.log(error)

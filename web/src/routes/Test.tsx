@@ -1,63 +1,132 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
-import '../styles/css/chat.css'
-import io from 'socket.io-client'
-import Cookies from 'js-cookie'
+import Playarea from '../components/Playarea'
+import api from '../api/axios'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
 import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
-import api from '../api/axios'
 import { Link } from 'react-router-dom'
-import session from '../utils/session'
-import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
+import Cookies from 'js-cookie'
 import { v4 as uuidv4 } from 'uuid'
-import Playarea from '../components/Playarea'
+import { StateTypes } from '../interfaces/chat'
+import io from 'socket.io-client'
+import session from '../utils/session'
 
-const Chat: React.FC = () => {
-  const [auth, setAuth] = useState<Auth>({
-    message: '',
-    meta: {
-      email: '',
-      full_name: '',
-      user_id: '',
-      profile_url: '',
+const Test = () => {
+  const [state, setState] = useState<StateTypes>({
+    auth: {
+      message: '',
+      meta: {
+        email: '',
+        full_name: '',
+        user_id: '',
+        profile_url: '',
+      },
+      status: false,
+      token: '',
     },
-    status: false,
-    token: '',
+    activechat: {
+      chat_id: '',
+      name: '',
+      type: 'bot',
+    },
+    lsdbarActive: 'bot',
+    newchatdrawer: false,
+    messages: [],
+    messageInput: '',
+    typing: false,
+    socket: null,
+    newbot: false,
+    botname: '',
+    bots: [],
+    regusers: [],
+    startedchats: [],
+    messContRef: useRef<HTMLDivElement | null>(null),
+    myuserid: '',
   })
-  const [activechat, setActiveChat] = useState<ActiveChat>({
-    chat_id: '',
-    name: '',
-    type: 'bot',
-  })
-  const [lsdbarActive, setlsdbarActive] = useState('bot')
-  const [newchatdrawer, setNewchatdrawer] = useState(false)
-  const [messages, setMessages] = useState<{}[]>([])
-  const [messageInput, setMessageInput] = useState<string>('')
-  const [typing, setTyping] = useState<boolean>(false)
-  const [socket, setSocket] = useState<any>(null)
-  const [newBot, setNewBot] = useState<boolean>(false)
-  const [botname, setBotName] = useState<string>('')
-  const [bots, setBots] = useState<Array<Bot>>([])
-  const [regusers, setRegUsers] = useState<{}[]>([])
-  const [startedchats, setStartedChats] = useState<StartedChats[]>([])
-  const messContRef = useRef<HTMLDivElement | null>(null)
-  const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
+  const {
+    auth,
+    activechat,
+    lsdbarActive,
+    newchatdrawer,
+    messages,
+    messageInput,
+    typing,
+    socket,
+    newbot,
+    botname,
+    bots,
+    regusers,
+    startedchats,
+    messContRef,
+    myuserid,
+  } = state
+
+  const submitNewBot = async (e: FormEvent) => {
+    e.preventDefault()
+    const res = await api('POST', 'newbot', { botname: botname })
+    setState({
+      ...state,
+      botname: '',
+      newbot: false,
+      activechat: {
+        chat_id: '',
+        name: '',
+        type: 'bot',
+      },
+    })
+    console.log(res.data)
+    getUserBots()
+    socket.emit('client_message', { message: 'start' })
+  }
+
+  const updateStartedChats = async (user: any) => {
+    const res = await api('PUT', 'updatestartedchats', user)
+    // update active chat chatID
+    if (res.status === 200) {
+      const index = startedchats.findIndex(
+        (chat) => chat.chat_id === activechat.chat_id
+      )
+      const updatedChats = [...startedchats]
+      updatedChats[index] = {
+        ...updatedChats[index],
+        chat_id: res.data.chat_id,
+      }
+      setState({
+        ...state,
+        activechat: { ...activechat, chat_id: res.data.chat_id },
+        startedchats: updatedChats,
+      })
+    }
+  }
+
+  const fetchPrevChats = async (chatid: string) => {
+    const res = await api(
+      'GET',
+      `prevchats?chat_id=${chatid}`,
+      { chat_id: chatid },
+      { 'Content-Type': 'application/json' }
+    )
+    setState({ ...state, messages: res.data.chats })
+  }
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     // add message to the arr
-    setMessages([
-      ...messages,
-      {
-        timestamp: Date.now(),
-        sender_id: myuserid,
-        sendername: auth.meta.full_name ? auth.meta.full_name : '',
-        level: 'user',
-        message: messageInput,
-      },
-    ])
+    setState({
+      ...state,
+      messages: [
+        ...messages,
+        {
+          timestamp: Date.now(),
+          sender_id: myuserid,
+          sendername: auth.meta.full_name ? auth.meta.full_name : '',
+          level: 'user',
+          message: messageInput,
+        },
+      ],
+    })
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
       if (activechat.type === 'bot') {
@@ -82,21 +151,21 @@ const Chat: React.FC = () => {
           level: '',
         })
       }
-      setMessageInput('')
+      setState({ ...state, messageInput: '' })
     }
-    setMessageInput('')
+    setState({ ...state, messageInput: '' })
   }
 
   const getUserBots = async () => {
     const res = await api('GET', 'mybots', {})
     console.log(res)
-    setBots(res ? res.data.user_bots : [])
+    setState({ ...state, bots: res ? res.data.user_bots : [] })
   }
 
   useEffect(() => {
     messContRef.current?.scrollIntoView()
     const auth: any = session.get('auth')
-    setAuth(JSON.parse(auth))
+    setState({ ...state, auth: JSON.parse(auth) })
     const token = auth ? JSON.parse(auth)?.token ?? null : null
     const socketio_url =
       process.env.REACT_APP_SOCKETIO_URL || 'http://localhost:5000'
@@ -105,17 +174,20 @@ const Chat: React.FC = () => {
         Authorization: token ? 'Bearer ' + token : 'Bearer undefined',
       },
     })
-    setSocket(newSocket)
-
-    // fetch User's Bots
-    getUserBots()
+    setState({ ...state, socket: newSocket })
 
     return () => {
       if (newSocket.connected) {
         newSocket.disconnect()
       }
     }
-  }, [])
+  }, [messContRef, state])
+
+  useEffect(() => {
+    // fetch User's Bots
+    getUserBots()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bots])
 
   useEffect(() => {
     if (socket) {
@@ -123,31 +195,40 @@ const Chat: React.FC = () => {
         console.log(data)
         if (data && typeof data !== 'string' && data.level === 'chat') {
           // setting started message
-          setStartedChats([
-            ...startedchats,
-            {
-              chat_id: data.chat_id,
-              name: data.full_name,
-              last_message: data.message,
-              unread_messages: 1,
-              profile_url: '',
-              last_seen: '',
-              timestamp: data.timestamp,
-            },
-          ])
+          setState({
+            ...state,
+            startedchats: [
+              ...startedchats,
+              {
+                chat_id: data.chat_id,
+                name: data.full_name,
+                last_message: data.message,
+                unread_messages: 1,
+                profile_url: '',
+                last_seen: '',
+                timestamp: data.timestamp,
+              },
+            ],
+          })
           // add chat to chatslist if active chat equals to user's id
           console.log(activechat.chat_id === data.chat_id)
           if (activechat.chat_id === data.chat_id) {
-            setMessages((prevMessages) => [...prevMessages, data])
+            setState({
+              ...state,
+              messages: [...messages, data],
+            })
             console.log('it is active ')
           }
         } else {
-          setMessages((prevMessages) => [...prevMessages, data.response])
+          setState({
+            ...state,
+            messages: [...messages, data.response],
+          })
         }
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('typing', (data: any) => {
-        setTyping(data.response)
+        setState({ ...state, typing: data.response })
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
     }
@@ -155,80 +236,24 @@ const Chat: React.FC = () => {
   }, [socket])
 
   const handleNewChatDrawer = async () => {
-    setNewchatdrawer(true)
+    setState({ ...state, newchatdrawer: true })
     // fetch users available for chatting
     const res = await api('GET', '/allusers', {})
     console.log(res.data)
   }
 
-  const fetchPrevChats = async (chatid: string) => {
-    const res = await api(
-      'GET',
-      `prevchats?chat_id=${chatid}`,
-      { chat_id: chatid },
-      { 'Content-Type': 'application/json' }
-    )
-    setMessages(res.data.chats)
-  }
-
-  const submitNewBot = async (e: FormEvent) => {
-    e.preventDefault()
-    const res = await api('POST', 'newbot', { botname: botname })
-    setBotName('')
-    setNewBot(false)
-    console.log(res.data)
-    getUserBots()
-    // set active Chat and start new conversation
-    setActiveChat({
-      chat_id: '',
-      name: '',
-      type: 'bot',
-    })
-    socket.emit('client_message', { message: 'start' })
-  }
-
   const fetchRegisteredUsers = async () => {
     const res = await api('GET', 'getusers', {})
-    setRegUsers(res.data)
-  }
-
-  useEffect(() => {
-    const fetchActiveChatees = async () => {
-      const res = await api('GET', 'getchats', {})
-      if (res.status === 200) {
-        console.log(res.data)
-        setStartedChats(res.data.chats)
-      }
-    }
-    if (lsdbarActive === 'chat') {
-      fetchActiveChatees()
-    }
-  }, [lsdbarActive])
-
-  const updateStartedChats = async (user: any) => {
-    const res = await api('PUT', 'updatestartedchats', user)
-    // update active chat chatID
-    if (res.status === 200) {
-      const index = startedchats.findIndex(
-        (chat) => chat.chat_id === activechat.chat_id
-      )
-      const updatedChats = [...startedchats]
-      updatedChats[index] = {
-        ...updatedChats[index],
-        chat_id: res.data.chat_id,
-      }
-      setStartedChats(updatedChats)
-      setActiveChat({ ...activechat, chat_id: res.data.chat_id })
-    }
+    setState({ ...state, regusers: res.data })
   }
 
   return (
     <div className="chat">
-      {newBot ? (
+      {newbot ? (
         <div
           className="chatmodalpop"
           onClick={() => {
-            setNewBot(false)
+            setState({ ...state, newbot: true })
           }}
         >
           <div className="chatmodalinnercont_wrapper">
@@ -253,7 +278,7 @@ const Chat: React.FC = () => {
                     className="newbot_form_input"
                     value={botname}
                     onChange={(e) => {
-                      setBotName(e.target.value)
+                      setState({ ...state, botname: e.target.value })
                     }}
                   />
                 </div>
@@ -305,7 +330,7 @@ const Chat: React.FC = () => {
             <Arrow
               className="newChatDrawerCloseIc"
               onClick={() => {
-                setNewchatdrawer(false)
+                setState({ ...state, newchatdrawer: false })
               }}
             />
             <br />
@@ -315,25 +340,31 @@ const Chat: React.FC = () => {
                 className="wecare_it_user"
                 key={user.user_id + uuidv4()}
                 onClick={() => {
-                  setMessages([])
-                  setActiveChat({
-                    chat_id: user.user_id,
-                    name: user.full_name,
-                    type: 'chat',
-                  })
-                  updateStartedChats(user)
-                  setStartedChats([
-                    ...startedchats,
-                    {
+                  setState({ ...state, messages: [] })
+                  setState({
+                    ...state,
+                    activechat: {
                       chat_id: user.user_id,
                       name: user.full_name,
-                      last_message: '',
-                      unread_messages: 0,
-                      profile_url: '',
-                      last_seen: '',
-                      timestamp: '',
+                      type: 'chat',
                     },
-                  ])
+                  })
+                  updateStartedChats(user)
+                  setState({
+                    ...state,
+                    startedchats: [
+                      ...startedchats,
+                      {
+                        chat_id: user.user_id,
+                        name: user.full_name,
+                        last_message: '',
+                        unread_messages: 0,
+                        profile_url: '',
+                        last_seen: '',
+                        timestamp: '',
+                      },
+                    ],
+                  })
                 }}
                 style={{ alignItems: 'center' }}
               >
@@ -381,7 +412,7 @@ const Chat: React.FC = () => {
                 <div
                   className="lsbar_it_title"
                   onClick={() => {
-                    setlsdbarActive('bot')
+                    setState({ ...state, lsdbarActive: 'bot' })
                   }}
                 >
                   <span>chatbots</span>
@@ -394,11 +425,14 @@ const Chat: React.FC = () => {
                         className="wecare_it_user"
                         key={bot.bot_id + uuidv4()}
                         onClick={() => {
-                          setMessages([])
-                          setActiveChat({
-                            chat_id: bot.bot_id,
-                            name: bot.botname,
-                            type: 'bot',
+                          setState({
+                            ...state,
+                            messages: [],
+                            activechat: {
+                              chat_id: bot.bot_id,
+                              name: bot.botname,
+                              type: 'bot',
+                            },
                           })
                           fetchPrevChats(bot.bot_id)
                         }}
@@ -422,7 +456,10 @@ const Chat: React.FC = () => {
                     <span
                       className="lsdbar_new_chat"
                       onClick={() => {
-                        setNewBot(true)
+                        setState({
+                          ...state,
+                          newbot: true,
+                        })
                       }}
                     >
                       <Plus className="pa_plus_Ic" />
@@ -441,7 +478,10 @@ const Chat: React.FC = () => {
                 <div
                   className="lsbar_it_title"
                   onClick={() => {
-                    setlsdbarActive('chat')
+                    setState({
+                      ...state,
+                      lsdbarActive: 'chat',
+                    })
                   }}
                 >
                   <span>Therapists & Help</span>
@@ -464,10 +504,13 @@ const Chat: React.FC = () => {
                             className="wecare_it_user"
                             key={chat.chat_id + uuidv4()}
                             onClick={() => {
-                              setActiveChat({
-                                chat_id: chat.chat_id,
-                                name: chat.name,
-                                type: 'chat',
+                              setState({
+                                ...state,
+                                activechat: {
+                                  chat_id: chat.chat_id,
+                                  name: chat.name,
+                                  type: 'chat',
+                                },
                               })
                               fetchPrevChats(chat.chat_id)
                             }}
@@ -524,7 +567,9 @@ const Chat: React.FC = () => {
             handleSendMessage={handleSendMessage}
             messContRef={messContRef}
             messageInput={messageInput}
-            setMessageInput={setMessageInput}
+            setMessageInput={(mess: string) => {
+              setState({ ...state, messageInput: mess })
+            }}
           />
           <div className="rightSidebar"></div>
         </div>
@@ -533,4 +578,4 @@ const Chat: React.FC = () => {
   )
 }
 
-export default Chat
+export default Test

@@ -30,3 +30,23 @@ export interface StartedChats {
   last_seen: string
   timestamp: string
 }
+
+export interface Messages {}
+
+export interface StateTypes {
+  auth: Auth
+  activechat: ActiveChat
+  lsdbarActive: string
+  newchatdrawer: boolean
+  messages: {}[]
+  messageInput: string
+  typing: boolean
+  socket: any
+  newbot: boolean
+  botname: string
+  bots: []
+  regusers: []
+  startedchats: StartedChats[]
+  messContRef: any
+  myuserid: string
+}
