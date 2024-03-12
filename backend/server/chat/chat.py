@@ -38,8 +38,6 @@ def prevchats(current_user):
     # Use request.args to get parameters from the URL
     chat_id = request.args.get('chat_id')
     
-    print(chat_id)
-    
     if not chat_id:
         return jsonify({
             "message": "Please provide chat_id parameter",

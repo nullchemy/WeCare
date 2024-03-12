@@ -13,6 +13,8 @@ import session from '../utils/session'
 import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
 import { v4 as uuidv4 } from 'uuid'
 import Playarea from '../components/Playarea'
+import UploadImage from '../components/ImageUpload'
+import { toast } from 'react-toastify'
 
 const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
@@ -43,6 +45,7 @@ const Chat: React.FC = () => {
   const [regusers, setRegUsers] = useState<{}[]>([])
   const [startedchats, setStartedChats] = useState<StartedChats[]>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
+  const [profilePicUrl, setProfilePicUrl] = useState<string>('')
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -68,7 +71,7 @@ const Chat: React.FC = () => {
           receiver_id: activechat.chat_id,
           timestamp: '',
           message: messageInput,
-          level: '',
+          level: 'bot',
         })
       } else {
         socket.emit('chat_message', {
@@ -173,18 +176,25 @@ const Chat: React.FC = () => {
 
   const submitNewBot = async (e: FormEvent) => {
     e.preventDefault()
-    const res = await api('POST', 'newbot', { botname: botname })
-    setBotName('')
-    setNewBot(false)
-    console.log(res.data)
-    getUserBots()
-    // set active Chat and start new conversation
-    setActiveChat({
-      chat_id: '',
-      name: '',
-      type: 'bot',
-    })
-    socket.emit('client_message', { message: 'start' })
+    if (botname !== '') {
+      const res = await api('POST', 'newbot', {
+        botname: botname,
+        bot_profile_pic: profilePicUrl,
+      })
+      setBotName('')
+      setNewBot(false)
+      console.log(res.data)
+      getUserBots()
+      // set active Chat and start new conversation
+      setActiveChat({
+        chat_id: '',
+        name: '',
+        type: 'bot',
+      })
+      socket.emit('client_message', { message: 'start' })
+    } else {
+      toast('Bot has to have a name!', { type: 'error' })
+    }
   }
 
   const fetchRegisteredUsers = async () => {
@@ -245,6 +255,10 @@ const Chat: React.FC = () => {
                 }}
               >
                 <div className="newbot_form_group">
+                  <UploadImage
+                    profilePicUrl={profilePicUrl}
+                    setProfilePicUrl={setProfilePicUrl}
+                  />
                   <label htmlFor="bot name" className="new_form_label">
                     name your bot <span style={{ color: 'red' }}>*</span>
                   </label>
@@ -389,36 +403,51 @@ const Chat: React.FC = () => {
                 </div>
                 {lsdbarActive === 'bot' ? (
                   <div className="lsdbar_cat_cont">
-                    {bots.map((bot: { botname: string; bot_id: string }) => (
-                      <div
-                        className="wecare_it_user"
-                        key={bot.bot_id + uuidv4()}
-                        onClick={() => {
-                          setMessages([])
-                          setActiveChat({
-                            chat_id: bot.bot_id,
-                            name: bot.botname,
-                            type: 'bot',
-                          })
-                          fetchPrevChats(bot.bot_id)
-                        }}
-                        style={{ alignItems: 'center' }}
-                      >
-                        <div className="wecare_lsdbar_profile">
-                          <img
-                            src={UserPlaceholder}
-                            alt=""
-                            className="wecare_user_profile_sidebar"
-                          />
+                    {bots.map(
+                      (bot: {
+                        botname: string
+                        bot_id: string
+                        bot_profile_pic: string
+                      }) => (
+                        <div
+                          className="wecare_it_user"
+                          key={bot.bot_id + uuidv4()}
+                          onClick={() => {
+                            setMessages([])
+                            setActiveChat({
+                              chat_id: bot.bot_id,
+                              name: bot.botname,
+                              type: 'bot',
+                            })
+                            fetchPrevChats(bot.bot_id)
+                          }}
+                          style={{ alignItems: 'center' }}
+                        >
+                          <div className="wecare_lsdbar_profile">
+                            <img
+                              src={
+                                bot.bot_profile_pic !== ''
+                                  ? bot.bot_profile_pic
+                                  : UserPlaceholder
+                              }
+                              alt=""
+                              className="wecare_user_profile_sidebar"
+                              style={
+                                bot.bot_profile_pic !== ''
+                                  ? { marginTop: '0px' }
+                                  : {}
+                              }
+                            />
+                          </div>
+                          <div className="lsdbar_user_profile_texts">
+                            <h2 className="lsdbar_user_name">{bot.botname}</h2>
+                          </div>
+                          <div className="lsdbar_user_profile_meta">
+                            <span className="lsdbar_lst_time">{}</span>
+                          </div>
                         </div>
-                        <div className="lsdbar_user_profile_texts">
-                          <h2 className="lsdbar_user_name">{bot.botname}</h2>
-                        </div>
-                        <div className="lsdbar_user_profile_meta">
-                          <span className="lsdbar_lst_time">{}</span>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                     <span
                       className="lsdbar_new_chat"
                       onClick={() => {

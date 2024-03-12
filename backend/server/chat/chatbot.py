@@ -50,6 +50,7 @@ helpline_message = "In times of severe distress where you need to speak with som
 
 def printmd(string):
     socketio.emit('typing', {'response': False})
+    text = text.replace("Gemini", "Benn")
     response = {
         "message_id": str(uuid.uuid4()),
         "sender_id": '',
@@ -85,7 +86,6 @@ def load_suicide_tokenizer_and_model(tokenizer="google/electra-base-discriminato
 
 def check_intent(text):
   global suicide_tokenizer, suicide_model
-  print('Running generating response')
   socketio.emit('typing', {'response': True})
   if suicide_tokenizer is None or suicide_model is None:
         socketio.emit('info', {'response': Markdown('Loading Suicide model...').data})

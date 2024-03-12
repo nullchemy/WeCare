@@ -19,6 +19,7 @@ export interface ActiveChat {
 export interface Bot {
   botname: string
   bot_id: string
+  bot_profile_pic: string
 }
 
 export interface StartedChats {
@@ -49,4 +50,5 @@ export interface StateTypes {
   startedchats: StartedChats[]
   messContRef: any
   myuserid: string
+  profilePicUrl: string
 }

@@ -412,6 +412,9 @@
   overflow: hidden !important;
   cursor: pointer;
 }
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .incoming_message .helpline_message {
+  background-color: #92d0ff !important;
+}
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .incoming_message .in_mess_content {
   margin-left: 10px;
   background-color: var(--background-modals);

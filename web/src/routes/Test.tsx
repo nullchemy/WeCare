@@ -1,4 +1,5 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import '../styles/css/chat.css'
 import Playarea from '../components/Playarea'
 import api from '../api/axios'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
@@ -44,6 +45,7 @@ const Test = () => {
     startedchats: [],
     messContRef: useRef<HTMLDivElement | null>(null),
     myuserid: '',
+    profilePicUrl: '',
   })
   const {
     auth,
@@ -181,13 +183,14 @@ const Test = () => {
         newSocket.disconnect()
       }
     }
-  }, [messContRef, state])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     // fetch User's Bots
     getUserBots()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bots])
+  }, [])
 
   useEffect(() => {
     if (socket) {
@@ -211,7 +214,6 @@ const Test = () => {
             ],
           })
           // add chat to chatslist if active chat equals to user's id
-          console.log(activechat.chat_id === data.chat_id)
           if (activechat.chat_id === data.chat_id) {
             setState({
               ...state,
@@ -270,6 +272,11 @@ const Test = () => {
                 }}
               >
                 <div className="newbot_form_group">
+                  {/* <UploadImage
+                    state={state}
+                    profilePicUrl={profilePicUrl}
+                    setProfilePicUrl={setState}
+                  /> */}
                   <label htmlFor="bot name" className="new_form_label">
                     name your bot <span style={{ color: 'red' }}>*</span>
                   </label>

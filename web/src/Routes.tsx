@@ -18,13 +18,8 @@ const router = createBrowserRouter(
       <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
       <Route path="/auth" element={<Auth />} errorElement={<ErrorBoundary />} />
       <Route path="*" element={<NotFound />} errorElement={<ErrorBoundary />} />
-        <Route
-          path="/chat"
-          element={<Chat />}
-          errorElement={<ErrorBoundary />}
-        />
-      <Route element={<ProtectedRoutes />}>
-      </Route>
+      <Route path="/chat" element={<Chat />} errorElement={<ErrorBoundary />} />
+      <Route element={<ProtectedRoutes />}></Route>
     </>
   )
 )

@@ -3,12 +3,15 @@ import redis
 import os
 import uuid
 import json
+import random
 from datetime import datetime,timezone
 import google.generativeai as genai
 from IPython.display import Markdown, display
 from ..auth_middleware import token_required
 from ..sockets import socketio
 from ..extensions import mongo
+from .helpline_messages import helpline_message, prevention_messages, start_message
+from .suicide_model import check_intent, initialize_model, cleanup
 
 gemini = Blueprint('gemini', __name__)
 
@@ -31,6 +34,8 @@ except redis.ConnectionError as e:
 # Global variables
 chatid = None
 user_id= None
+receiver_id = None
+sender_id = None
 
 # Set up the model
 generation_config = {
@@ -43,19 +48,19 @@ generation_config = {
 safety_settings = [
   {
     "category": "HARM_CATEGORY_HARASSMENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    "threshold": "BLOCK_NONE"
   },
   {
     "category": "HARM_CATEGORY_HATE_SPEECH",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    "threshold": "BLOCK_NONE"
   },
   {
     "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    "threshold": "BLOCK_NONE"
   },
   {
     "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    "threshold": "BLOCK_NONE"
   },
 ]
 
@@ -77,16 +82,21 @@ def get_model_response(user_input):
     convo.send_message(user_input)
     return convo.last.text
 
-def printmd(string):
+def printmd(string, level="bot"):
     socketio.emit('typing', {'response': False})
+    print(string)
+    string = string.replace("Gemini", "Benn")
+    string = string.replace("I am a large language model, trained by Google.", "")
+    string = string.replace("trained by Google", "")
+    string = string.replace("I am a large language model,", "")
     response = {
+        "chat_id": chatid,
         "message_id": str(uuid.uuid4()),
-        "sender_id": '',
-        "receiver_id": '',
+        "sender_id": receiver_id,
+        "receiver_id": sender_id,
         "timestamp": datetime.now(timezone.utc).timestamp() * 1000,
         "message": str(Markdown(string).data),
-        "level": 'bot',
-        "status": 'sent',
+        "level": level
       }
     # save response to database
     botchats_collection = mongo.db.botchats
@@ -102,15 +112,16 @@ def printmd(string):
 @token_required
 def gemini_chat(current_user, message):
     print('Gemini Endpoint Hit⚡⚡⚡')
-    global chatid, user_id
+    global chatid, user_id, receiver_id, sender_id
     botchats_collection = mongo.db.botchats
-    print(message)
     # create chat ID
     message['message_id'] = str(uuid.uuid4())
     message['sender_id'] = current_user['user_id']
     message['timestamp'] = datetime.now(timezone.utc).timestamp() * 1000
     message['level'] = 'bot'
     message['status'] = 'sent'
+    receiver_id = message['receiver_id']
+    sender_id = current_user['user_id']
     # save message to database
     botchats_collection.update_one(
             {'chat_id': message.get('chat_id')},
@@ -121,13 +132,40 @@ def gemini_chat(current_user, message):
     if user_id is None:
         user_id = current_user['user_id']
     socketio.emit('typing', {'response': True})
+    message_input = message.get('message')
+    if "name" in message_input:
+      message_input = message.get('message')+', just tell me your name without explaining yourself or adding extra explanations to it. in short i just want the name'
+    print(message_input)
     # Get the model response to the user's message
-    model_response = get_model_response(message.get('message'))
+    model_response = get_model_response(message_input)
     # update chat history
-    update_chat_history(current_user['user_id'], json.dumps({'role': 'user', 'parts': [message.get('message')]}))
-    update_chat_history(current_user['user_id'], json.dumps({'role': 'model', 'parts': [model_response]}))
+    update_chat_history(chatid, json.dumps({'role': 'user', 'parts': [message.get('message')]}))
+    update_chat_history(chatid, json.dumps({'role': 'model', 'parts': [model_response]}))
     # Emit the response back to the client
     printmd(model_response)
+    # check suicidal intent
+    if check_intent(message.get('message')):
+          printmd(format(random.choice(prevention_messages)))
+          socketio.emit('typing', {'response': True})
+          printmd(format(helpline_message), 'helpline_message')
+
+# initialize and prestart Suicide Model
+@socketio.on('model_start')
+@token_required
+def model_start(current_user, message):
+  print('Initialize Suicide Model Endpoint Hit⚡⚡⚡')
+  initialize_model()
+
+
+@gemini.route('/clearchat', methods=['POST'])
+@token_required
+def clear_chat(current_user, chat):
+  result = redis_client.delete(current_user['user_id'])
+  if result > 0:
+      print(f"Key '{key_to_clear}' cleared from the Redis cache.")
+  else:
+      print(f"Key '{key_to_clear}' not found in the Redis cache.")
+
 
 if __name__ == '__main__':
     from app import app, socketio

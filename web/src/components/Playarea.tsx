@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, RefObject } from 'react'
+import React, { FC, FormEvent, RefObject, useEffect } from 'react'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Send } from '../assets/svg/send.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
@@ -37,6 +37,23 @@ const Playarea: FC<PlayareaProps> = ({
   messContRef,
 }) => {
   const myRef = React.createRef<SyntaxHighlighter>()
+  useEffect(() => {
+    messContRef.current?.scrollIntoView()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+    messContRef.current?.scrollIntoView()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typing])
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      if (messageInput !== '') {
+        handleSendMessage(event)
+      }
+    }
+  }
   return (
     <div className="playarea">
       {activechat.chat_id === '' ? (
@@ -123,7 +140,13 @@ const Playarea: FC<PlayareaProps> = ({
                     <div className="in_mess_sender_profile">
                       <img src={UserPlaceholder} alt="" />
                     </div>
-                    <div className="in_mess_content">
+                    <div
+                      className={
+                        chat.level === 'helpline_message'
+                          ? 'in_mess_content helpline_message'
+                          : 'in_mess_content'
+                      }
+                    >
                       <div className="inc_mess_meta">
                         <span className="inc_sender_name">
                           {activechat.name}
@@ -204,6 +227,7 @@ const Playarea: FC<PlayareaProps> = ({
                   <textarea
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Type a message..."
                     className="pa_chat_input"
                   ></textarea>

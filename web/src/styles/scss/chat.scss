@@ -392,6 +392,7 @@
               flex-direction: column;
               width: 100%;
               flex: 1;
+
               .incoming_message {
                 display: flex;
                 align-items: flex-start;
@@ -405,6 +406,9 @@
                   border-radius: 50%;
                   overflow: hidden !important;
                   cursor: pointer;
+                }
+                .helpline_message {
+                  background-color: #92d0ff !important;
                 }
                 .in_mess_content {
                   margin-left: 10px;
