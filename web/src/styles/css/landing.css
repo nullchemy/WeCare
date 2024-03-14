@@ -3,7 +3,7 @@
 }
 
 .landing {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 143px);
 }
 .landing .landing_container .landing_wrapper .landing_relative .landing_center_wrap {
   width: auto;
@@ -107,6 +107,7 @@
   transition: 0.4s;
   width: -moz-max-content;
   width: max-content;
+  margin-top: 3.5rem;
 }
 
 @keyframes blink {

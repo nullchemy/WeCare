@@ -324,6 +324,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_left {
   display: flex;
@@ -365,6 +366,38 @@
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_right .three_vertical_dots {
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+  padding: 7px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 3px;
+}
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_right .three_vertical_dots:hover {
+  background-color: rgba(65, 65, 65, 0.5921568627);
+}
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_pop_up {
+  position: absolute;
+  right: 10px;
+  top: 50px;
+  z-index: 999;
+  background-color: #fff;
+  height: -moz-min-content;
+  height: min-content;
+  width: 150px;
+  box-shadow: 0px 2px 8px rgba(77, 77, 77, 0.568627451);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_pop_up ul li {
+  padding: 5px 5px 5px 10px;
+  cursor: pointer;
+}
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_pop_up ul li:hover {
+  background-color: rgba(137, 137, 137, 0.5921568627);
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle {
   height: calc(100vh - 94px - 35px - 50px);

@@ -12,6 +12,14 @@ const Header = () => {
               <h2>WeCare</h2>
             </div>
             <div className="header_right">
+              <Link to="/about">About</Link>
+              <a
+                href="https://denniskibet.netlify.app"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Developer
+              </a>
               <Link to="/auth" className="header_login_btn">
                 login
               </Link>

@@ -7,6 +7,7 @@ import { useAppDispatch } from '../state/hooks'
 import { setIsLogged } from '../state/actions/loggedAction'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import ImageUpload from '../utils/ImageUpload'
+import { toast } from 'react-toastify'
 
 const Auth = () => {
   const [isRegistering, setRegistering] = useState(false)
@@ -22,7 +23,6 @@ const Auth = () => {
   const [profilePicUrl, setProfilePicUrl] = useState<string>('')
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [err, setErr] = useState('')
   const navigate = useNavigate()
   let location = useLocation()
   const dispatch = useAppDispatch()
@@ -42,7 +42,7 @@ const Auth = () => {
     if (isRegistering) {
       // Handle registration
       if (formData.password !== formData.confirm_password) {
-        setErr('Passwords do not match.')
+        toast('Passwords do not match.', { type: 'warning' })
         return
       }
       // Add your registration logic here
@@ -50,8 +50,8 @@ const Auth = () => {
       const res: any = await api('POST', 'auth/register', formData)
       setLoading(false)
       if (res) {
-        if (res.data && res.status === 201) {
-          setErr(res.data.message)
+        if (res.status === 201) {
+          toast(res.data.message, { type: 'success' })
           //set logged in state
           session.save(JSON.stringify(res.data))
           dispatch(setIsLogged(true))
@@ -59,29 +59,31 @@ const Auth = () => {
             setUploadImage(true)
           }, 1000)
         } else {
-          setErr(res.data.message)
+          toast(res.data.message, { type: 'error' })
         }
       } else {
-        setErr('Something wrong happened!')
+        toast('Something wrong happened! Please retry', { type: 'error' })
       }
     } else {
       // Handle login Logic
-      setLoading(true)
-      const res: any = await api('POST', 'auth/login', formData)
-      setLoading(false)
-      if (res.data && res.data.status) {
-        setErr('')
-        let from = location.state?.from?.pathname || '/chat'
-        console.log(res.data)
-        //set logged in state
-        session.save(JSON.stringify(res.data))
-        dispatch(setIsLogged(true))
-        //redirect user to chatpage
-        return navigate(from, { replace: true })
-      } else {
-        setErr(
-          res.data ? res.data.message : 'Something wrong happened! Please retry'
-        )
+      try {
+        setLoading(true)
+        const res: any = await api('POST', 'auth/login', formData)
+        setLoading(false)
+        if (res.status === 200) {
+          toast(res.data.message, { type: 'success' })
+          let from = location.state?.from?.pathname || '/chat'
+          console.log(res.data)
+          //set logged in state
+          session.save(JSON.stringify(res.data))
+          dispatch(setIsLogged(true))
+          //redirect user to chatpage
+          return navigate(from, { replace: true })
+        } else {
+          toast(res.data.message, { type: 'error' })
+        }
+      } catch (error) {
+        toast('Something wrong happened! Please retry', { type: 'error' })
       }
     }
   }
@@ -122,50 +124,59 @@ const Auth = () => {
           {!uploadImage ? (
             <div className="auth_details">
               <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-              <p className="error_info">{err}</p>
               <form onSubmit={handleSubmit}>
                 {!isRegistering && (
-                  <input
-                    type="text"
-                    name="email_or_user_id"
-                    placeholder="Email or User ID"
-                    value={formData.email_or_user_id}
-                    onChange={handleFormChange}
-                  />
+                  <div className="form_group">
+                    <input
+                      type="text"
+                      name="email_or_user_id"
+                      placeholder="Email or User ID"
+                      value={formData.email_or_user_id}
+                      onChange={handleFormChange}
+                    />
+                  </div>
                 )}
                 {isRegistering && (
-                  <input
-                    type="text"
-                    name="full_name"
-                    placeholder="Full Name"
-                    value={formData.full_name}
-                    onChange={handleFormChange}
-                  />
+                  <div className="form_group">
+                    <input
+                      type="text"
+                      name="full_name"
+                      placeholder="Full Name"
+                      value={formData.full_name}
+                      onChange={handleFormChange}
+                    />
+                  </div>
                 )}
                 {isRegistering && (
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleFormChange}
-                  />
+                  <div className="form_group">
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleFormChange}
+                    />
+                  </div>
                 )}
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleFormChange}
-                />
-                {isRegistering && (
+                <div className="form_group">
                   <input
                     type="password"
-                    name="confirm_password"
-                    placeholder="Confirm Password"
-                    value={formData.confirm_password}
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
                     onChange={handleFormChange}
                   />
+                </div>
+                {isRegistering && (
+                  <div className="form_group">
+                    <input
+                      type="password"
+                      name="confirm_password"
+                      placeholder="Confirm Password"
+                      value={formData.confirm_password}
+                      onChange={handleFormChange}
+                    />
+                  </div>
                 )}
                 <button type="submit">
                   {loading ? (

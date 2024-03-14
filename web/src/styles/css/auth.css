@@ -7,7 +7,7 @@
   position: relative;
 }
 .auth .auth-form {
-  width: 300px;
+  width: 400px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -17,9 +17,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, var(--background-color-one) 0%, var(--background-color-two) 20%, var(--background-color-three) 100%);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 .auth .auth-form h2 {
-  margin: 0 0 10px;
+  margin: 0 0 30px 0;
+  font-weight: 600;
+  font-size: 2rem;
+  font-family: "Courier New", Courier, monospace;
 }
 .auth .auth-form .error_info {
   color: red;
@@ -29,22 +34,35 @@
   display: flex;
   flex-direction: column;
 }
-.auth .auth-form form input {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
+.auth .auth-form form .form_group {
+  width: 100%;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #848484;
   border-radius: 5px;
+  overflow: hidden;
+}
+.auth .auth-form form .form_group input {
+  width: calc(100% - 40px);
+  padding: 10px 20px;
+  border: none;
+  font-size: 1.2rem;
 }
 .auth .auth-form form button {
   background-color: #007bff;
   color: #fff;
-  padding: 10px;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 23px;
   cursor: pointer;
+  margin-bottom: 2rem;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
 }
 .auth .auth-form p {
   margin-top: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.1rem;
 }
 .auth .auth-form p span {
   cursor: pointer;

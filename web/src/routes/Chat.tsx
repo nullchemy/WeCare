@@ -15,6 +15,8 @@ import { v4 as uuidv4 } from 'uuid'
 import Playarea from '../components/Playarea'
 import UploadImage from '../components/ImageUpload'
 import { toast } from 'react-toastify'
+import { setIsLogged } from '../state/actions/loggedAction'
+import { useAppDispatch } from '../state/hooks'
 
 const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
@@ -47,6 +49,7 @@ const Chat: React.FC = () => {
   const messContRef = useRef<HTMLDivElement | null>(null)
   const [profilePicUrl, setProfilePicUrl] = useState<string>('')
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
+  const dispatch = useAppDispatch()
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -303,6 +306,7 @@ const Chat: React.FC = () => {
               to="/"
               className="btn"
               onClick={() => {
+                dispatch(setIsLogged(false))
                 Cookies.remove('auth')
               }}
             >

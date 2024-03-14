@@ -1,6 +1,7 @@
-import React, { FC, FormEvent, RefObject, useEffect } from 'react'
+import React, { FC, FormEvent, RefObject, useEffect, useState } from 'react'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Send } from '../assets/svg/send.svg'
+import { ReactComponent as Ellipsis } from '../assets/svg/ellipsis-vertical.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import formatTimestamp from '../utils/time'
 import ReactMarkdown from 'react-markdown'
@@ -9,6 +10,7 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { v4 as uuidv4 } from 'uuid'
+import api from '../api/axios'
 
 interface ActiveChat {
   chat_id: string
@@ -37,6 +39,7 @@ const Playarea: FC<PlayareaProps> = ({
   messContRef,
 }) => {
   const myRef = React.createRef<SyntaxHighlighter>()
+  const [togglechateepop, setToggleChateePop] = useState<boolean>(false)
   useEffect(() => {
     messContRef.current?.scrollIntoView()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +56,10 @@ const Playarea: FC<PlayareaProps> = ({
         handleSendMessage(event)
       }
     }
+  }
+  const clearChat = async () => {
+    const res = await api('POST', 'clearchat', { chatid: activechat.chat_id })
+    console.log(res.data)
   }
   return (
     <div className="playarea">
@@ -76,6 +83,29 @@ const Playarea: FC<PlayareaProps> = ({
                 <h2>{activechat.name}</h2>
                 <span className="active_chatee_ls">online</span>
               </div>
+            </div>
+            <div className="active_chatee_right">
+              <Ellipsis
+                className="three_vertical_dots"
+                onClick={() => {
+                  setToggleChateePop(!togglechateepop)
+                }}
+              />
+            </div>
+            <div
+              className={
+                togglechateepop
+                  ? 'active_chatee_pop_up'
+                  : 'active_chatee_pop_up hide'
+              }
+              onClick={() => {
+                setToggleChateePop(!togglechateepop)
+                clearChat()
+              }}
+            >
+              <ul>
+                <li>clear chat</li>
+              </ul>
             </div>
           </div>
           <div className="pa_middle">
@@ -119,6 +149,38 @@ const Playarea: FC<PlayareaProps> = ({
                                   <code {...props} className={className}>
                                     {children}
                                   </code>
+                                )
+                              },
+                              a: (props: any) => {
+                                const isPhoneNumber = /^\d{10}$/.test(
+                                  props.href
+                                )
+                                const target = props.href.startsWith('tel:')
+                                  ? '_self'
+                                  : '_blank'
+
+                                if (isPhoneNumber) {
+                                  return (
+                                    <a
+                                      href={`tel:${props.href}`}
+                                      style={{
+                                        textDecoration: 'unset',
+                                        color: 'blue !important',
+                                      }}
+                                    >
+                                      {props.children}
+                                    </a>
+                                  )
+                                }
+
+                                return (
+                                  <a
+                                    href={props.href}
+                                    target={target}
+                                    rel="noopener noreferrer"
+                                  >
+                                    {props.children}
+                                  </a>
                                 )
                               },
                             }}

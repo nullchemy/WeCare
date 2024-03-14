@@ -160,11 +160,13 @@ def model_start(current_user, message):
 @gemini.route('/clearchat', methods=['POST'])
 @token_required
 def clear_chat(current_user, chat):
+  print("Endpoint Hit ⚡⚡ [ClearChat]")
   result = redis_client.delete(current_user['user_id'])
   if result > 0:
       print(f"Key '{key_to_clear}' cleared from the Redis cache.")
   else:
       print(f"Key '{key_to_clear}' not found in the Redis cache.")
+  return {'message': 'Endpoint Hit'}
 
 
 if __name__ == '__main__':

@@ -14,6 +14,14 @@
 .header .header_container .header_wrapper .header_left h2 {
   font-family: "IBM Plex Mono", monospace;
 }
+.header .header_container .header_wrapper .header_right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.header .header_container .header_wrapper .header_right a {
+  font-weight: 600;
+}
 .header .header_container .header_wrapper .header_right .header_login_btn {
   display: flex;
   align-items: center;
@@ -32,4 +40,5 @@
   transition: 0.4s;
   width: -moz-max-content;
   width: max-content;
+  margin-left: 40px;
 }/*# sourceMappingURL=header.css.map */

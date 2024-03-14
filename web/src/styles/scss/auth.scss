@@ -6,7 +6,7 @@
   height: 100vh;
   position: relative;
   .auth-form {
-    width: 300px;
+    width: 400px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -16,8 +16,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: linear-gradient(
+      180deg,
+      var(--background-color-one) 0%,
+      var(--background-color-two) 20%,
+      var(--background-color-three) 100%
+    );
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+      rgba(0, 0, 0, 0.22) 0px 10px 10px;
     h2 {
-      margin: 0 0 10px;
+      margin: 0 0 30px 0;
+      font-weight: 600;
+      font-size: 2rem;
+      font-family: 'Courier New', Courier, monospace;
     }
     .error_info {
       color: red;
@@ -27,26 +38,39 @@
     form {
       display: flex;
       flex-direction: column;
-
-      input {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
+      .form_group {
+        width: 100%;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #848484;
         border-radius: 5px;
+        overflow: hidden;
+        input {
+          width: calc(100% - 40px);
+          padding: 10px 20px;
+          border: none;
+
+          font-size: 1.2rem;
+        }
       }
 
       button {
         background-color: #007bff;
         color: #fff;
-        padding: 10px;
+        padding: 15px;
         border: none;
-        border-radius: 5px;
+        border-radius: 23px;
         cursor: pointer;
+        margin-bottom: 2rem;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+        text-transform: uppercase;
       }
     }
 
     p {
       margin-top: 10px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.1rem;
       span {
         cursor: pointer;
         color: #007bff;

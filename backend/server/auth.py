@@ -50,6 +50,12 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
+    # Check for duplicate email before insertion
+    email_exists = users_collection.find_one({"email": email})
+    if email_exists:
+        return jsonify({"message": "User already registered. Please try a different email address."}), 400
+
+
     # Save user details to the database
     user_data = {
         'user_id': user_id,
@@ -72,7 +78,7 @@ def register():
         print("Insertion successful. Token generated")
         return jsonify({"message": "User registered successfully!", "status": True, "token": token, "meta": {"user_id": user_id, "full_name": full_name, "email": email}}), 201
     else:
-        print("Insertion failed.")
+        print("Insertion failed. Reason:", result.raw_result)
         return jsonify({"message": "User registration failed!"}), 500
 
 
@@ -102,7 +108,6 @@ def login():
             current_app.config["SECRET_KEY"],
             algorithm="HS256"
         )
-        print(user)
 
         return jsonify({"message": "Login successful", "status": True, "token": token, "meta": {"user_id": user["user_id"], "full_name": user["full_name"], "email": user['email'], "profile_url": user["profile_url"]}}), 200
 

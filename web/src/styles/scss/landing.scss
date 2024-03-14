@@ -2,12 +2,10 @@
   --green110: #00cd51;
 }
 .landing {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 143px);
   .landing_container {
     .landing_wrapper {
       .landing_relative {
-        .landing_particles {
-        }
         .landing_center_wrap {
           width: auto;
           margin: 3% auto;
@@ -122,6 +120,7 @@
             padding: 5px 20px;
             transition: 0.4s;
             width: max-content;
+            margin-top: 3.5rem;
           }
         }
       }

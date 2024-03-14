@@ -12,6 +12,12 @@
         }
       }
       .header_right {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        a {
+          font-weight: 600;
+        }
         .header_login_btn {
           display: flex;
           align-items: center;
@@ -34,6 +40,7 @@
           padding: 5px 20px;
           transition: 0.4s;
           width: max-content;
+          margin-left: 40px;
         }
       }
     }

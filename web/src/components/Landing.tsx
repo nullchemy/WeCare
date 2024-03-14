@@ -51,11 +51,11 @@ const Landing = () => {
                 </span>
                 chat-app
               </h1>
-              <p className="landing_intro_explainer">
+              {/* <p className="landing_intro_explainer">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo a
                 nesciunt voluptatem aut in aspernatur ipsum natus, neque amet
                 nemo eos iure mollitia saepe fugiat.
-              </p>
+              </p> */}
               <Link className="landing_cta_btn" to="/chat">
                 get started
               </Link>
