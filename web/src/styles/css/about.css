@@ -1,0 +1,23 @@
+.about {
+  height: 100vh;
+}
+.about .about_container {
+  margin: 0 5%;
+}
+.about .about_container .about_wrapper {
+  padding: 2rem 0;
+}
+.about .about_container .about_wrapper .about_header_title {
+  color: var(--text-color);
+  font-size: 4rem;
+  font-weight: 600;
+  font-family: "IBM Plex Mono", monospace;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.about .about_container .about_wrapper .about_paragraphs {
+  font-family: Apercu, Roboto, "Courier New", Courier, monospace;
+  font-size: 1.25rem;
+  font-weight: 200;
+  margin-bottom: 2rem;
+}/*# sourceMappingURL=about.css.map */
