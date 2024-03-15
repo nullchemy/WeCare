@@ -51,19 +51,27 @@ const Chat: React.FC = () => {
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
   const dispatch = useAppDispatch()
 
+  const joinRoom = (room = [myuserid, activechat.chat_id].sort().join('|')) => {
+    socket.emit('join_room', { full_name: activechat.name, room: room })
+  }
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     // add message to the arr
-    setMessages([
-      ...messages,
-      {
-        timestamp: Date.now(),
-        sender_id: myuserid,
-        sendername: auth.meta.full_name ? auth.meta.full_name : '',
-        level: 'user',
-        message: messageInput,
-      },
-    ])
+    if (activechat.type === 'bot') {
+      setMessages([
+        ...messages,
+        {
+          timestamp: Date.now(),
+          sender_id: myuserid,
+          sendername: auth.meta.full_name ? auth.meta.full_name : '',
+          level: 'user',
+          message: messageInput,
+        },
+      ])
+    } else {
+      joinRoom()
+    }
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
       if (activechat.type === 'bot') {
@@ -86,6 +94,7 @@ const Chat: React.FC = () => {
           timestamp: '',
           message: messageInput,
           level: '',
+          room: [myuserid, activechat.chat_id].sort().join('|'),
         })
       }
       setMessageInput('')
@@ -95,8 +104,9 @@ const Chat: React.FC = () => {
 
   const getUserBots = async () => {
     const res = await api('GET', 'mybots', {})
-    console.log(res)
-    setBots(res ? res.data.user_bots : [])
+    if (res.status === 200) {
+      setBots(res ? res.data.user_bots : [])
+    }
   }
 
   useEffect(() => {
@@ -128,23 +138,11 @@ const Chat: React.FC = () => {
       socket.on('response', (data: any) => {
         console.log(data)
         if (data && typeof data !== 'string' && data.level === 'chat') {
-          // setting started message
-          setStartedChats([
-            ...startedchats,
-            {
-              chat_id: data.chat_id,
-              name: data.full_name,
-              last_message: data.message,
-              unread_messages: 1,
-              profile_url: '',
-              last_seen: '',
-              timestamp: data.timestamp,
-            },
-          ])
           // add chat to chatslist if active chat equals to user's id
           console.log(activechat.chat_id === data.chat_id)
+          setMessages((prevMessages) => [...prevMessages, data])
           if (activechat.chat_id === data.chat_id) {
-            setMessages((prevMessages) => [...prevMessages, data])
+            console.log(data)
             console.log('it is active ')
           }
         } else {
@@ -155,6 +153,23 @@ const Chat: React.FC = () => {
       socket.on('typing', (data: any) => {
         setTyping(data.response)
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
+      })
+      socket.on('open_room', (data: any) => {
+        console.log(data)
+
+        // setting started message
+        setStartedChats([
+          ...startedchats,
+          {
+            chat_id: data.chat_id,
+            name: data.full_name,
+            last_message: data.message,
+            unread_messages: 1,
+            profile_url: '',
+            last_seen: '',
+            timestamp: data.timestamp,
+          },
+        ])
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,14 +182,16 @@ const Chat: React.FC = () => {
     console.log(res.data)
   }
 
-  const fetchPrevChats = async (chatid: string) => {
+  const fetchPrevChats = async (chatid: string, context: string) => {
     const res = await api(
       'GET',
-      `prevchats?chat_id=${chatid}`,
+      `prevchats?chat_id=${chatid}&context=${context}`,
       { chat_id: chatid },
       { 'Content-Type': 'application/json' }
     )
-    setMessages(res.data.chats)
+    if (res.status === 200) {
+      setMessages(res.data.chats)
+    }
   }
 
   const submitNewBot = async (e: FormEvent) => {
@@ -339,19 +356,19 @@ const Chat: React.FC = () => {
                     name: user.full_name,
                     type: 'chat',
                   })
-                  updateStartedChats(user)
-                  setStartedChats([
-                    ...startedchats,
-                    {
-                      chat_id: user.user_id,
-                      name: user.full_name,
-                      last_message: '',
-                      unread_messages: 0,
-                      profile_url: '',
-                      last_seen: '',
-                      timestamp: '',
-                    },
-                  ])
+                  // updateStartedChats(user)
+                  // setStartedChats([
+                  //   ...startedchats,
+                  //   {
+                  //     chat_id: user.user_id,
+                  //     name: user.full_name,
+                  //     last_message: '',
+                  //     unread_messages: 0,
+                  //     profile_url: '',
+                  //     last_seen: '',
+                  //     timestamp: '',
+                  //   },
+                  // ])
                 }}
                 style={{ alignItems: 'center' }}
               >
@@ -423,7 +440,7 @@ const Chat: React.FC = () => {
                               name: bot.botname,
                               type: 'bot',
                             })
-                            fetchPrevChats(bot.bot_id)
+                            fetchPrevChats(bot.bot_id, 'bot')
                           }}
                           style={{ alignItems: 'center' }}
                         >
@@ -482,7 +499,11 @@ const Chat: React.FC = () => {
                 </div>
                 {lsdbarActive === 'chat' ? (
                   <div className="lsdbar_cat_cont">
-                    {startedchats.map(
+                    {Array.from(
+                      new Map(
+                        startedchats.map((chat: any) => [chat.chat_id, chat])
+                      ).values()
+                    ).map(
                       (chat: {
                         chat_id: string
                         name: string
@@ -502,7 +523,7 @@ const Chat: React.FC = () => {
                                 name: chat.name,
                                 type: 'chat',
                               })
-                              fetchPrevChats(chat.chat_id)
+                              fetchPrevChats(chat.chat_id, 'chat')
                             }}
                           >
                             <div className="wecare_lsdbar_profile">
@@ -552,6 +573,7 @@ const Chat: React.FC = () => {
           <Playarea
             activechat={activechat}
             messages={messages}
+            setMessages={setMessages}
             typing={typing}
             myuserid={myuserid}
             handleSendMessage={handleSendMessage}

@@ -163,6 +163,7 @@ const Auth = () => {
                     type="password"
                     name="password"
                     placeholder="Password"
+                    autoComplete="new-password"
                     value={formData.password}
                     onChange={handleFormChange}
                   />
@@ -173,6 +174,7 @@ const Auth = () => {
                       type="password"
                       name="confirm_password"
                       placeholder="Confirm Password"
+                      autoComplete="new-password"
                       value={formData.confirm_password}
                       onChange={handleFormChange}
                     />

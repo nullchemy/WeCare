@@ -159,14 +159,25 @@ def model_start(current_user, message):
 
 @gemini.route('/clearchat', methods=['POST'])
 @token_required
-def clear_chat(current_user, chat):
+def clear_chat(current_user):
   print("Endpoint Hit ⚡⚡ [ClearChat]")
-  result = redis_client.delete(current_user['user_id'])
+  botchats_collection = mongo.db.botchats
+  message = request.get_json()
+  my_user_id = current_user['user_id']
+  result = redis_client.delete(my_user_id)
+
   if result > 0:
-      print(f"Key '{key_to_clear}' cleared from the Redis cache.")
+      print(f"Key '{my_user_id}' cleared from the Redis cache.")
   else:
-      print(f"Key '{key_to_clear}' not found in the Redis cache.")
-  return {'message': 'Endpoint Hit'}
+      print(f"Key '{my_user_id}' not found in the Redis cache.")
+  try:
+    db_result = botchats_collection.update_one(
+      {'chat_id': message.get('chatid')},
+      {'$set': {'chats': []}}
+    )
+    return {'message': 'Success fully cleared messages!'}, 200
+  except Exception as e:
+    print("Failed to Clear chats from Database:", e)
 
 
 if __name__ == '__main__':

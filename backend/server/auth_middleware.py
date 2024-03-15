@@ -19,6 +19,7 @@ def token_required(f):
                 }, 401
         try:
             users_collection = mongo.db.users
+            print(token)
             data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
             current_user = users_collection.find_one(data)
             
@@ -34,7 +35,12 @@ def token_required(f):
                 }, 401
 
             if not current_user['active']:
-                abort(403)
+                print("User account has been deactivated! Contact admin")
+                return {
+                    "message": "User account has been deactivated! Contact admin",
+                    "data": None,
+                    "error": "Forbidden"
+                }, 403
 
         except jwt.ExpiredSignatureError:
             return {
@@ -52,9 +58,9 @@ def token_required(f):
             }, 401
 
         except Exception as e:
-            print("Something went wrong: " + str(e))
+            print("Auth Middleware => Something went wrong: " + str(e))
             return {
-                "message": "Something went wrong: " + str(e),
+                "message": "Auth Middleware => Something went wrong: " + str(e),
                 "data": None,
                 "error": str(e)
             }, 500

@@ -11,6 +11,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { v4 as uuidv4 } from 'uuid'
 import api from '../api/axios'
+import { toast } from 'react-toastify'
 
 interface ActiveChat {
   chat_id: string
@@ -20,6 +21,7 @@ interface ActiveChat {
 interface PlayareaProps {
   activechat: ActiveChat
   messages: {}[]
+  setMessages: (value: {}[]) => void
   typing: boolean
   myuserid: string
   handleSendMessage: (e: FormEvent) => void
@@ -31,6 +33,7 @@ interface PlayareaProps {
 const Playarea: FC<PlayareaProps> = ({
   activechat,
   messages,
+  setMessages,
   typing,
   myuserid,
   handleSendMessage,
@@ -59,8 +62,14 @@ const Playarea: FC<PlayareaProps> = ({
   }
   const clearChat = async () => {
     const res = await api('POST', 'clearchat', { chatid: activechat.chat_id })
-    console.log(res.data)
+    if (res.status === 200) {
+      toast('Chats cleared', { type: 'info' })
+      setMessages([])
+    } else {
+      toast('Failed to clear Chats! retry', { type: 'error' })
+    }
   }
+
   return (
     <div className="playarea">
       {activechat.chat_id === '' ? (

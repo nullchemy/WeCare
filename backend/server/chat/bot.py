@@ -57,6 +57,6 @@ def get_user_bots(current_user):
     user_bots = bots_collection.find_one({'user_id': my_user_id}, {'_id': 0, 'user_id': 0})
 
     if user_bots:
-        return jsonify({'user_bots': user_bots['bot']})
+        return jsonify({'user_bots': user_bots['bot']}), 200
     else:
-        return jsonify({'user_bots': []})
+        return jsonify({'user_bots': []}), 200
