@@ -12,11 +12,43 @@
         text-align: center;
         margin-bottom: 2rem;
       }
+      .abt_sub_title {
+        font-family: Apercu, Roboto, 'Courier New', Courier, monospace;
+        font-size: 2rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
       .about_paragraphs {
         font-family: Apercu, Roboto, 'Courier New', Courier, monospace;
         font-size: 1.25rem;
         font-weight: 200;
         margin-bottom: 2rem;
+        .sendicon {
+          height: 20px;
+          width: 20px;
+          fill: #248aff;
+          margin-bottom: -2px;
+        }
+      }
+      .abt_table {
+        border: 1px solid #2b2b2b;
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1rem;
+        font-family: Apercu, Roboto, 'Courier New', Courier, monospace;
+        th,
+        td {
+          padding: 8px;
+          text-align: left;
+          border: 1px solid #2b2b2b;
+        }
+        thead {
+          background-color: #9ee0ff;
+          tr > th {
+            font-weight: 700;
+            font-size: 1.3rem;
+          }
+        }
       }
     }
   }

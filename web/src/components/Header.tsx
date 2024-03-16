@@ -9,7 +9,9 @@ const Header = () => {
         <div className="header_container">
           <div className="header_wrapper">
             <div className="header_left">
-              <h2>WeCare</h2>
+              <Link to="/" className="header_title_link">
+                WeCare
+              </Link>
             </div>
             <div className="header_right">
               <Link to="/about">About</Link>

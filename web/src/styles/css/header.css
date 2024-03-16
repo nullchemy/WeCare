@@ -10,9 +10,12 @@
 }
 .header .header_container .header_wrapper .header_left {
   flex: 1;
+  margin: 5px 0;
 }
-.header .header_container .header_wrapper .header_left h2 {
+.header .header_container .header_wrapper .header_left .header_title_link {
   font-family: "IBM Plex Mono", monospace;
+  font-size: 2rem;
+  font-weight: 600;
 }
 .header .header_container .header_wrapper .header_right {
   display: flex;

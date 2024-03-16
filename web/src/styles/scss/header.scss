@@ -7,8 +7,11 @@
       padding: 10px 0;
       .header_left {
         flex: 1;
-        h2 {
+        margin: 5px 0;
+        .header_title_link {
           font-family: 'IBM Plex Mono', monospace;
+          font-size: 2rem;
+          font-weight: 600;
         }
       }
       .header_right {
