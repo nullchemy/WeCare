@@ -28,6 +28,12 @@ interface PlayareaProps {
   messageInput: string
   setMessageInput: (value: string) => void
   messContRef: RefObject<any>
+  viewRightSideBar: { active: boolean; width: number; message: string }
+  setViewRightSideBar: (value: {
+    active: boolean
+    width: number
+    message: string
+  }) => void
 }
 
 const Playarea: FC<PlayareaProps> = ({
@@ -40,6 +46,8 @@ const Playarea: FC<PlayareaProps> = ({
   messageInput,
   setMessageInput,
   messContRef,
+  viewRightSideBar,
+  setViewRightSideBar,
 }) => {
   const myRef = React.createRef<SyntaxHighlighter>()
   const [togglechateepop, setToggleChateePop] = useState<boolean>(false)
@@ -70,8 +78,13 @@ const Playarea: FC<PlayareaProps> = ({
     }
   }
 
+  console.log(viewRightSideBar)
+
   return (
-    <div className="playarea">
+    <div
+      className="playarea"
+      style={viewRightSideBar.message !== '' ? { width: '0px' } : {}}
+    >
       {activechat.chat_id === '' ? (
         <div className="playarea_placeholder">
           <div className="playarea_place_center">
@@ -84,7 +97,16 @@ const Playarea: FC<PlayareaProps> = ({
       ) : (
         <div className="playarea_active">
           <div className="pa_top">
-            <div className="active_chatee_left">
+            <div
+              className="active_chatee_left"
+              onClick={() => {
+                setViewRightSideBar({
+                  active: false,
+                  width: 23,
+                  message: '',
+                })
+              }}
+            >
               <div className="active_chatee_profile">
                 <img src={UserPlaceholder} alt="" />
               </div>
@@ -124,6 +146,13 @@ const Playarea: FC<PlayareaProps> = ({
                   <div
                     className="outgoing_message"
                     key={chat.message_id + uuidv4()}
+                    onClick={() => {
+                      setViewRightSideBar({
+                        active: true,
+                        width: 77,
+                        message: chat.message,
+                      })
+                    }}
                   >
                     <div className="out_mess_content">
                       <div className="out_mess_meta">

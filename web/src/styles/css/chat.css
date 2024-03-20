@@ -489,6 +489,7 @@
   max-width: 80%;
   margin: 20px 0;
   align-self: flex-end;
+  cursor: pointer;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .outgoing_message .out_mess_content {
   margin-right: 10px;
@@ -574,8 +575,10 @@
   width: 20px;
 }
 .chat .chat_container .chatWrapper .rightSidebar {
-  width: 23%;
-  width: 0% !important;
+  width: 0%;
+  background-color: var(--background-modals);
+  border-radius: 10px;
+  height: calc(100vh - 94px);
 }
 
 [contentEditable=true]:empty:not(:focus):before {

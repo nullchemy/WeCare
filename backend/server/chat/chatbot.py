@@ -92,8 +92,8 @@ def check_intent(text):
         suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
   tokenised_text = suicide_tokenizer.encode_plus(text, return_tensors="pt")
   logits = suicide_model(**tokenised_text)[0]
-  prediction = round(torch.softmax(logits, dim=1).tolist()[0][1])
-  return prediction
+  prediction = torch.softmax(logits, dim=1).tolist()[0]
+  return {"prediction": round(prediction[1]), "actual_value": prediction[1], "meta_analysis": prediction}
 
 def generate_response(chat_round, user_input):
   global tokenizer, model, chat_history_ids
@@ -104,7 +104,7 @@ def generate_response(chat_round, user_input):
   new_input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors='pt')
   bot_input_ids = torch.cat([chat_history_ids.long(), new_input_ids], dim=-1) if chat_round > 0 else new_input_ids.long()
   chat_history_ids = model.generate(bot_input_ids, max_length=1250, pad_token_id=tokenizer.eos_token_id)
-  if check_intent(user_input):
+  if check_intent(user_input)['prediction']:
     printmd(format(random.choice(prevention_messages)))
     socketio.emit('typing', {'response': True})
     printmd(format(helpline_message))

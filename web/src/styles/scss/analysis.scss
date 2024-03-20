@@ -1,0 +1,65 @@
+.analysis {
+  position: relative;
+  .an_arrow_back {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    transform: rotate(180deg);
+    height: 20px;
+    width: 20px;
+    padding: 7px;
+    border-radius: 50%;
+    z-index: 999;
+    &:hover {
+      background-color: #434343ca;
+    }
+  }
+  .analysis_container {
+    width: 100%;
+    padding-top: 3rem;
+    .analysis_wrapper {
+      width: 100%;
+      .initial_message {
+        width: 100%;
+        text-align: center;
+        margin-top: 2rem;
+        span {
+          padding: 10px;
+          border-radius: 7px;
+          border: 1px solid #000;
+          font-size: 1.5rem;
+          font-weight: 800;
+        }
+      }
+      .analysis_content {
+        display: flex;
+        margin-top: 2rem;
+        padding: 0 1rem;
+        .analysis_bar_chart {
+          margin: 1rem 0;
+          width: 50%;
+          height: auto;
+        }
+        .analysis_textuals {
+          margin-top: 2rem;
+          margin-left: 2rem;
+          .analysis_prediction {
+            font-family: Apercu, Roboto, Arial, Helvetica, sans-serif;
+            font-size: 1.4rem;
+            font-weight: 200;
+            margin-bottom: 1rem;
+            strong {
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.dashlnchart {
+  width: 100% !important;
+  height: 100% !important;
+}

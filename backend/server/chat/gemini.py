@@ -124,6 +124,10 @@ def gemini_chat(current_user, message):
     message['status'] = 'sent'
     receiver_id = message['receiver_id']
     sender_id = current_user['user_id']
+    socketio.emit('typing', {'response': True})
+    # check suicidal intent
+    pred = check_intent(message.get('message'))
+    message['analysis'] = pred
     # save message to database
     botchats_collection.update_one(
             {'chat_id': message.get('chat_id')},
@@ -133,7 +137,7 @@ def gemini_chat(current_user, message):
       chatid = message.get('chat_id')
     if user_id is None:
         user_id = current_user['user_id']
-    socketio.emit('typing', {'response': True})
+    
     message_input = message.get('message')
     if "name" in message_input:
       message_input = message.get('message')+', just tell me your name without explaining yourself or adding extra explanations to it. in short i just want the name'
@@ -145,8 +149,7 @@ def gemini_chat(current_user, message):
     update_chat_history(chatid, json.dumps({'role': 'model', 'parts': [model_response]}))
     # Emit the response back to the client
     printmd(model_response)
-    # check suicidal intent
-    if check_intent(message.get('message')):
+    if pred['prediction']:
           printmd(format(random.choice(prevention_messages)))
           socketio.emit('typing', {'response': True})
           printmd(format(helpline_message), 'helpline_message')
@@ -181,6 +184,14 @@ def clear_chat(current_user):
   except Exception as e:
     print("Failed to Clear chats from Database:", e)
 
+@gemini.route('/analysis', methods=['POST'])
+@token_required
+def analysis(current_user):
+    print("Endpoint Hit ⚡⚡ [Analysis]")
+    data = request.get_json()
+    my_user_id = current_user['user_id']
+    pred = check_intent(data.get('message'))
+    return jsonify(pred), 200
 
 if __name__ == '__main__':
     from app import app, socketio

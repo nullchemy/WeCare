@@ -17,6 +17,7 @@ import UploadImage from '../components/ImageUpload'
 import { toast } from 'react-toastify'
 import { setIsLogged } from '../state/actions/loggedAction'
 import { useAppDispatch } from '../state/hooks'
+import Analysis from '../components/Analysis'
 
 const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
@@ -48,6 +49,11 @@ const Chat: React.FC = () => {
   const [startedchats, setStartedChats] = useState<StartedChats[]>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
   const [profilePicUrl, setProfilePicUrl] = useState<string>('')
+  const [viewRightSideBar, setViewRightSideBar] = useState<{
+    active: boolean
+    width: number
+    message: string
+  }>({ active: false, width: 0, message: '' })
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
   const dispatch = useAppDispatch()
 
@@ -235,22 +241,22 @@ const Chat: React.FC = () => {
     }
   }, [lsdbarActive])
 
-  const updateStartedChats = async (user: any) => {
-    const res = await api('PUT', 'updatestartedchats', user)
-    // update active chat chatID
-    if (res.status === 200) {
-      const index = startedchats.findIndex(
-        (chat) => chat.chat_id === activechat.chat_id
-      )
-      const updatedChats = [...startedchats]
-      updatedChats[index] = {
-        ...updatedChats[index],
-        chat_id: res.data.chat_id,
-      }
-      setStartedChats(updatedChats)
-      setActiveChat({ ...activechat, chat_id: res.data.chat_id })
-    }
-  }
+  // const updateStartedChats = async (user: any) => {
+  //   const res = await api('PUT', 'updatestartedchats', user)
+  //   // update active chat chatID
+  //   if (res.status === 200) {
+  //     const index = startedchats.findIndex(
+  //       (chat) => chat.chat_id === activechat.chat_id
+  //     )
+  //     const updatedChats = [...startedchats]
+  //     updatedChats[index] = {
+  //       ...updatedChats[index],
+  //       chat_id: res.data.chat_id,
+  //     }
+  //     setStartedChats(updatedChats)
+  //     setActiveChat({ ...activechat, chat_id: res.data.chat_id })
+  //   }
+  // }
 
   return (
     <div className="chat">
@@ -580,8 +586,22 @@ const Chat: React.FC = () => {
             messContRef={messContRef}
             messageInput={messageInput}
             setMessageInput={setMessageInput}
+            viewRightSideBar={viewRightSideBar}
+            setViewRightSideBar={setViewRightSideBar}
           />
-          <div className="rightSidebar"></div>
+          <div
+            className="rightSidebar"
+            style={
+              viewRightSideBar.active
+                ? { width: viewRightSideBar.width + '%' }
+                : { display: 'none' }
+            }
+          >
+            <Analysis
+              viewRightSideBar={viewRightSideBar}
+              setViewRightSideBar={setViewRightSideBar}
+            />
+          </div>
         </div>
       </div>
     </div>

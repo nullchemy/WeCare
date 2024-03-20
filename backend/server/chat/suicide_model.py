@@ -21,8 +21,8 @@ def check_intent(text):
         suicide_tokenizer, suicide_model = load_suicide_tokenizer_and_model()
   tokenised_text = suicide_tokenizer.encode_plus(text, return_tensors="pt")
   logits = suicide_model(**tokenised_text)[0]
-  prediction = round(torch.softmax(logits, dim=1).tolist()[0][1])
-  return prediction
+  prediction = torch.softmax(logits, dim=1).tolist()[0]
+  return {"prediction": round(prediction[1]), "actual_value": prediction[1], "meta_analysis": prediction}
 
 def initialize_model():
     global suicide_tokenizer, suicide_model

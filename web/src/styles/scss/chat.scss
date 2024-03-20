@@ -487,6 +487,7 @@
                 max-width: 80%;
                 margin: 20px 0;
                 align-self: flex-end;
+                cursor: pointer;
                 .out_mess_content {
                   margin-right: 10px;
                   background-color: var(--background-modals);
@@ -575,8 +576,10 @@
         }
       }
       .rightSidebar {
-        width: 23%;
-        width: 0% !important;
+        width: 0%;
+        background-color: var(--background-modals);
+        border-radius: 10px;
+        height: calc(100vh - 94px);
       }
     }
   }
