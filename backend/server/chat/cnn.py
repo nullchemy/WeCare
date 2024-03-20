@@ -92,10 +92,15 @@ def predict():
         # Perform inference
         with torch.no_grad():
             outputs = model(inputs)
-            predictions = torch.round(torch.sigmoid(outputs)).squeeze().tolist()
+            sigmd = torch.sigmoid(outputs)
+            print(sigmd)
+            predictions = torch.round(sigmd).squeeze().tolist()
+        
+        met_anal_val_one = 1 - sigmd.tolist()[0][0]
+
         
         # Return predictions
-        return jsonify({'predictions': predictions})
+        return jsonify({'prediction': predictions, "actual_value": sigmd.tolist()[0][0], "meta_analysis": [met_anal_val_one, sigmd.tolist()[0][0]]})
     except Exception as e:
         return jsonify({'error': str(e)})
 
