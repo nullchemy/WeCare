@@ -6,7 +6,17 @@ const Footer = () => {
     <Fragment>
       <div className="footer">
         <div className="footer_wrapper">
-          <p>WeCare - denniskibet &copy; {new Date().getFullYear()}</p>
+          <p>
+            WeCare -{' '}
+            <a
+              href="https://denniskibet.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              denniskibet
+            </a>{' '}
+            &copy; {new Date().getFullYear()}
+          </p>
         </div>
       </div>
     </Fragment>

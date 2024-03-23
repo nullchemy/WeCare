@@ -101,7 +101,7 @@ const Playarea: FC<PlayareaProps> = ({
               className="active_chatee_left"
               onClick={() => {
                 setViewRightSideBar({
-                  active: false,
+                  active: true,
                   width: 23,
                   message: '',
                 })

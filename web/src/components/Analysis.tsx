@@ -26,15 +26,17 @@ const Analysis: FC<AnaProps> = ({ viewRightSideBar, setViewRightSideBar }) => {
   const [loading, setLoading] = useState(false)
   const fetchAnalysisData = async () => {
     setLoading(true)
-    const res = await api('POST', 'analysis', {
-      message: viewRightSideBar.message,
-    })
-    setLoading(false)
-    if (res.status === 200) {
-      console.log(res.data)
-      setAnalsis(res.data)
-    } else {
-      toast(res.data.message, { type: 'error' })
+    if (viewRightSideBar.message !== '') {
+      const res = await api('POST', 'analysis', {
+        message: viewRightSideBar.message,
+      })
+      setLoading(false)
+      if (res.status === 200) {
+        console.log(res.data)
+        setAnalsis(res.data)
+      } else {
+        toast(res.data.message, { type: 'error' })
+      }
     }
   }
   useEffect(() => {

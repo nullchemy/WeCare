@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import { setIsLogged } from '../state/actions/loggedAction'
 import { useAppDispatch } from '../state/hooks'
 import Analysis from '../components/Analysis'
+import Profile from '../components/Profile'
 
 const Chat: React.FC = () => {
   const [auth, setAuth] = useState<Auth>({
@@ -597,10 +598,17 @@ const Chat: React.FC = () => {
                 : { display: 'none' }
             }
           >
-            <Analysis
-              viewRightSideBar={viewRightSideBar}
-              setViewRightSideBar={setViewRightSideBar}
-            />
+            {viewRightSideBar.message !== '' ? (
+              <Analysis
+                viewRightSideBar={viewRightSideBar}
+                setViewRightSideBar={setViewRightSideBar}
+              />
+            ) : (
+              <Profile
+                profilePicUrl={profilePicUrl}
+                setProfilePicUrl={setProfilePicUrl}
+              />
+            )}
           </div>
         </div>
       </div>
