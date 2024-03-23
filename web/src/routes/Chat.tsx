@@ -55,6 +55,7 @@ const Chat: React.FC = () => {
     width: number
     message: string
   }>({ active: false, width: 0, message: '' })
+  const [model, setModel] = useState('electra')
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
   const dispatch = useAppDispatch()
 
@@ -90,6 +91,7 @@ const Chat: React.FC = () => {
           timestamp: '',
           message: messageInput,
           level: 'bot',
+          model: model,
         })
       } else {
         socket.emit('chat_message', {
@@ -602,11 +604,15 @@ const Chat: React.FC = () => {
               <Analysis
                 viewRightSideBar={viewRightSideBar}
                 setViewRightSideBar={setViewRightSideBar}
+                model={model}
+                setModel={setModel}
               />
             ) : (
               <Profile
                 profilePicUrl={profilePicUrl}
                 setProfilePicUrl={setProfilePicUrl}
+                model={model}
+                setModel={setModel}
               />
             )}
           </div>

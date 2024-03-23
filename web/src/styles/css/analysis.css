@@ -16,6 +16,26 @@
 .analysis .an_arrow_back:hover {
   background-color: rgba(67, 67, 67, 0.7921568627);
 }
+.analysis .analysis_model {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+}
+.analysis .analysis_model .analysis_model_form {
+  margin-left: 10px;
+}
+.analysis .analysis_model .analysis_model_form select,
+.analysis .analysis_model .analysis_model_form option {
+  cursor: pointer;
+}
+.analysis .analysis_model .analysis_model_form select {
+  outline: none !important;
+  padding: 3px;
+  border-radius: 5px;
+}
 .analysis .analysis_container {
   width: 100%;
   padding-top: 3rem;

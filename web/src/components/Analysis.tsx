@@ -16,8 +16,15 @@ interface AnaProps {
     width: number
     message: string
   }) => void
+  model: string
+  setModel: (value: string) => void
 }
-const Analysis: FC<AnaProps> = ({ viewRightSideBar, setViewRightSideBar }) => {
+const Analysis: FC<AnaProps> = ({
+  viewRightSideBar,
+  setViewRightSideBar,
+  model,
+  setModel,
+}) => {
   const [analsis, setAnalsis] = useState<null | {
     prediction: number
     actual_value: number
@@ -29,6 +36,7 @@ const Analysis: FC<AnaProps> = ({ viewRightSideBar, setViewRightSideBar }) => {
     if (viewRightSideBar.message !== '') {
       const res = await api('POST', 'analysis', {
         message: viewRightSideBar.message,
+        model: model,
       })
       setLoading(false)
       if (res.status === 200) {
@@ -42,7 +50,7 @@ const Analysis: FC<AnaProps> = ({ viewRightSideBar, setViewRightSideBar }) => {
   useEffect(() => {
     fetchAnalysisData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewRightSideBar])
+  }, [viewRightSideBar, model])
   return (
     <div className="analysis">
       <Arrow
@@ -51,6 +59,25 @@ const Analysis: FC<AnaProps> = ({ viewRightSideBar, setViewRightSideBar }) => {
           setViewRightSideBar({ active: false, width: 0, message: '' })
         }}
       />
+      <div className="analysis_model">
+        <h2>Model: </h2>
+        <form className="analysis_model_form">
+          <select
+            name="model"
+            id="model"
+            value={model}
+            onChange={(e) => {
+              setModel(e.target.value)
+            }}
+          >
+            <option value="electra">ELECTRA</option>
+            <option value="bert">BERT</option>
+            <option value="lstm">LSTM</option>
+            <option value="cnn">CNN</option>
+            <option value="logit">LOGIT</option>
+          </select>
+        </form>
+      </div>
       <div className="analysis_container">
         <div className="analysis_wrapper">
           <div className="initial_message">

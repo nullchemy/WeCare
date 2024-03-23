@@ -11,7 +11,8 @@ from ..auth_middleware import token_required
 from ..sockets import socketio
 from ..extensions import mongo
 from .helpline_messages import helpline_message, prevention_messages, start_message
-from .suicide_model import check_intent, initialize_model, cleanup
+from .suicide_model import check_intent
+from .electra import initialize_model, cleanup
 
 gemini = Blueprint('gemini', __name__)
 
@@ -126,7 +127,7 @@ def gemini_chat(current_user, message):
     sender_id = current_user['user_id']
     socketio.emit('typing', {'response': True})
     # check suicidal intent
-    pred = check_intent(message.get('message'))
+    pred = check_intent(message.get('message'), message.get('model'))
     message['analysis'] = pred
     # save message to database
     botchats_collection.update_one(
@@ -190,7 +191,7 @@ def analysis(current_user):
     print("Endpoint Hit ⚡⚡ [Analysis]")
     data = request.get_json()
     my_user_id = current_user['user_id']
-    pred = check_intent(data.get('message'))
+    pred = check_intent(data.get('message'), data.get('model'))
     return jsonify(pred), 200
 
 if __name__ == '__main__':

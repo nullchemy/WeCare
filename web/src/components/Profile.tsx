@@ -8,9 +8,16 @@ import Footer from './Footer'
 interface ProfTypes {
   profilePicUrl: string
   setProfilePicUrl: React.Dispatch<React.SetStateAction<string>>
+  model: string
+  setModel: (value: string) => void
 }
 
-const Profile: FC<ProfTypes> = ({ profilePicUrl, setProfilePicUrl }) => {
+const Profile: FC<ProfTypes> = ({
+  profilePicUrl,
+  setProfilePicUrl,
+  model,
+  setModel,
+}) => {
   return (
     <div className="user_profile">
       <UploadImage
@@ -32,7 +39,14 @@ const Profile: FC<ProfTypes> = ({ profilePicUrl, setProfilePicUrl }) => {
           <div className="user_profile_model_selection">
             <h3>Model: </h3>
             <form className="user_profile_model_form">
-              <select name="model" id="model">
+              <select
+                name="model"
+                id="model"
+                value={model}
+                onChange={(e) => {
+                  setModel(e.target.value)
+                }}
+              >
                 <option value="electra">ELECTRA</option>
                 <option value="bert">BERT</option>
                 <option value="lstm">LSTM</option>

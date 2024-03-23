@@ -11,7 +11,6 @@ from .chat.chatbot import chatbot
 from .chat.chat import chat
 from .chat.bot import bot
 from .chat.gemini import gemini
-from .chat.cnn import cnn
 
 def create_app():
     app = Flask(__name__)
@@ -33,7 +32,6 @@ def create_app():
     app.register_blueprint(chat)
     app.register_blueprint(bot)
     app.register_blueprint(gemini)
-    app.register_blueprint(cnn)
 
     socketio.init_app(app)
 
