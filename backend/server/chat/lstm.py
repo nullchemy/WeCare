@@ -6,10 +6,6 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 tokenizer = Tokenizer()
-with open('tokenizer.json', 'r') as f:
-    tokenizer_config = f.read()
-    tokenizer.set_config(tokenizer_config)
-    
 vocab_size = len(tokenizer.word_index) + 1
 
 embedding_dim = 300
@@ -132,7 +128,3 @@ def predict(text):
     return {'prediction': predictions.item(), "actual_value": probabilities.tolist()[0], "meta_analysis": [met_anal_val_one, probabilities.tolist()[0]]}
 
 print(predict("hello"))
-
-
-
-print(predict("i want to kill myself, i have been feeling suicidal offlate"))

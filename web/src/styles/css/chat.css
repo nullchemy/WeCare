@@ -95,6 +95,11 @@
   margin: 0 20px;
   cursor: pointer;
 }
+.chat .chat_container .chatAppbar .chatbar_left h1 {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 2rem;
+  font-weight: 600;
+}
 .chat .chat_container .chatWrapper {
   width: 90%;
   margin: 0 auto;
@@ -348,7 +353,6 @@
      object-fit: cover;
   -o-object-position: center;
      object-position: center;
-  margin-top: 5px;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_top .active_chatee_left .active_chatee_meta h2 {
   font-family: "Apercu";

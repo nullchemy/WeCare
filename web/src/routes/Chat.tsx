@@ -13,7 +13,7 @@ import session from '../utils/session'
 import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
 import { v4 as uuidv4 } from 'uuid'
 import Playarea from '../components/Playarea'
-import UploadImage from '../components/ImageUpload'
+import UploadImage from '../components/UploadImage'
 import { toast } from 'react-toastify'
 import { setIsLogged } from '../state/actions/loggedAction'
 import { useAppDispatch } from '../state/hooks'
@@ -449,6 +449,7 @@ const Chat: React.FC = () => {
                               name: bot.botname,
                               type: 'bot',
                             })
+                            setProfilePicUrl(bot.bot_profile_pic)
                             fetchPrevChats(bot.bot_id, 'bot')
                           }}
                           style={{ alignItems: 'center' }}
@@ -591,6 +592,7 @@ const Chat: React.FC = () => {
             setMessageInput={setMessageInput}
             viewRightSideBar={viewRightSideBar}
             setViewRightSideBar={setViewRightSideBar}
+            profilePicUrl={profilePicUrl}
           />
           <div
             className="rightSidebar"

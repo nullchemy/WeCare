@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
+import { ReactComponent as Camera } from '../assets/svg/camera.svg'
 import ImageUpload from '../utils/ImageUpload'
 import api from '../api/axios'
 import '../styles/css/imageupload.css'
@@ -64,6 +65,10 @@ const UploadImage = ({ profilePicUrl, setProfilePicUrl }: ImgUpload) => {
             onChange={(e) => {
               setProfilePic(e.target.files?.[0] || null)
             }}
+          />
+          <Camera
+            className="profile_picture_camera_ic"
+            title="upload profile picture"
           />
         </div>
       </div>

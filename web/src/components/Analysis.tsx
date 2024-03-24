@@ -72,9 +72,7 @@ const Analysis: FC<AnaProps> = ({
           >
             <option value="electra">ELECTRA</option>
             <option value="bert">BERT</option>
-            <option value="lstm">LSTM</option>
             <option value="cnn">CNN</option>
-            <option value="logit">LOGIT</option>
           </select>
         </form>
       </div>

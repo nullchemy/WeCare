@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import '../styles/css/profile.css'
-import UploadImage from './ImageUpload'
-import { ReactComponent as Plus } from '../assets/svg/plus.svg'
+import UploadImage from './UploadImage'
+import { ReactComponent as Pen } from '../assets/svg/pen.svg'
 import { Link } from 'react-router-dom'
 import Footer from './Footer'
 
@@ -33,7 +33,7 @@ const Profile: FC<ProfTypes> = ({
                 type="text"
                 value="kibet"
               />
-              <Plus className="user_profile_name_edit" />
+              <Pen className="user_profile_name_edit" />
             </form>
           </div>
           <div className="user_profile_model_selection">
@@ -49,9 +49,7 @@ const Profile: FC<ProfTypes> = ({
               >
                 <option value="electra">ELECTRA</option>
                 <option value="bert">BERT</option>
-                <option value="lstm">LSTM</option>
                 <option value="cnn">CNN</option>
-                <option value="logit">LOGIT</option>
               </select>
             </form>
           </div>

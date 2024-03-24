@@ -34,6 +34,7 @@ interface PlayareaProps {
     width: number
     message: string
   }) => void
+  profilePicUrl: string
 }
 
 const Playarea: FC<PlayareaProps> = ({
@@ -48,6 +49,7 @@ const Playarea: FC<PlayareaProps> = ({
   messContRef,
   viewRightSideBar,
   setViewRightSideBar,
+  profilePicUrl,
 }) => {
   const myRef = React.createRef<SyntaxHighlighter>()
   const [togglechateepop, setToggleChateePop] = useState<boolean>(false)
@@ -101,14 +103,23 @@ const Playarea: FC<PlayareaProps> = ({
               className="active_chatee_left"
               onClick={() => {
                 setViewRightSideBar({
-                  active: true,
+                  active: !viewRightSideBar.active,
                   width: 23,
                   message: '',
                 })
               }}
             >
               <div className="active_chatee_profile">
-                <img src={UserPlaceholder} alt="" />
+                {/* <img src={UserPlaceholder} alt="" /> */}
+                {profilePicUrl !== '' ? (
+                  <img src={profilePicUrl} alt="" />
+                ) : (
+                  <img
+                    src={UserPlaceholder}
+                    style={{ marginTop: '5px' }}
+                    alt=""
+                  />
+                )}
               </div>
               <div className="active_chatee_meta">
                 <h2>{activechat.name}</h2>

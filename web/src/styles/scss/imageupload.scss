@@ -39,6 +39,20 @@
       left: 0px;
       cursor: pointer;
     }
+    .profile_picture_camera_ic {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 25px;
+      width: 25px;
+      fill: #b0b0b0;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+        rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+      padding: 5px;
+      pointer-events: none;
+      cursor: pointer;
+    }
   }
 }
 
