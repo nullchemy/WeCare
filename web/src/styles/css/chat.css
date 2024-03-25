@@ -485,7 +485,9 @@
   padding-top: 5px;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .incoming_message .in_mess_content .incoming_cont_message .inc_th_content {
-  font-size: 0.95rem;
+  font-family: "Apercu";
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .outgoing_message {
   display: flex;
@@ -515,7 +517,9 @@
   padding-top: 5px;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .outgoing_message .out_mess_content .outgoing_cont_message .out_th_content {
-  font-size: 0.95rem;
+  font-family: "Apercu";
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 .chat .chat_container .chatWrapper .playarea .playarea_active .pa_middle .messplay .outgoing_message .out_mess_sender_profile {
   min-width: 30px;
@@ -722,4 +726,18 @@
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+}
+
+.r_blg_body__content p {
+  margin-bottom: 10px;
+}
+.r_blg_body__content p strong {
+  font-size: 1.5rem;
+}
+.r_blg_body__content ul {
+  margin: 10px 20px 10px 25px;
+}
+.r_blg_body__content ul li {
+  margin-bottom: 10px;
+  list-style: circle;
 }/*# sourceMappingURL=chat.css.map */

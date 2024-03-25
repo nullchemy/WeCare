@@ -480,7 +480,9 @@
                   .incoming_cont_message {
                     padding-top: 5px;
                     .inc_th_content {
-                      font-size: 0.95rem;
+                      font-family: 'Apercu';
+                      font-size: 1.2rem;
+                      font-weight: 500;
                     }
                   }
                 }
@@ -510,7 +512,9 @@
                   .outgoing_cont_message {
                     padding-top: 5px;
                     .out_th_content {
-                      font-size: 0.95rem;
+                      font-family: 'Apercu';
+                      font-size: 1.2rem;
+                      font-weight: 500;
                     }
                   }
                 }
@@ -729,6 +733,22 @@
     .lsdbar_lst_time {
       font-size: 0.7rem;
       user-select: none;
+    }
+  }
+}
+
+.r_blg_body__content {
+  p {
+    margin-bottom: 10px;
+    strong {
+      font-size: 1.5rem;
+    }
+  }
+  ul {
+    margin: 10px 20px 10px 25px;
+    li {
+      margin-bottom: 10px;
+      list-style: circle;
     }
   }
 }

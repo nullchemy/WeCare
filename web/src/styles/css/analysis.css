@@ -44,14 +44,13 @@
   width: 100%;
 }
 .analysis .analysis_container .analysis_wrapper .initial_message {
-  width: 100%;
+  width: 80%;
   text-align: center;
+  margin: 0 auto;
   margin-top: 2rem;
+  padding: 10px;
 }
 .analysis .analysis_container .analysis_wrapper .initial_message span {
-  padding: 10px;
-  border-radius: 7px;
-  border: 1px solid #000;
   font-size: 1.5rem;
   font-weight: 800;
 }
@@ -82,4 +81,11 @@
 .dashlnchart {
   width: 100% !important;
   height: 100% !important;
+}
+
+.r_blg_body__content p {
+  margin-bottom: 10px;
+}
+.r_blg_body__content p strong {
+  font-size: 1.5rem;
 }/*# sourceMappingURL=analysis.css.map */
