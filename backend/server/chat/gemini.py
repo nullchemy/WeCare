@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 import redis
 import os
 import uuid
@@ -11,7 +11,7 @@ from ..auth_middleware import token_required
 from ..sockets import socketio
 from ..extensions import mongo
 from .helpline_messages import helpline_message, prevention_messages, start_message
-from .suicide_model import check_intent
+from .suicide_model import check_intent, generate_pdf
 from .electra import initialize_model, cleanup
 
 gemini = Blueprint('gemini', __name__)
@@ -193,6 +193,31 @@ def analysis(current_user):
     my_user_id = current_user['user_id']
     pred = check_intent(data.get('message'), data.get('model'))
     return jsonify(pred), 200
+
+@gemini.route('/report', methods=['POST'])
+@token_required
+def gen_report(current_user):
+    print("Endpoint Hit ⚡⚡ [Generate Report]")
+    my_user_id = current_user['user_id']
+    data = request.get_json()
+    chat_id = data.get('chat_id')
+    botchats_collection = mongo.db.botchats
+    chats = botchats_collection.find_one({'chat_id': chat_id})['chats']
+    my_chats = [chat for chat in chats if chat['receiver_id'] == chat_id]
+    for item in my_chats:
+      item.pop('chat_id', None)
+      item.pop('message_id', None)
+      item.pop('sender_id', None)
+      item.pop('receiver_id', None)
+      item.pop('level', None)
+      item.pop('status', None)
+    #print(my_chats)
+    output_stream = generate_pdf(my_chats)
+    # Create response object
+    response = make_response(output_stream.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=example.pdf'
+    return response, 200
 
 if __name__ == '__main__':
     from app import app, socketio

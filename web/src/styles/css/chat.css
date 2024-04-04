@@ -582,6 +582,11 @@
   height: 20px;
   width: 20px;
 }
+.chat .chat_container .chatWrapper .playarea .playarea_active .pa_bottom .pa_btm_info {
+  text-align: center;
+  margin: 5px 0;
+  font-size: 0.8rem;
+}
 .chat .chat_container .chatWrapper .rightSidebar {
   width: 0%;
   background-color: var(--background-modals);
@@ -717,15 +722,26 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: flex-start;
+  justify-content: flex-end !important;
   padding-right: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 0px !important;
 }
 .wecare_it_user .lsdbar_user_profile_meta .lsdbar_lst_time {
   font-size: 0.7rem;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+}
+.wecare_it_user .lsdbar_user_profile_meta .lsdbar_lst_delete_bot {
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+  fill: #ff7676;
+  transition: 2s;
+}
+.wecare_it_user .lsdbar_user_profile_meta .lsdbar_lst_delete_bot:hover {
+  fill: red;
+  transform: scale(1.05);
 }
 
 .r_blg_body__content p {

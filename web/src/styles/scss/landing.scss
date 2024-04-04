@@ -2,8 +2,13 @@
   --green110: #00cd51;
 }
 .landing {
-  height: calc(100vh - 143px);
+  //height: calc(100vh - 143px);
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  flex: 1;
   .landing_container {
+    width: 100%;
     .landing_wrapper {
       .landing_relative {
         .landing_center_wrap {

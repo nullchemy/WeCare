@@ -13,7 +13,7 @@ from .chat.bot import bot
 from .chat.gemini import gemini
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='public')
 
     # app.config.from_object(config_object)
     app.config['CORS_HEADERS'] = 'Content-Type'

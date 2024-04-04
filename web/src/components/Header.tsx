@@ -14,6 +14,7 @@ const Header = () => {
               </Link>
             </div>
             <div className="header_right">
+              <Link to="/report">Report</Link>
               <Link to="/about">About</Link>
               <a
                 href="https://denniskibet.netlify.app"

@@ -12,6 +12,7 @@ import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { v4 as uuidv4 } from 'uuid'
 import api from '../api/axios'
 import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 interface ActiveChat {
   chat_id: string
@@ -142,11 +143,30 @@ const Playarea: FC<PlayareaProps> = ({
               }
               onClick={() => {
                 setToggleChateePop(!togglechateepop)
-                clearChat()
               }}
             >
               <ul>
-                <li>clear chat</li>
+                <li
+                  onClick={() => {
+                    clearChat()
+                  }}
+                >
+                  clear chat
+                </li>
+                <li
+                  onClick={() => {
+                    window.open(
+                      `${window.location.protocol}//${
+                        window.location.hostname
+                      }${
+                        window.location.port ? `:${window.location.port}` : ''
+                      }/bot-report?chat-id=${activechat.chat_id}`,
+                      '_blank'
+                    )
+                  }}
+                >
+                  generate report
+                </li>
               </ul>
             </div>
           </div>
@@ -348,6 +368,10 @@ const Playarea: FC<PlayareaProps> = ({
                 </form>
               </div>
             </div>
+            <p className="pa_btm_info">
+              <Link to="/about">WeCare</Link> can make mistakes, consider double
+              checking important information
+            </p>
           </div>
         </div>
       )}

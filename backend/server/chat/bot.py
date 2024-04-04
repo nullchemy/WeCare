@@ -60,3 +60,26 @@ def get_user_bots(current_user):
         return jsonify({'user_bots': user_bots['bot']}), 200
     else:
         return jsonify({'user_bots': []}), 200
+
+
+@bot.route('/delete-bot', methods=['DELETE'])
+@token_required
+def delete_bot(current_user):
+    print("Endpoint Hit ⚡⚡ [Delete Bot]")
+    data = request.get_json()
+    my_user_id = current_user['user_id']
+    bot_id = data.get('bot_id')
+    bots_collection = mongo.db.bots
+
+    existing_bot = bots_collection.find_one({'user_id': my_user_id})
+
+    if existing_bot:
+        # Remove Bot
+        bots_collection.update_one(
+            {'user_id': my_user_id},
+            {'$pull': {'bot': {'bot_id': bot_id}}},
+            upsert=False
+        )
+        return jsonify({'message': 'Bot deleted successfully!'}), 200
+    else:
+        return jsonify({'message': 'Bot Does not Exist'}), 400

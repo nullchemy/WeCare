@@ -1,138 +1,92 @@
-import torch
-import torch.nn as nn
-from torch.nn import Sigmoid
-from torch.nn.utils.rnn import pad_sequence
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import io
+import datetime
 
-tokenizer = Tokenizer()
-with open('tokenizer.json', 'r') as f:
-    tokenizer_config = f.read()
-    tokenizer.set_config(tokenizer_config)
-    
-vocab_size = len(tokenizer.word_index) + 1
+def format_timestamp(timestamp):
+    # Convert timestamp to datetime object
+    dt_object = datetime.datetime.fromtimestamp(timestamp / 1000)
+    # Format datetime object to desired format
+    formatted_timestamp = dt_object.strftime("%I:%M%p")
+    return formatted_timestamp
 
-embedding_dim = 300
-hidden_dim = 128
-output_size = 1
-n_layers = 2
-dropout = 0.5
+def generate_pdf(json_data):
+    # Create a new PDF object
+    output_stream = io.BytesIO()
+    pdf = SimpleDocTemplate(output_stream, title="Bot Chat Report", pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    content = []
 
-class SentimentLSTM(nn.Module):
-    """
-    The RNN model that will be used to perform Sentiment analysis.
-    """
+    heading_text = "<b><font size='24'>WECARE MENTAL HEALTH AND SUICIDE DETECTION CHAT-APP</font></b>"
+    heading_paragraph_style = getSampleStyleSheet()["Title"]
+    heading_paragraph_style.alignment = 0
+    heading_paragraph = Paragraph(heading_text, heading_paragraph_style)
+    content.append(heading_paragraph)
+    content.append(Spacer(1, 24))
 
-    def __init__(self, vocab_size, output_size, 
-                 embedding_dim, hidden_dim, n_layers, 
-                 dropout_rate, pre_trained=False, embedding_vectors=None):
-        """
-        Initialize the model by setting up the layers.
-        """
-        super().__init__()
+    # Introduction Paragraph
+    intro_text = "<p>This is a summary report of user's messages chat predictions from the Model.</p>"
+    intro_paragraph_style = getSampleStyleSheet()["BodyText"]
+    intro_paragraph_style.alignment = 0
+    intro_paragraph = Paragraph(intro_text, intro_paragraph_style)
+    content.append(intro_paragraph)
+    content.append(Spacer(1, 12))
 
-        self.output_size = output_size
-        self.n_layers = n_layers
-        self.hidden_dim = hidden_dim
-        
-        if pre_trained:
-            self.embedding, num_embeddings, embedding_dim = create_emb_layer(embedding_vectors, True)
-        else:
-            # Create word embeddings from the input words
-            self.embedding = nn.Embedding(vocab_size, embedding_dim)
+    # Add headers
+    headers = ["Timestamp", "Message", "Model", "Prediction", "Actual Value"]
+    data = [headers]
 
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim, n_layers, 
-                            dropout=dropout_rate, batch_first=True)
-        
-        # dropout layer
-        self.dropout = nn.Dropout(0.3) # dropout_rate
-        
-        # linear and sigmoid layers
-        self.fc = nn.Linear(hidden_dim, output_size)
-        self.sig = nn.Sigmoid()
-        
+    # Convert JSON data to table format
+    for item in json_data:
+        formatted_timestamp = format_timestamp(item['timestamp'])
+        prediction_text = "suicidal" if item['analysis']['prediction'] == 1 else "non-suicidal"
+        actual_value = round(item['analysis']['actual_value'], 6)
+        data.append([ 
+                     formatted_timestamp, Paragraph(item['message']), item['model'], 
+                     prediction_text, actual_value])
 
-    def forward(self, x, hidden):
-        """
-        Perform a forward pass of our model on some input and hidden state.
-        """
-        batch_size = x.size(0)
+    # Create table
+    table = Table(data)
+    style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ('WORDWRAP', (1, 0), (1, -1), True),])
+    table.setStyle(style)
 
-        # embeddings and lstm_out
-        embeds = self.embedding(x)
-        lstm_out, hidden = self.lstm(embeds, hidden)
-    
-        # stack up lstm outputs
-        lstm_out = lstm_out.contiguous().view(-1, self.hidden_dim)
-        
-        # dropout and fully-connected layer
-        out = self.dropout(lstm_out)
-        out = self.fc(out)
-        # sigmoid function
-        sig_out = self.sig(out)
-        
-        # reshape to be batch_size first
-        sig_out = sig_out.view(batch_size, -1)
-        sig_out = sig_out[:, -1] # get last batch of labels
+    # Set column widths
+    col_widths = [0.58 * letter[0] / len(headers)] * len(headers)  # Divide page width evenly among columns
+    col_widths[1] *= 4  # Increase width of message column
+    print(col_widths)
+    table._argW = col_widths
 
-        # return last sigmoid output and hidden state
-        return sig_out, hidden
-    
-    
-    def init_hidden(self, batch_size):
-        ''' Initializes hidden state '''
-        # Create two new tensors with sizes n_layers x batch_size x hidden_dim,
-        # initialized to zero, for hidden state and cell state of LSTM
-        weight = next(self.parameters()).data
-        
-        hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_(),
-                  weight.new(self.n_layers, batch_size, self.hidden_dim).zero_())
-        
-        return hidden
-        
+    # Build content
+    content.append(table)
 
-# Load the trained model
-model = SentimentLSTM(vocab_size, output_size, embedding_dim, hidden_dim, n_layers, dropout)
-# model.load_state_dict(torch.load('Models/lstm_model_2_saved_weights.pt', map_location=torch.device('cpu')))
-current_model_dict = model.state_dict()
-loaded_state_dict = torch.load('Models/lstm_model_3_saved_weights.pt', map_location=torch.device('cpu'))
-new_state_dict={k:v if v.size()==current_model_dict[k].size()  else  current_model_dict[k] for k,v in zip(current_model_dict.keys(), loaded_state_dict.values())}
-model.load_state_dict(new_state_dict, strict=False)
-model.eval()
+    # Footer Paragraph
+    current_date = datetime.datetime.now().strftime("%d/%m/%Y %I:%M%p")
+    footer_text = f"Generated on: {current_date}"
+    footer_paragraph = Paragraph(footer_text, getSampleStyleSheet()["BodyText"])
+    content.append(Spacer(1, 24))  # Add spacer for line break
+    content.append(footer_paragraph)
 
-# Define a function to preprocess the input text
-def preprocess_text(text):
-    # Tokenize the text
-    tokenized_text = tokenizer.texts_to_sequences([text])
-    # Pad sequences to the same length as in training
-    max_length = 100
-    padded_sequence = pad_sequences(tokenized_text, maxlen=max_length, padding='post')
-    # Convert to tensor
-    tensor = torch.LongTensor(padded_sequence)
-    return tensor
+    # Add table to PDF
+    pdf.build(content)
 
-# Define a function to get predictions
-def predict(text):
-    print(f'Running generating response => Check intent LSTM model')
-    # Preprocess the text
-    input_tensor = preprocess_text(text)
-    # Get model predictions
-    with torch.no_grad():
-        model.eval()
-        # Initialize hidden state
-        hidden = model.init_hidden(input_tensor.size(0))
-        # Forward pass
-        output, _ = model(input_tensor, hidden)
-        # Apply sigmoid to get probabilities
-        sigmoid = Sigmoid()
-        probabilities = sigmoid(output)
-        # Round probabilities to get binary predictions
-        predictions = torch.round(probabilities)
-        met_anal_val_one = 1 - probabilities.tolist()[0]
-    return {'prediction': predictions.item(), "actual_value": probabilities.tolist()[0], "meta_analysis": [met_anal_val_one, probabilities.tolist()[0]]}
+    # Save the PDF to a file or stream
+    output_stream = io.BytesIO()
+    pdf.output(output_stream)
 
-print(predict("hello"))
+    # Create response object
+    response = make_response(output_stream.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=example.pdf'
 
+    return response
 
-
-print(predict("i want to kill myself, i have been feeling suicidal offlate"))
+generate_pdf()

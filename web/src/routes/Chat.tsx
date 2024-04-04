@@ -2,10 +2,12 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import '../styles/css/chat.css'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie'
+import Fuse from 'fuse.js'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
 import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
 import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
+import { ReactComponent as Trash } from '../assets/svg/trash.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import api from '../api/axios'
 import { Link } from 'react-router-dom'
@@ -56,6 +58,15 @@ const Chat: React.FC = () => {
     message: string
   }>({ active: false, width: 0, message: '' })
   const [model, setModel] = useState('electra')
+  const [searchedbots, setSearchedBots] = useState<{
+    found: boolean
+    search: string
+    bots: Array<Bot>
+  }>({
+    found: false,
+    search: '',
+    bots: [],
+  })
   const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
   const dispatch = useAppDispatch()
 
@@ -244,22 +255,44 @@ const Chat: React.FC = () => {
     }
   }, [lsdbarActive])
 
-  // const updateStartedChats = async (user: any) => {
-  //   const res = await api('PUT', 'updatestartedchats', user)
-  //   // update active chat chatID
-  //   if (res.status === 200) {
-  //     const index = startedchats.findIndex(
-  //       (chat) => chat.chat_id === activechat.chat_id
-  //     )
-  //     const updatedChats = [...startedchats]
-  //     updatedChats[index] = {
-  //       ...updatedChats[index],
-  //       chat_id: res.data.chat_id,
-  //     }
-  //     setStartedChats(updatedChats)
-  //     setActiveChat({ ...activechat, chat_id: res.data.chat_id })
-  //   }
-  // }
+  const searchForaBot = (array: Bot[], name: string): void => {
+    const options = {
+      keys: ['botname'],
+      threshold: 0.3,
+    }
+    const fuse = new Fuse(array, options)
+    const result = fuse.search(name)
+    if (result.length === 0) {
+      setSearchedBots({
+        found: false,
+        search: name,
+        bots: result.map((item) => item.item),
+      })
+    } else {
+      setSearchedBots({
+        found: true,
+        search: name,
+        bots: result.map((item) => item.item),
+      })
+    }
+  }
+
+  const deleteBot = async (bot_id: string) => {
+    const res = await api('DELETE', '/delete-bot', { bot_id: bot_id })
+    if (res.status === 200) {
+      getUserBots()
+      if (activechat.chat_id === bot_id) {
+        setActiveChat({
+          chat_id: '',
+          name: '',
+          type: 'bot',
+        })
+      }
+      toast('Bot Deleted Successfully', { type: 'success' })
+    } else {
+      toast('Could not delete Bot! Retry', { type: 'error' })
+    }
+  }
 
   return (
     <div className="chat">
@@ -365,19 +398,6 @@ const Chat: React.FC = () => {
                     name: user.full_name,
                     type: 'chat',
                   })
-                  // updateStartedChats(user)
-                  // setStartedChats([
-                  //   ...startedchats,
-                  //   {
-                  //     chat_id: user.user_id,
-                  //     name: user.full_name,
-                  //     last_message: '',
-                  //     unread_messages: 0,
-                  //     profile_url: '',
-                  //     last_seen: '',
-                  //     timestamp: '',
-                  //   },
-                  // ])
                 }}
                 style={{ alignItems: 'center' }}
               >
@@ -407,6 +427,9 @@ const Chat: React.FC = () => {
                     type="text"
                     className="lsdbar_search_input"
                     placeholder="Search"
+                    onChange={(e) => {
+                      searchForaBot(bots, e.target.value)
+                    }}
                   />
                 </div>
                 <button type="submit" className="lsdbar_search_button">
@@ -433,50 +456,121 @@ const Chat: React.FC = () => {
                 </div>
                 {lsdbarActive === 'bot' ? (
                   <div className="lsdbar_cat_cont">
-                    {bots.map(
-                      (bot: {
-                        botname: string
-                        bot_id: string
-                        bot_profile_pic: string
-                      }) => (
-                        <div
-                          className="wecare_it_user"
-                          key={bot.bot_id + uuidv4()}
-                          onClick={() => {
-                            setMessages([])
-                            setActiveChat({
-                              chat_id: bot.bot_id,
-                              name: bot.botname,
-                              type: 'bot',
-                            })
-                            setProfilePicUrl(bot.bot_profile_pic)
-                            fetchPrevChats(bot.bot_id, 'bot')
-                          }}
-                          style={{ alignItems: 'center' }}
-                        >
-                          <div className="wecare_lsdbar_profile">
-                            <img
-                              src={
-                                bot.bot_profile_pic !== ''
-                                  ? bot.bot_profile_pic
-                                  : UserPlaceholder
-                              }
-                              alt=""
-                              className="wecare_user_profile_sidebar"
-                              style={
-                                bot.bot_profile_pic !== ''
-                                  ? { marginTop: '0px' }
-                                  : {}
-                              }
-                            />
+                    {!searchedbots.found && searchedbots.search !== '' ? (
+                      <p style={{ textAlign: 'center', margin: '20px 0' }}>
+                        nothing matched
+                      </p>
+                    ) : searchedbots.bots.length !== 0 &&
+                      searchedbots.found &&
+                      searchedbots.search !== '' ? (
+                      searchedbots.bots.map(
+                        (bot: {
+                          botname: string
+                          bot_id: string
+                          bot_profile_pic: string
+                        }) => (
+                          <div
+                            className="wecare_it_user"
+                            key={bot.bot_id + uuidv4()}
+                            onClick={() => {
+                              setMessages([])
+                              setActiveChat({
+                                chat_id: bot.bot_id,
+                                name: bot.botname,
+                                type: 'bot',
+                              })
+                              setProfilePicUrl(bot.bot_profile_pic)
+                              fetchPrevChats(bot.bot_id, 'bot')
+                            }}
+                            style={{ alignItems: 'center' }}
+                          >
+                            <div className="wecare_lsdbar_profile">
+                              <img
+                                src={
+                                  bot.bot_profile_pic !== ''
+                                    ? bot.bot_profile_pic
+                                    : UserPlaceholder
+                                }
+                                alt=""
+                                className="wecare_user_profile_sidebar"
+                                style={
+                                  bot.bot_profile_pic !== ''
+                                    ? { marginTop: '0px' }
+                                    : {}
+                                }
+                              />
+                            </div>
+                            <div className="lsdbar_user_profile_texts">
+                              <h2 className="lsdbar_user_name">
+                                {bot.botname}
+                              </h2>
+                            </div>
+                            <div className="lsdbar_user_profile_meta">
+                              <span className="lsdbar_lst_time">{}</span>
+                              <Trash
+                                className="lsdbar_lst_delete_bot"
+                                onClick={() => {
+                                  deleteBot(bot.bot_id)
+                                }}
+                              />
+                            </div>
                           </div>
-                          <div className="lsdbar_user_profile_texts">
-                            <h2 className="lsdbar_user_name">{bot.botname}</h2>
+                        )
+                      )
+                    ) : (
+                      bots.map(
+                        (bot: {
+                          botname: string
+                          bot_id: string
+                          bot_profile_pic: string
+                        }) => (
+                          <div
+                            className="wecare_it_user"
+                            key={bot.bot_id + uuidv4()}
+                            onClick={() => {
+                              setMessages([])
+                              setActiveChat({
+                                chat_id: bot.bot_id,
+                                name: bot.botname,
+                                type: 'bot',
+                              })
+                              setProfilePicUrl(bot.bot_profile_pic)
+                              fetchPrevChats(bot.bot_id, 'bot')
+                            }}
+                            style={{ alignItems: 'center' }}
+                          >
+                            <div className="wecare_lsdbar_profile">
+                              <img
+                                src={
+                                  bot.bot_profile_pic !== ''
+                                    ? bot.bot_profile_pic
+                                    : UserPlaceholder
+                                }
+                                alt=""
+                                className="wecare_user_profile_sidebar"
+                                style={
+                                  bot.bot_profile_pic !== ''
+                                    ? { marginTop: '0px' }
+                                    : {}
+                                }
+                              />
+                            </div>
+                            <div className="lsdbar_user_profile_texts">
+                              <h2 className="lsdbar_user_name">
+                                {bot.botname}
+                              </h2>
+                            </div>
+                            <div className="lsdbar_user_profile_meta">
+                              <span className="lsdbar_lst_time">{}</span>
+                              <Trash
+                                className="lsdbar_lst_delete_bot"
+                                onClick={() => {
+                                  deleteBot(bot.bot_id)
+                                }}
+                              />
+                            </div>
                           </div>
-                          <div className="lsdbar_user_profile_meta">
-                            <span className="lsdbar_lst_time">{}</span>
-                          </div>
-                        </div>
+                        )
                       )
                     )}
                     <span

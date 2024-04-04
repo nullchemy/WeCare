@@ -12,6 +12,8 @@ import ProtectedRoutes from './utils/PrivateRoute'
 import Chat from './routes/Chat'
 import Auth from './routes/Auth'
 import About from './routes/About'
+import Report from './routes/Report'
+import BotReport from './routes/BotReport'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +23,16 @@ const router = createBrowserRouter(
       <Route
         path="/about"
         element={<About />}
+        errorElement={<ErrorBoundary />}
+      />
+      <Route
+        path="/report"
+        element={<Report />}
+        errorElement={<ErrorBoundary />}
+      />
+      <Route
+        path="/bot-report"
+        element={<BotReport />}
         errorElement={<ErrorBoundary />}
       />
       <Route path="*" element={<NotFound />} errorElement={<ErrorBoundary />} />

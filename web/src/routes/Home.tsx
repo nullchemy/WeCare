@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import '../styles/css/home.css'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Landing from '../components/Landing'
@@ -6,7 +7,7 @@ import Landing from '../components/Landing'
 const Home = () => {
   return (
     <Fragment>
-      <div className="Home">
+      <div className="home">
         <Header />
         <Landing />
         <Footer />

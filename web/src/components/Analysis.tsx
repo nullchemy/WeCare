@@ -4,6 +4,7 @@ import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
 import api from '../api/axios'
 import { toast } from 'react-toastify'
 import BarChart from './BarChart'
+import Loading from './Loading'
 
 interface AnaProps {
   viewRightSideBar: {
@@ -83,7 +84,7 @@ const Analysis: FC<AnaProps> = ({
           </div>
           {loading ? (
             <div className="analysing_text">
-              <p>Analysing...</p>
+              <Loading />
             </div>
           ) : (
             <div className="analysis_content">

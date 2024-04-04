@@ -54,6 +54,10 @@
   font-size: 1.5rem;
   font-weight: 800;
 }
+.analysis .analysis_container .analysis_wrapper .analysing_text {
+  margin: 20px 5%;
+  width: 90%;
+}
 .analysis .analysis_container .analysis_wrapper .analysis_content {
   display: flex;
   margin-top: 2rem;

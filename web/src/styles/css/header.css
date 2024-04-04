@@ -1,5 +1,6 @@
 .header {
   height: 60px;
+  overflow: hidden;
 }
 .header .header_container {
   margin: 0 5%;
