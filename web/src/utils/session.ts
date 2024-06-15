@@ -15,9 +15,7 @@ const savesession = (session: string) => {
 }
 
 const getsession = (cookie: string) => {
-  return {
-    auth: Cookies.get(cookie),
-  }
+  return Cookies.get(cookie)
 }
 
 const destroysession = (cookie: string) => {

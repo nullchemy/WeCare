@@ -1,3 +1,5 @@
+app
+datasets
 Flask
 Flask_Bcrypt
 Flask_Cors
@@ -5,6 +7,14 @@ Flask_PyMongo
 Flask_SocketIO
 ipython
 pandas
+protobuf
 PyJWT
+python-dotenv
+redis
+reportlab
+tensorflow
 torch
 transformers
+google-generativeai
+gunicorn
+waitress

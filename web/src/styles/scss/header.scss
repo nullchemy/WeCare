@@ -1,3 +1,52 @@
 .header {
-  height: 54px;
+  height: 60px;
+  overflow: hidden;
+  .header_container {
+    margin: 0 5%;
+    .header_wrapper {
+      display: flex;
+      padding: 10px 0;
+      .header_left {
+        flex: 1;
+        margin: 5px 0;
+        .header_title_link {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 2rem;
+          font-weight: 600;
+        }
+      }
+      .header_right {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        a {
+          font-weight: 600;
+        }
+        .header_login_btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: linear-gradient(
+            to bottom right,
+            #14a9ff,
+            #0088f0
+          ) !important;
+          border: none;
+          border-radius: 23px;
+          color: #fff !important;
+          cursor: pointer;
+          font-family: Roboto, sans-serif;
+          font-weight: 700;
+          line-height: 1.5rem;
+          margin: 10px auto;
+          outline: none;
+          padding: 5px 20px;
+          transition: 0.4s;
+          width: max-content;
+          margin-left: 40px;
+        }
+      }
+    }
+  }
 }

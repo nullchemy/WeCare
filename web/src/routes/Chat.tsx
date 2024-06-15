@@ -1,57 +1,150 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import '../styles/css/chat.css'
 import io from 'socket.io-client'
+import Cookies from 'js-cookie'
+import Fuse from 'fuse.js'
 import { ReactComponent as Searchlens } from '../assets/svg/lens.svg'
 import { ReactComponent as AngleDown } from '../assets/svg/angle-down.svg'
 import { ReactComponent as Plus } from '../assets/svg/plus.svg'
-import { ReactComponent as Send } from '../assets/svg/send.svg'
+import { ReactComponent as Arrow } from '../assets/svg/arrow-right.svg'
+import { ReactComponent as Trash } from '../assets/svg/trash.svg'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
-import ChatList from '../data/chat_list.json'
 import api from '../api/axios'
+import { Link } from 'react-router-dom'
+import session from '../utils/session'
+import { Auth, ActiveChat, Bot, StartedChats } from '../interfaces/chat'
+import { v4 as uuidv4 } from 'uuid'
+import Playarea from '../components/Playarea'
+import UploadImage from '../components/UploadImage'
+import { toast } from 'react-toastify'
+import { setIsLogged } from '../state/actions/loggedAction'
+import { useAppDispatch } from '../state/hooks'
+import Analysis from '../components/Analysis'
+import Profile from '../components/Profile'
 
-const Test: React.FC = () => {
-  const [chatlist, setChatList] = useState<Array<any>>([])
-  const [activechat, setActiveChat] = useState<string>('')
-  const [lsdbarActive, setlsdbarActive] = useState('chat')
+const Chat: React.FC = () => {
+  const [auth, setAuth] = useState<Auth>({
+    message: '',
+    meta: {
+      email: '',
+      full_name: '',
+      user_id: '',
+      profile_url: '',
+    },
+    status: false,
+    token: '',
+  })
+  const [activechat, setActiveChat] = useState<ActiveChat>({
+    chat_id: '',
+    name: '',
+    type: 'bot',
+  })
+  const [lsdbarActive, setlsdbarActive] = useState('bot')
   const [newchatdrawer, setNewchatdrawer] = useState(false)
   const [messages, setMessages] = useState<{}[]>([])
   const [messageInput, setMessageInput] = useState<string>('')
-  const [info, setInfo] = useState<string>('')
   const [typing, setTyping] = useState<boolean>(false)
   const [socket, setSocket] = useState<any>(null)
+  const [newBot, setNewBot] = useState<boolean>(false)
+  const [botname, setBotName] = useState<string>('')
+  const [bots, setBots] = useState<Array<Bot>>([])
+  const [regusers, setRegUsers] = useState<{}[]>([])
+  const [startedchats, setStartedChats] = useState<StartedChats[]>([])
   const messContRef = useRef<HTMLDivElement | null>(null)
-  const myuserid = 'mod456'
+  const [profilePicUrl, setProfilePicUrl] = useState<string>('')
+  const [viewRightSideBar, setViewRightSideBar] = useState<{
+    active: boolean
+    width: number
+    message: string
+  }>({ active: false, width: 0, message: '' })
+  const [model, setModel] = useState('electra')
+  const [searchedbots, setSearchedBots] = useState<{
+    found: boolean
+    search: string
+    bots: Array<Bot>
+  }>({
+    found: false,
+    search: '',
+    bots: [],
+  })
+  const myuserid = auth.meta.user_id ? auth.meta.user_id : ''
+  const dispatch = useAppDispatch()
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const joinRoom = (room = [myuserid, activechat.chat_id].sort().join('|')) => {
+    socket.emit('join_room', { full_name: activechat.name, room: room })
+  }
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(messageInput)
     // add message to the arr
-    setMessages([
-      ...messages,
-      {
-        timestamp: 'now',
-        userid: myuserid,
-        sendername: 'Dennis Kibet',
-        level: 'user',
-        message: messageInput,
-      },
-    ])
+    if (activechat.type === 'bot') {
+      setMessages([
+        ...messages,
+        {
+          timestamp: Date.now(),
+          sender_id: myuserid,
+          sendername: auth.meta.full_name ? auth.meta.full_name : '',
+          level: 'user',
+          message: messageInput,
+        },
+      ])
+    } else {
+      joinRoom()
+    }
     messContRef.current?.scrollIntoView({ behavior: 'smooth' })
     if (socket) {
-      socket.emit('client_message', { message: messageInput })
+      if (activechat.type === 'bot') {
+        socket.emit('gemini_message', {
+          chat_id: activechat.chat_id,
+          message_id: '',
+          sender_id: myuserid,
+          receiver_id: activechat.chat_id,
+          timestamp: '',
+          message: messageInput,
+          level: 'bot',
+          model: model,
+        })
+      } else {
+        socket.emit('chat_message', {
+          chat_id: activechat.chat_id,
+          message_id: '',
+          full_name: activechat.name,
+          sender_id: myuserid,
+          receiver_id: activechat.chat_id,
+          timestamp: '',
+          message: messageInput,
+          level: '',
+          room: [myuserid, activechat.chat_id].sort().join('|'),
+        })
+      }
       setMessageInput('')
     }
     setMessageInput('')
   }
 
+  const getUserBots = async () => {
+    const res = await api('GET', 'mybots', {})
+    if (res.status === 200) {
+      setBots(res ? res.data.user_bots : [])
+    }
+  }
+
   useEffect(() => {
     messContRef.current?.scrollIntoView()
-    setChatList(ChatList.chats)
-
-    const newSocket = io('http://localhost:5000')
+    const auth: any = session.get('auth')
+    setAuth(JSON.parse(auth))
+    const token = auth ? JSON.parse(auth)?.token ?? null : null
+    const socketio_url =
+      process.env.REACT_APP_SOCKETIO_URL || 'http://localhost:5000'
+    const newSocket = io(socketio_url as string, {
+      extraHeaders: {
+        Authorization: token ? 'Bearer ' + token : 'Bearer undefined',
+      },
+    })
     setSocket(newSocket)
 
-    newSocket.emit('client_message', { message: 'start' })
+    // fetch User's Bots
+    getUserBots()
 
     return () => {
       if (newSocket.connected) {
@@ -63,21 +156,43 @@ const Test: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on('response', (data: any) => {
-        console.log(data.response)
-        setMessages((prevMessages) => [...prevMessages, data.response])
-        messContRef.current?.scrollIntoView({ behavior: 'smooth' })
-      })
-      socket.on('info', (data: any) => {
-        console.log(data.response)
-        setInfo(data.response)
+        console.log(data)
+        if (data && typeof data !== 'string' && data.level === 'chat') {
+          // add chat to chatslist if active chat equals to user's id
+          console.log(activechat.chat_id === data.chat_id)
+          setMessages((prevMessages) => [...prevMessages, data])
+          if (activechat.chat_id === data.chat_id) {
+            console.log(data)
+            console.log('it is active ')
+          }
+        } else {
+          setMessages((prevMessages) => [...prevMessages, data.response])
+        }
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
       socket.on('typing', (data: any) => {
-        console.log(data.response)
         setTyping(data.response)
         messContRef.current?.scrollIntoView({ behavior: 'smooth' })
       })
+      socket.on('open_room', (data: any) => {
+        console.log(data)
+
+        // setting started message
+        setStartedChats([
+          ...startedchats,
+          {
+            chat_id: data.chat_id,
+            name: data.full_name,
+            last_message: data.message,
+            unread_messages: 1,
+            profile_url: '',
+            last_seen: '',
+            timestamp: data.timestamp,
+          },
+        ])
+      })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket])
 
   const handleNewChatDrawer = async () => {
@@ -87,21 +202,176 @@ const Test: React.FC = () => {
     console.log(res.data)
   }
 
-  const fetchPrevChats = async (chatid: string) => {
-    const res = await api('GET', 'prevchats', { chatid: chatid })
-    console.log(res.data)
+  const fetchPrevChats = async (chatid: string, context: string) => {
+    const res = await api(
+      'GET',
+      `prevchats?chat_id=${chatid}&context=${context}`,
+      { chat_id: chatid },
+      { 'Content-Type': 'application/json' }
+    )
+    if (res.status === 200) {
+      setMessages(res.data.chats)
+    }
+  }
+
+  const submitNewBot = async (e: FormEvent) => {
+    e.preventDefault()
+    if (botname !== '') {
+      const res = await api('POST', 'newbot', {
+        botname: botname,
+        bot_profile_pic: profilePicUrl,
+      })
+      setBotName('')
+      setNewBot(false)
+      console.log(res.data)
+      getUserBots()
+      // set active Chat and start new conversation
+      setActiveChat({
+        chat_id: '',
+        name: '',
+        type: 'bot',
+      })
+      socket.emit('client_message', { message: 'start' })
+    } else {
+      toast('Bot has to have a name!', { type: 'error' })
+    }
+  }
+
+  const fetchRegisteredUsers = async () => {
+    const res = await api('GET', 'getusers', {})
+    setRegUsers(res.data)
+  }
+
+  useEffect(() => {
+    const fetchActiveChatees = async () => {
+      const res = await api('GET', 'getchats', {})
+      if (res.status === 200) {
+        console.log(res.data)
+        setStartedChats(res.data.chats)
+      }
+    }
+    if (lsdbarActive === 'chat') {
+      fetchActiveChatees()
+    }
+  }, [lsdbarActive])
+
+  const searchForaBot = (array: Bot[], name: string): void => {
+    const options = {
+      keys: ['botname'],
+      threshold: 0.3,
+    }
+    const fuse = new Fuse(array, options)
+    const result = fuse.search(name)
+    if (result.length === 0) {
+      setSearchedBots({
+        found: false,
+        search: name,
+        bots: result.map((item) => item.item),
+      })
+    } else {
+      setSearchedBots({
+        found: true,
+        search: name,
+        bots: result.map((item) => item.item),
+      })
+    }
+  }
+
+  const deleteBot = async (bot_id: string) => {
+    const res = await api('DELETE', '/delete-bot', { bot_id: bot_id })
+    if (res.status === 200) {
+      getUserBots()
+      if (activechat.chat_id === bot_id) {
+        setActiveChat({
+          chat_id: '',
+          name: '',
+          type: 'bot',
+        })
+      }
+      toast('Bot Deleted Successfully', { type: 'success' })
+    } else {
+      toast('Could not delete Bot! Retry', { type: 'error' })
+    }
   }
 
   return (
     <div className="chat">
+      {newBot ? (
+        <div
+          className="chatmodalpop"
+          onClick={() => {
+            setNewBot(false)
+          }}
+        >
+          <div className="chatmodalinnercont_wrapper">
+            <div
+              className="chatmodalinnercont"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              <form
+                className="newbot_form"
+                onSubmit={(e) => {
+                  submitNewBot(e)
+                }}
+              >
+                <div className="newbot_form_group">
+                  <UploadImage
+                    profilePicUrl={profilePicUrl}
+                    setProfilePicUrl={setProfilePicUrl}
+                  />
+                  <label htmlFor="bot name" className="new_form_label">
+                    name your bot <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="newbot_form_input"
+                    value={botname}
+                    onChange={(e) => {
+                      setBotName(e.target.value)
+                    }}
+                  />
+                </div>
+                <button className="newbot_name_submit_form">
+                  <span>create</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <div className="chat_container">
         <div className="chatAppbar">
           <div className="chatbar_left">
+            <div className="chat_profile_pic" title={auth.meta.full_name}>
+              {auth.meta.profile_url ? (
+                <img src={auth.meta.profile_url} alt="" />
+              ) : (
+                <img
+                  src={UserPlaceholder}
+                  style={{ marginTop: '5px' }}
+                  alt=""
+                />
+              )}
+            </div>
             <h1 title="Mental Health Chatbot for Suicide Detection, and Support">
-              WeCare
+              <Link to="/">WeCare</Link>
             </h1>
           </div>
-          <div className="chatbar_right"></div>
+          <div className="chatbar_right">
+            <Link
+              to="/"
+              className="btn"
+              onClick={() => {
+                dispatch(setIsLogged(false))
+                Cookies.remove('auth')
+              }}
+            >
+              logout
+            </Link>
+          </div>
         </div>
         <div className="chatWrapper">
           <div
@@ -109,14 +379,43 @@ const Test: React.FC = () => {
               newchatdrawer ? 'newChatDrawer lsdractive' : 'newChatDrawer'
             }
           >
-            <button
+            <Arrow
               className="newChatDrawerCloseIc"
               onClick={() => {
                 setNewchatdrawer(false)
               }}
-            >
-              Close
-            </button>
+            />
+            <br />
+            {/* registered users available for chat list */}
+            {regusers.map((user: any) => (
+              <div
+                className="wecare_it_user"
+                key={user.user_id + uuidv4()}
+                onClick={() => {
+                  setMessages([])
+                  setActiveChat({
+                    chat_id: user.user_id,
+                    name: user.full_name,
+                    type: 'chat',
+                  })
+                }}
+                style={{ alignItems: 'center' }}
+              >
+                <div className="wecare_lsdbar_profile">
+                  <img
+                    src={UserPlaceholder}
+                    alt=""
+                    className="wecare_user_profile_sidebar"
+                  />
+                </div>
+                <div className="lsdbar_user_profile_texts">
+                  <h2 className="lsdbar_user_name">{user.full_name}</h2>
+                </div>
+                <div className="lsdbar_user_profile_meta">
+                  <span className="lsdbar_lst_time">{}</span>
+                </div>
+              </div>
+            ))}
           </div>
           <div
             className={newchatdrawer ? 'leftSidebar' : 'leftSidebar lsdractive'}
@@ -128,6 +427,9 @@ const Test: React.FC = () => {
                     type="text"
                     className="lsdbar_search_input"
                     placeholder="Search"
+                    onChange={(e) => {
+                      searchForaBot(bots, e.target.value)
+                    }}
                   />
                 </div>
                 <button type="submit" className="lsdbar_search_button">
@@ -136,6 +438,153 @@ const Test: React.FC = () => {
               </form>
             </div>
             <div className="lsdbar_categories">
+              <div
+                className={
+                  lsdbarActive === 'bot'
+                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
+                    : 'lsdbar_cat_item'
+                }
+              >
+                <div
+                  className="lsbar_it_title"
+                  onClick={() => {
+                    setlsdbarActive('bot')
+                  }}
+                >
+                  <span>chatbots</span>
+                  <AngleDown className="lsdbar_it_Ic" />
+                </div>
+                {lsdbarActive === 'bot' ? (
+                  <div className="lsdbar_cat_cont">
+                    {!searchedbots.found && searchedbots.search !== '' ? (
+                      <p style={{ textAlign: 'center', margin: '20px 0' }}>
+                        nothing matched
+                      </p>
+                    ) : searchedbots.bots.length !== 0 &&
+                      searchedbots.found &&
+                      searchedbots.search !== '' ? (
+                      searchedbots.bots.map(
+                        (bot: {
+                          botname: string
+                          bot_id: string
+                          bot_profile_pic: string
+                        }) => (
+                          <div
+                            className="wecare_it_user"
+                            key={bot.bot_id + uuidv4()}
+                            onClick={() => {
+                              setMessages([])
+                              setActiveChat({
+                                chat_id: bot.bot_id,
+                                name: bot.botname,
+                                type: 'bot',
+                              })
+                              setProfilePicUrl(bot.bot_profile_pic)
+                              fetchPrevChats(bot.bot_id, 'bot')
+                            }}
+                            style={{ alignItems: 'center' }}
+                          >
+                            <div className="wecare_lsdbar_profile">
+                              <img
+                                src={
+                                  bot.bot_profile_pic !== ''
+                                    ? bot.bot_profile_pic
+                                    : UserPlaceholder
+                                }
+                                alt=""
+                                className="wecare_user_profile_sidebar"
+                                style={
+                                  bot.bot_profile_pic !== ''
+                                    ? { marginTop: '0px' }
+                                    : {}
+                                }
+                              />
+                            </div>
+                            <div className="lsdbar_user_profile_texts">
+                              <h2 className="lsdbar_user_name">
+                                {bot.botname}
+                              </h2>
+                            </div>
+                            <div className="lsdbar_user_profile_meta">
+                              <span className="lsdbar_lst_time">{}</span>
+                              <Trash
+                                className="lsdbar_lst_delete_bot"
+                                onClick={() => {
+                                  deleteBot(bot.bot_id)
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )
+                      )
+                    ) : (
+                      bots.map(
+                        (bot: {
+                          botname: string
+                          bot_id: string
+                          bot_profile_pic: string
+                        }) => (
+                          <div
+                            className="wecare_it_user"
+                            key={bot.bot_id + uuidv4()}
+                            onClick={() => {
+                              setMessages([])
+                              setActiveChat({
+                                chat_id: bot.bot_id,
+                                name: bot.botname,
+                                type: 'bot',
+                              })
+                              setProfilePicUrl(bot.bot_profile_pic)
+                              fetchPrevChats(bot.bot_id, 'bot')
+                            }}
+                            style={{ alignItems: 'center' }}
+                          >
+                            <div className="wecare_lsdbar_profile">
+                              <img
+                                src={
+                                  bot.bot_profile_pic !== ''
+                                    ? bot.bot_profile_pic
+                                    : UserPlaceholder
+                                }
+                                alt=""
+                                className="wecare_user_profile_sidebar"
+                                style={
+                                  bot.bot_profile_pic !== ''
+                                    ? { marginTop: '0px' }
+                                    : {}
+                                }
+                              />
+                            </div>
+                            <div className="lsdbar_user_profile_texts">
+                              <h2 className="lsdbar_user_name">
+                                {bot.botname}
+                              </h2>
+                            </div>
+                            <div className="lsdbar_user_profile_meta">
+                              <span className="lsdbar_lst_time">{}</span>
+                              <Trash
+                                className="lsdbar_lst_delete_bot"
+                                onClick={() => {
+                                  deleteBot(bot.bot_id)
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )
+                      )
+                    )}
+                    <span
+                      className="lsdbar_new_chat"
+                      onClick={() => {
+                        setNewBot(true)
+                      }}
+                    >
+                      <Plus className="pa_plus_Ic" />
+                      <span>new bot chat</span>
+                    </span>
+                  </div>
+                ) : null}
+              </div>
               <div
                 className={
                   lsdbarActive === 'chat'
@@ -149,12 +598,16 @@ const Test: React.FC = () => {
                     setlsdbarActive('chat')
                   }}
                 >
-                  <span>Friends & Family</span>
+                  <span>Therapists & Help</span>
                   <AngleDown className="lsdbar_it_Ic" />
                 </div>
                 {lsdbarActive === 'chat' ? (
                   <div className="lsdbar_cat_cont">
-                    {chatlist.map(
+                    {Array.from(
+                      new Map(
+                        startedchats.map((chat: any) => [chat.chat_id, chat])
+                      ).values()
+                    ).map(
                       (chat: {
                         chat_id: string
                         name: string
@@ -167,9 +620,14 @@ const Test: React.FC = () => {
                         return (
                           <div
                             className="wecare_it_user"
+                            key={chat.chat_id + uuidv4()}
                             onClick={() => {
-                              setActiveChat(chat.chat_id)
-                              fetchPrevChats(chat.chat_id)
+                              setActiveChat({
+                                chat_id: chat.chat_id,
+                                name: chat.name,
+                                type: 'chat',
+                              })
+                              fetchPrevChats(chat.chat_id, 'chat')
                             }}
                           >
                             <div className="wecare_lsdbar_profile">
@@ -205,6 +663,7 @@ const Test: React.FC = () => {
                       className="lsdbar_new_chat"
                       onClick={() => {
                         handleNewChatDrawer()
+                        fetchRegisteredUsers()
                       }}
                     >
                       <Plus className="pa_plus_Ic" />
@@ -213,212 +672,50 @@ const Test: React.FC = () => {
                   </div>
                 ) : null}
               </div>
-              <div
-                className={
-                  lsdbarActive === 'groups'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('groups')
-                  }}
-                >
-                  <span>Groups</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'groups' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
-                      <Plus className="pa_plus_Ic" />
-                      <span>new group chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={
-                  lsdbarActive === 'community'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('community')
-                  }}
-                >
-                  <span>Communities</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'community' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
-                      <Plus className="pa_plus_Ic" />
-                      <span>new community chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={
-                  lsdbarActive === 'bot'
-                    ? 'lsdbar_cat_item lsdbar_item_cat_active'
-                    : 'lsdbar_cat_item'
-                }
-              >
-                <div
-                  className="lsbar_it_title"
-                  onClick={() => {
-                    setlsdbarActive('bot')
-                  }}
-                >
-                  <span>bots</span>
-                  <AngleDown className="lsdbar_it_Ic" />
-                </div>
-                {lsdbarActive === 'bot' ? (
-                  <div className="lsdbar_cat_cont">
-                    <span className="lsdbar_new_chat">
-                      <Plus className="pa_plus_Ic" />
-                      <span>new bot chat</span>
-                    </span>
-                  </div>
-                ) : null}
-              </div>
             </div>
           </div>
-          <div className="playarea">
-            {activechat === '' ? (
-              <div className="playarea_placeholder">
-                <div className="playarea_place_center">
-                  <h1>Start a new Conversation</h1>
-                </div>
-                <div className="playarea_place_bottom">
-                  <p>messages are end-to-end encrypted</p>
-                </div>
-              </div>
+          <Playarea
+            activechat={activechat}
+            messages={messages}
+            setMessages={setMessages}
+            typing={typing}
+            myuserid={myuserid}
+            handleSendMessage={handleSendMessage}
+            messContRef={messContRef}
+            messageInput={messageInput}
+            setMessageInput={setMessageInput}
+            viewRightSideBar={viewRightSideBar}
+            setViewRightSideBar={setViewRightSideBar}
+            profilePicUrl={profilePicUrl}
+          />
+          <div
+            className="rightSidebar"
+            style={
+              viewRightSideBar.active
+                ? { width: viewRightSideBar.width + '%' }
+                : { display: 'none' }
+            }
+          >
+            {viewRightSideBar.message !== '' ? (
+              <Analysis
+                viewRightSideBar={viewRightSideBar}
+                setViewRightSideBar={setViewRightSideBar}
+                model={model}
+                setModel={setModel}
+              />
             ) : (
-              <div className="playarea_active">
-                <div className="pa_top">
-                  <div className="active_chatee_left">
-                    <div className="active_chatee_profile">
-                      <img src={UserPlaceholder} alt="" />
-                    </div>
-                    <div className="active_chatee_meta">
-                      <h2>Alice Johnson</h2>
-                      <span className="active_chatee_ls">online</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="pa_middle">
-                  <div className="messplay">
-                    {messages.map((chat: any) => {
-                      return chat.userid === myuserid ? (
-                        <div className="outgoing_message">
-                          <div className="out_mess_content">
-                            <div className="out_mess_meta">
-                              <span className="out_mess_time">
-                                {chat.timestamp}
-                              </span>
-                            </div>
-                            <div className="outgoing_cont_message">
-                              <span className="out_th_content">
-                                {chat.message}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="out_mess_sender_profile">
-                            <img src={UserPlaceholder} alt="" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="incoming_message">
-                          <div className="in_mess_sender_profile">
-                            <img src={UserPlaceholder} alt="" />
-                          </div>
-                          <div className="in_mess_content">
-                            <div className="inc_mess_meta">
-                              <span className="inc_sender_name">
-                                {chat.sendername}
-                              </span>
-                              <span className="inc_mess_misc">
-                                {chat.level}
-                              </span>
-                              <span className="inc_mess_time">
-                                {chat.timestamp}
-                              </span>
-                            </div>
-                            <div className="incoming_cont_message">
-                              <span className="inc_th_content">
-                                {chat.message}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                    {info !== '' ? <span>info</span> : null}
-                    {typing ? (
-                      <div className="incoming_message">
-                        <div className="in_mess_sender_profile">
-                          <img src={UserPlaceholder} alt="" />
-                        </div>
-                        <div className="in_mess_content">
-                          <div className="typing">
-                            <span className="circle bouncing"></span>
-                            <span className="circle bouncing"></span>
-                            <span className="circle bouncing"></span>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-                    <div ref={messContRef} />
-                  </div>
-                  <div>
-                    {/* {messages.map((message, index) => (
-                  <div key={index}>{message}</div>
-                ))} */}
-                  </div>
-                  <span className="messplay_sec_info">
-                    Messages are end-to-end encrypted. No one outside this chat,
-                    not even WeCare, can read or listen to them. Click to learn
-                    more
-                  </span>
-                </div>
-                <div className="pa_bottom">
-                  <div className="pa_chat_wrapper">
-                    <div className="pa_widgets">
-                      <Plus className="pa_plus_Ic" />
-                    </div>
-                    <div className="pa_chat_form">
-                      <form
-                        onSubmit={handleSendMessage}
-                        className="pa_form_chat"
-                      >
-                        <textarea
-                          value={messageInput}
-                          onChange={(e) => setMessageInput(e.target.value)}
-                          placeholder="Type a message..."
-                          className="pa_chat_input"
-                        ></textarea>
-                        <button type="submit" className="pa_chat_submit_btn">
-                          <Send className="pa_send_Ic" />
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Profile
+                profilePicUrl={profilePicUrl}
+                setProfilePicUrl={setProfilePicUrl}
+                model={model}
+                setModel={setModel}
+              />
             )}
           </div>
-          <div className="rightSidebar"></div>
         </div>
       </div>
     </div>
   )
 }
 
-export default Test
+export default Chat

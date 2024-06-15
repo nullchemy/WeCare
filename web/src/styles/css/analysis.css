@@ -1,0 +1,88 @@
+.analysis {
+  position: relative;
+}
+.analysis .an_arrow_back {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  transform: rotate(180deg);
+  height: 20px;
+  width: 20px;
+  padding: 7px;
+  border-radius: 50%;
+  z-index: 999;
+}
+.analysis .an_arrow_back:hover {
+  background-color: rgba(67, 67, 67, 0.7921568627);
+}
+.analysis .analysis_model {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+}
+.analysis .analysis_model .analysis_model_form {
+  margin-left: 10px;
+}
+.analysis .analysis_model .analysis_model_form select,
+.analysis .analysis_model .analysis_model_form option {
+  cursor: pointer;
+}
+.analysis .analysis_model .analysis_model_form select {
+  outline: none !important;
+  padding: 3px;
+  border-radius: 5px;
+}
+.analysis .analysis_container {
+  width: 100%;
+  padding-top: 3rem;
+}
+.analysis .analysis_container .analysis_wrapper {
+  width: 100%;
+}
+.analysis .analysis_container .analysis_wrapper .initial_message {
+  width: 80%;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 2rem;
+  padding: 10px;
+}
+.analysis .analysis_container .analysis_wrapper .initial_message span {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.analysis .analysis_container .analysis_wrapper .analysing_text {
+  margin: 20px 5%;
+  width: 90%;
+}
+.analysis .analysis_container .analysis_wrapper .analysis_content {
+  display: flex;
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+.analysis .analysis_container .analysis_wrapper .analysis_content .analysis_bar_chart {
+  margin: 1rem 0;
+  width: 50%;
+  height: auto;
+}
+.analysis .analysis_container .analysis_wrapper .analysis_content .analysis_textuals {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}
+.analysis .analysis_container .analysis_wrapper .analysis_content .analysis_textuals .analysis_prediction {
+  font-family: Apercu, Roboto, Arial, Helvetica, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 200;
+  margin-bottom: 1rem;
+}
+.analysis .analysis_container .analysis_wrapper .analysis_content .analysis_textuals .analysis_prediction strong {
+  font-weight: 600;
+}
+
+.dashlnchart {
+  width: 100% !important;
+  height: 100% !important;
+}/*# sourceMappingURL=analysis.css.map */

@@ -4,7 +4,21 @@ import '../styles/css/footer.css'
 const Footer = () => {
   return (
     <Fragment>
-      <div className="footer">Footer</div>
+      <div className="footer">
+        <div className="footer_wrapper">
+          <p>
+            WeCare -{' '}
+            <a
+              href="https://denniskibet.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              denniskibet
+            </a>{' '}
+            &copy; {new Date().getFullYear()}
+          </p>
+        </div>
+      </div>
     </Fragment>
   )
 }

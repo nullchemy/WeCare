@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import uuid
 import jwt
 from flask import current_app
+from .auth_middleware import token_required
 
 from .extensions import mongo, bcrypt
 auth = Blueprint('auth', __name__)
@@ -21,8 +22,10 @@ def generate_user_number():
     new_user_number = last_user_number + 1
     return new_user_number
 
-@auth.route('/auth/register', methods=['POST'])
+@auth.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
     data = request.get_json()
     if not data:
         return {
@@ -47,22 +50,43 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
+    # Check for duplicate email before insertion
+    email_exists = users_collection.find_one({"email": email})
+    if email_exists:
+        return jsonify({"message": "User already registered. Please try a different email address."}), 400
+
+
     # Save user details to the database
     user_data = {
         'user_id': user_id,
         'full_name': full_name,
+        'profile_url': '',
         'email': email,
         'hashed_password': hashed_password,
         'user_number': user_number,
+        'chats': [],
         'active': True
     }
-    users_collection.insert_one(user_data)
+    result = users_collection.insert_one(user_data)
+    # token should expire after 24 hrs
+    if result.acknowledged:
+        token = jwt.encode(
+            {"user_id": user_id},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256"
+        )
+        print("Insertion successful. Token generated")
+        return jsonify({"message": "User registered successfully!", "status": True, "token": token, "meta": {"user_id": user_id, "full_name": full_name, "email": email}}), 201
+    else:
+        print("Insertion failed. Reason:", result.raw_result)
+        return jsonify({"message": "User registration failed!"}), 500
 
-    return jsonify({"message": "User registered successfully!", "user_id": user_id, "user_number": user_number}), 201
 
 
-@auth.route('/auth/login', methods=['POST'])
+@auth.route('/auth/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
     data = request.get_json()
     if not data:
         return {
@@ -85,6 +109,22 @@ def login():
             algorithm="HS256"
         )
 
-        return jsonify({"message": "Login successful", "status": True, "token": token}), 200
-
+        return jsonify({"message": "Login successful", "status": True, "token": token, "meta": {"user_id": user["user_id"], "full_name": user["full_name"], "email": user['email'], "profile_url": user["profile_url"]}}), 200
     return jsonify({"message": "Invalid credentials. Please try again.", "status": False}), 401
+
+@auth.route('/updateprofile', methods=['PUT'])
+@token_required
+def updateprofile(current_user):
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "Preflight request successful"}), 200
+    data = request.get_json()
+    profile_url = data.get('url')
+    my_user_id = current_user['user_id']
+    users_collection = mongo.db.users
+    # Find the user by user_id and update the profile_url
+    result = users_collection.update_one({'user_id': my_user_id}, {'$set': {'profile_url': profile_url}})
+    # Check if the user was found and updated
+    if result.modified_count == 1:
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    else:
+        return jsonify({'message': 'profile update failed'}), 404

@@ -1,0 +1,81 @@
+.user_profile {
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  .user_profile_container {
+    .user_profile_wrapper {
+      .user_profile_name {
+        width: 100%;
+        .user_profile_name_form {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          .user_profile_update_name {
+            outline: none;
+            padding: 5px;
+            border-radius: 5px;
+            width: min-content;
+            max-width: 30%;
+            border: none;
+            background-color: transparent;
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-transform: capitalize;
+          }
+          .update_name {
+            border: 1px solid #000;
+          }
+          .user_profile_name_edit {
+            cursor: pointer;
+            height: 20px;
+            width: 20px;
+          }
+        }
+      }
+      .user_profile_model_selection {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .user_profile_model_form {
+          margin-left: 10px;
+          select,
+          option {
+            cursor: pointer;
+          }
+          select {
+            outline: none !important;
+            padding: 3px;
+            border-radius: 5px;
+          }
+        }
+      }
+      .user_profile_information {
+        margin: 20px;
+        margin-top: 4rem;
+        text-align: center;
+        .user_profile_information_title {
+          font-size: 1rem;
+          font-weight: 700;
+          margin-bottom: 5px;
+        }
+        .user_profile_info_generative {
+          font-size: 0.8rem;
+        }
+        .user_profile_lnk {
+          font-size: 0.8rem;
+          color: #0084ff;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .user_profile_footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+}

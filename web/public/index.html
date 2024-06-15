@@ -2,21 +2,203 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <meta name="theme-color" content="#14a9ff" />
+    <meta name="description" content="nullchemy" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="%PUBLIC_URL%/nullchemy_new_logo_3d.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="%PUBLIC_URL%/nullchemy_new_logo_3d.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="%PUBLIC_URL%/nullchemy_new_logo_3d.png"
+    />
+    <link
+      rel="mask-icon"
+      href="%PUBLIC_URL%/icons/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#14a9ff" />
     <title>
-      Mental Health Chatbot for Suicide Detection, and Support using ML
+      WeCare - Mental Health Chatbot for Suicide Detection and Support
     </title>
+    <style>
+      .preloader {
+        height: 100vh;
+        position: relative;
+      }
+      .preloader .preloaderwrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .preloader .preloaderwrapper p {
+        margin-top: 10px;
+        font-size: 0.8rem;
+      }
+      .preloader .preloaderwrapper .loader {
+        width: 60px;
+        height: 40px;
+        position: relative;
+        display: inline-block;
+        --base-color: #d5faff; /*use your base color*/
+      }
+      .preloader .preloaderwrapper .loader::before {
+        content: '';
+        left: 0;
+        top: 0;
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #3c87ff;
+        background-image: radial-gradient(
+            circle 8px at 18px 18px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 18px 0px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 0px 18px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 36px 18px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 18px 36px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 30px 5px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 30px 5px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 30px 30px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 5px 30px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 4px at 5px 5px,
+            var(--base-color) 100%,
+            transparent 0
+          );
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+        animation: rotationBack 3s linear infinite;
+      }
+      .preloader .preloaderwrapper .loader::after {
+        content: '';
+        left: 35px;
+        top: 15px;
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #1dffc3;
+        background-image: radial-gradient(
+            circle 5px at 12px 12px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 12px 0px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 0px 12px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 24px 12px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 12px 24px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 20px 3px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 20px 3px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 20px 20px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 3px 20px,
+            var(--base-color) 100%,
+            transparent 0
+          ),
+          radial-gradient(
+            circle 2.5px at 3px 3px,
+            var(--base-color) 100%,
+            transparent 0
+          );
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+        animation: rotationBack 4s linear infinite reverse;
+      }
+      @keyframes rotationBack {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(-360deg);
+        }
+      } /*# sourceMappingURL=preloader.css.map */
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class="preloader">
+        <div class="preloaderwrapper">
+          <span class="loader"></span>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
