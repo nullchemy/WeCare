@@ -1,22 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import React, { Fragment, useEffect, useState } from 'react'
 import '../styles/css/auth.css'
 import api from '../api/axios'
 import session from '../utils/session'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../state/hooks'
 import { setIsLogged } from '../state/actions/loggedAction'
 import UserPlaceholder from '../assets/images/icons8-user-80.png'
 import ImageUpload from '../utils/ImageUpload'
 import { toast } from 'react-toastify'
-import UserPlaceholder from '../assets/images/icons8-user-80.png'
-import ImageUpload from '../utils/ImageUpload'
-import { toast } from 'react-toastify'
 
 const Auth = () => {
   const [isRegistering, setRegistering] = useState(false)
-  const [uploadImage, setUploadImage] = useState(false)
   const [uploadImage, setUploadImage] = useState(false)
   const [formData, setFormData] = useState({
     full_name: '',
@@ -25,10 +19,6 @@ const Auth = () => {
     password: '',
     confirm_password: '',
   })
-  const [profilePic, setProfilePic] = useState<File | null>(null)
-  const [profilePicUrl, setProfilePicUrl] = useState<string>('')
-  const [uploading, setUploading] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [profilePic, setProfilePic] = useState<File | null>(null)
   const [profilePicUrl, setProfilePicUrl] = useState<string>('')
   const [uploading, setUploading] = useState(false)
@@ -60,19 +50,6 @@ const Auth = () => {
       setLoading(true)
       setLoading(true)
       const res: any = await api('POST', 'auth/register', formData)
-      setLoading(false)
-      if (res) {
-        if (res.status === 201) {
-          toast(res.data.message, { type: 'success' })
-          //set logged in state
-          session.save(JSON.stringify(res.data))
-          dispatch(setIsLogged(true))
-          setTimeout(() => {
-            setUploadImage(true)
-          }, 1000)
-        } else {
-          toast(res.data.message, { type: 'error' })
-        }
       setLoading(false)
       if (res) {
         if (res.status === 201) {
@@ -148,129 +125,6 @@ const Auth = () => {
     <Fragment>
       <div className="auth">
         <div className="auth-form">
-          {!uploadImage ? (
-            <div className="auth_details">
-              <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-              <form onSubmit={handleSubmit}>
-                {!isRegistering && (
-                  <div className="form_group">
-                    <input
-                      type="text"
-                      name="email_or_user_id"
-                      placeholder="Email or User ID"
-                      value={formData.email_or_user_id}
-                      onChange={handleFormChange}
-                    />
-                  </div>
-                )}
-                {isRegistering && (
-                  <div className="form_group">
-                    <input
-                      type="text"
-                      name="full_name"
-                      placeholder="Full Name"
-                      value={formData.full_name}
-                      onChange={handleFormChange}
-                    />
-                  </div>
-                )}
-                {isRegistering && (
-                  <div className="form_group">
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={handleFormChange}
-                    />
-                  </div>
-                )}
-                <div className="form_group">
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    autoComplete="new-password"
-                    value={formData.password}
-                    onChange={handleFormChange}
-                  />
-                </div>
-                {isRegistering && (
-                  <div className="form_group">
-                    <input
-                      type="password"
-                      name="confirm_password"
-                      placeholder="Confirm Password"
-                      autoComplete="new-password"
-                      value={formData.confirm_password}
-                      onChange={handleFormChange}
-                    />
-                  </div>
-                )}
-                <button type="submit">
-                  {loading ? (
-                    <div className="dot-flashing"></div>
-                  ) : isRegistering ? (
-                    'Register'
-                  ) : (
-                    'Login'
-                  )}
-                </button>
-              </form>
-              {isRegistering ? (
-                <p>
-                  Already have an account?{' '}
-                  <span onClick={() => setRegistering(!isRegistering)}>
-                    Login here.
-                  </span>
-                </p>
-              ) : (
-                <p>
-                  Don't have an account?{' '}
-                  <span onClick={() => setRegistering(!isRegistering)}>
-                    Register here.
-                  </span>
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="image_upload">
-              <h1 className="image_upload_title">set profile picture</h1>
-              <div
-                className={
-                  uploading
-                    ? 'profie_picture_wrapper moving-border'
-                    : 'profie_picture_wrapper'
-                }
-              >
-                <div
-                  className={
-                    uploading ? 'profie_picture noborder' : 'profie_picture'
-                  }
-                >
-                  <img
-                    className={
-                      profilePicUrl !== ''
-                        ? 'the_profile_picture m_t_unset'
-                        : 'the_profile_picture'
-                    }
-                    src={profilePicUrl !== '' ? profilePicUrl : UserPlaceholder}
-                    alt=""
-                  />
-                  <input
-                    className="profile_picture_file_field"
-                    type="file"
-                    name="profile_picture"
-                    onChange={(e) => {
-                      setProfilePic(e.target.files?.[0] || null)
-                    }}
-                  />
-                </div>
-              </div>
-              <Link to="/chat" className="profile_skip">
-                {profilePicUrl === '' ? 'skip' : 'go to chat'}
-              </Link>
-            </div>
           {!uploadImage ? (
             <div className="auth_details">
               <h2>{isRegistering ? 'Register' : 'Login'}</h2>
