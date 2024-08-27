@@ -9,7 +9,7 @@ const Footer = () => {
           <p>
             WeCare -{' '}
             <a
-              href="https://denniskibet.netlify.app"
+              href="https://denniskibet.com"
               target="_blank"
               rel="noopener noreferrer"
             >

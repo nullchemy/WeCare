@@ -17,7 +17,7 @@ const Header = () => {
               <Link to="/report">Report</Link>
               <Link to="/about">About</Link>
               <a
-                href="https://denniskibet.netlify.app"
+                href="https://denniskibet.com"
                 target="_blank"
                 rel="noopener noreferrer"
               >

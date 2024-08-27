@@ -18,3 +18,4 @@ transformers
 google-generativeai
 gunicorn
 waitress
+tf-keras
